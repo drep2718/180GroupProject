@@ -35,6 +35,21 @@ public class User implements UserInterface {
     }
 // I dont know if you guys want me to change it so that we check password validity before removing the profile so ill wait on adding it.
 
+    public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
+        int index = usernames.indexOf(username);
+        if (index != -1) {
+            return usernames.get(index); // can return bio too once it finds profile.
+        } else {
+            return "Profile not found";
+        }
+    }
+    
+    public String getBio(String bio) {
+        return bio;
+    }
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
     
      public void updateUsername(String newUsername) {
         this.username = newUsername;
