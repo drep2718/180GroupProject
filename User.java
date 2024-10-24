@@ -35,7 +35,7 @@ public class User implements UserInterface {
     public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
         int index = usernames.indexOf(username);
         if (index != -1) {
-            return usernames.get(index); // can return bio too once it finds profile.
+            return "Name: " + usernames.get(index) + "\nBio: " + bios.get(index);
         } else {
             return "Profile not found";
         }
