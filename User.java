@@ -43,6 +43,10 @@ public class User implements UserInterface {
             return "Profile not found";
         }
     }
+
+    public boolean usernameAvail(String username){
+        return usernames.contains(username); 
+    }
     
     public String getBio() {
         return bio;
@@ -61,6 +65,15 @@ public class User implements UserInterface {
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    public String getUsername(){
+        return username; 
+    }
+
+    public void setUsername(String username){
+        this.username = username; 
+        
     }
 
 
