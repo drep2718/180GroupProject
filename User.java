@@ -1,23 +1,21 @@
 import java.util.ArrayList;
 
 public class User implements UserInterface {
-    private ArrayList<String> usernames;
+    private ArrayList<String> usernames = new ArrayList<>();
+    private ArrayList<String> passwords = new ArrayList<>();
+    private ArrayList<String> bios = new ArrayList<>();
     String username;
-    private ArrayList<String> passwords;
     String password;
-    private ArrayList<String> bios;
     String bio;
 
     public User(String username, String password, String bio) {
         this.username = username;
         this.password = password;
         this.bio = bio;
-        usernames = new ArrayList<>();
-        passwords = new ArrayList<>();
-        bios = new ArrayList<>();
     }
 
-    public void createProfile(String username, String password, String bio) {
+    public static void createProfile(String username, String password, String bio) {
+        User username = new User(username, password, bio);
         usernames.add(username);
         passwords.add(password);
         bios.add(bio);
@@ -33,7 +31,6 @@ public class User implements UserInterface {
             System.out.println("User not found!");
         }
     }
-// I dont know if you guys want me to change it so that we check password validity before removing the profile so ill wait on adding it.
 
     public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
         int index = usernames.indexOf(username);
