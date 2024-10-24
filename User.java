@@ -75,6 +75,30 @@ public class User implements UserInterface {
         this.username = username; 
         
     }
+    
+    // Password Methods
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public boolean validatePassword(String username, String password) {
+        if ((password.equals(this.password) && (passwords.contains(password))
+                && (username.equals(this.username)) && usernames.contains(username))) {
+            return true;
+        } else if ((!password.equals(this.password)) || (!passwords.contains(password))) {
+            System.out.println("Wrong Password!");
+            return false;
+        } else if ((!usernames.contains(username)) || (!(username.equals(this.username)))) {
+            System.out.println("Wrong Username!");
+            return false;
+        }
+        return false;
+    }
 
 
 
