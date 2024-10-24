@@ -2,7 +2,7 @@ public interface UserInterface {
 
      String getUsername();
      void setUsername (String username);
-     Boolean usernameAvali(String username);
+     boolean usernameAvail(String username);
      String getPassword();
      void setPassword(String password);
      boolean validatePassword(String username, String password);
@@ -12,7 +12,7 @@ public interface UserInterface {
      void updateUsername(String newUsername);
      void updatePassword(String newPassword);
      void updateBio(String newBio);
-     String removeProfile(String username, String password);
+     void removeProfile(String username);
      String findProfile(String username);
 
 }
