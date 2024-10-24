@@ -8,16 +8,34 @@ public class User implements UserInterface {
     private ArrayList<String> bios;
     String bio;
 
-    public User(ArrayList usernames, String username, ArrayList passwords,
-                String password, ArrayList bios, String bio) {
+    public User(String username, String password, String bio) {
         this.username = username;
-        this.usernames = usernames;
-        this.passwords = passwords;
         this.password = password;
         this.bio = bio;
-        this.bios = bios;
+        usernames = new ArrayList<>();
+        passwords = new ArrayList<>();
+        bios = new ArrayList<>();
     }
 
+    public void createProfile(String username, String password, String bio) {
+        usernames.add(username);
+        passwords.add(password);
+        bios.add(bio);
+    }
+
+    public void removeProfile(String username) {
+        int index = usernames.indexOf(username);
+        if (index != -1) {
+            usernames.remove(index);
+            passwords.remove(index);
+            bios.remove(index);
+        } else {
+            System.out.println("User not found!");
+        }
+    }
+// I dont know if you guys want me to change it so that we check password validity before removing the profile so ill wait on adding it.
+
+    
      public void updateUsername(String newUsername) {
         this.username = newUsername;
     }
