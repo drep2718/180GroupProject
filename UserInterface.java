@@ -8,7 +8,7 @@ public interface UserInterface {
      Boolean validatePassword(String username, String password);
      String getBio();
      void setBio(String bio);
-     String createProfile(String username, String password, String bio);
+     void createProfile(String username, String password, String bio);
      void updateUsername(String newUsername);
      void updatePassword(String newPassword);
      void updateBio(String newBio);
