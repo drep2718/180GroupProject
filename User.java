@@ -44,7 +44,7 @@ public class User implements UserInterface {
         }
     }
     
-    public String getBio(String bio) {
+    public String getBio() {
         return bio;
     }
     public void setBio(String bio) {
