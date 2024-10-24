@@ -2,7 +2,7 @@ public interface UserInterface {
 
      String getUsername();
      void setUsername (String username);
-     Boolean checkUsernameAvailability(String username);
+     Boolean usernameAvali(String username);
      String getPassword();
      void setPassword(String password);
      Boolean validatePassword(String username, String password);
