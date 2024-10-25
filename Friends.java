@@ -5,7 +5,7 @@ public class Friends implements FriendsInterface{
     ArrayList<String> friendsList;
     ArrayList<String> blockedList;
 
-    public void removeFriend(User userToRemove) {
+    public void removeFriend(User userToRemove) { 
         if (friendsList.contains(userToRemove)) {
             friendsList.remove(userToRemove);
         } else {
@@ -15,5 +15,14 @@ public class Friends implements FriendsInterface{
     public boolean isFriend(User otherUser) {
         return friendsList.contains(otherUser);
     }
+
+     public void unblockUser (User userToUnblock) { // does unblocking mean adding to friendsLost
+        if (blockedList.contains(userToUnblock)) {
+            blockedList.remove(userToUnblock);
+        }  else {
+            System.out.println("Blocked User not found");
+        }
+    }
+    
 }
 
