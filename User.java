@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class User implements UserInterface {
-    private ArrayList<String> usernames = new ArrayList<>();
-    private ArrayList<String> passwords = new ArrayList<>();
-    private ArrayList<String> bios = new ArrayList<>();
-    String username;
-    String password;
-    String bio;
-
+    ArrayList<String> usernames;
+    private String username;
+    ArrayList<String> passwords;
+    private String password;
+    ArrayList<String> bios;
+    private String bio;
+    
     public User(String username, String password, String bio) {
         this.username = username;
         this.password = password;
