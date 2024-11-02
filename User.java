@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class User implements UserInterface {
-    ArrayList<String> usernames;
+    private ArrayList<String> usernames;
     private String username;
-    ArrayList<String> passwords;
+    private ArrayList<String> passwords;
     private String password;
-    ArrayList<String> bios;
+    private ArrayList<String> bios;
     private String bio;
     
     public User(String username, String password, String bio) {
