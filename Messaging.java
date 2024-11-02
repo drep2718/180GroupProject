@@ -5,7 +5,7 @@ public class Messaging implements MessagingInterface{
     private String content;
     private String date;
     private Boolean isRead;
-    private Arraylist<Strings> messageHistory;
+    private Arraylist<Messaging> messageHistory;
 
 }
   
