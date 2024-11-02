@@ -35,6 +35,8 @@ public class User implements UserInterface {
         this.username = username;
         this.password = password;
         this.bio = bio;
+        this.filepath = filepath;
+        this.formatName = formatName;
         this.image = imageSave(image, filepath, formatName);
         this.usernames = new ArrayList<>();
         this.passwords = new ArrayList<>();
