@@ -1,9 +1,6 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class User implements UserInterface {
@@ -15,18 +12,18 @@ public class User implements UserInterface {
     private String formatName;
     private ArrayList<User> allUsers;
     private ArrayList<BufferedImage> images;
+
     private ArrayList<String> bios;
     private ArrayList<String> passwords;
     private ArrayList<String> usernames;
 
-    public User(String username, String password, String bio, BufferedImage image) {
+    public User(String username, String password, String bio) {
         this.username = username;
         this.password = password;
         this.bio = bio;
         this.usernames = new ArrayList<>();
         this.passwords = new ArrayList<>();
         this.bios = new ArrayList<>();
-        this.images = new ArrayList<>();
         this.allUsers = new ArrayList<>();
 
     }
@@ -56,14 +53,37 @@ public class User implements UserInterface {
         }
     }
 
-    public void createProfile(String username, String password, String bio, BufferedImage image) {
-        User user = new User(username, password, bio, image);
+
+
+    public User createProfile(String username, String password, String bio) {
+        User user = new User(username, password, bio);
         usernames.add(username);
         passwords.add(password);
         bios.add(bio);
         allUsers.add(user);
 
+        saveToFile(user);
+        return user;
+    }
 
+    public User createProfile(String username, String password, String bio, BufferedImage image, String filepath, String formatName) {
+        try {
+            formatName = filepath.substring(filepath.lastIndexOf(".") + 1);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        
+        User user = new User(username, password, bio, image, filepath, formatName);
+        usernames.add(username);
+        passwords.add(password);
+        bios.add(bio);
+        allUsers.add(user);
+
+        saveToFile(user);
+        return user;
+    }
+
+    public void saveToFile(User user) {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
             bfw.write(user.toString());
             bfw.newLine();
@@ -73,8 +93,14 @@ public class User implements UserInterface {
     }
 
     public String toString() {
-        return username + "," + password + "," + bio + "," + filepath;
+        String path = "";
+        if (filepath != null) {
+            path = "," + filepath;
+        }
+        return username + "," + password + "," + bio + "," + path;
     }
+
+    //-------------------------------------------------------------
 
     public void removeProfile(String username) {
         int index = usernames.indexOf(username);
@@ -82,10 +108,125 @@ public class User implements UserInterface {
             usernames.remove(index);
             passwords.remove(index);
             bios.remove(index);
+
+            for (User user : allUsers) {
+                if (user.toString().contains(this.username)) {
+                    allUsers.remove(user);
+                }
+            }
+
+            rewriteUsers();
+
+
         } else {
             System.out.println("User not found!");
         }
     }
+
+    public void rewriteUsers() {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", false))) {
+            for (int i = 0; i < allUsers.size(); i++) {
+                User user = allUsers.get(i);
+                bfw.write(user.toString());
+                bfw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadUsers() { // this method if going to be called at the begging of each run of the program to read the saved data back into the array lists
+        try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
+            String line = bfr.readLine();
+            while (line != null) {
+                String[] parts = line.split(",");
+                String username = parts[0];
+                String password = parts[1];
+                String bio = parts[2];
+
+                    usernames.add(username);
+                    passwords.add(password);
+                    bios.add(bio);
+
+                  if (parts.length > 3) {
+                      String filepath = parts[3];
+                      BufferedImage image = ImageIO.read(new File(filepath));
+
+                      User user = new User(username, password, bio, image, filepath, filepath.substring(filepath.lastIndexOf('.') + 1));
+                      allUsers.add(user);
+                } else {
+                      User user = new User(username, password, bio);
+                      allUsers.add(user);
+                  }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void updateUsername(String newUsername) {
+        int index = usernames.indexOf(this.username);
+        if (index != -1) {
+            usernames.set(index, newUsername);
+            for (User user : allUsers) {
+                if (user.toString().contains(this.username)) {
+                    allUsers.remove(user);
+                }
+            }
+
+            User updatedUser = new User(newUsername, this.password, this.bio);
+            allUsers.add(updatedUser);
+            this.username = newUsername;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Username Found");
+        }
+    }
+
+    public void updateBio(String newBio) {
+        int index = bios.indexOf(this.bio);
+        if (index != -1) {
+            bios.set(index, newBio);
+            for (User user : allUsers) {
+                if (user.toString().contains(this.bio)) {
+                    allUsers.remove(user);
+                }
+            }
+
+            User updatedUser = new User(this.username, this.password, newBio);
+            allUsers.add(updatedUser);
+            this.bio = newBio;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Bio Found");
+        }
+    }
+
+    public void updatePassword(String newPassword) {
+        int index = passwords.indexOf(this.password);
+        if (index != -1) {
+            passwords.set(index, newPassword);
+            for (User user : allUsers) {
+                if (user.toString().contains(this.password)) {
+                    allUsers.remove(user);
+                }
+            }
+
+            User updatedUser = new User(this.username, newPassword, this.bio);
+            allUsers.add(updatedUser);
+            this.password = newPassword;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Password Found");
+        }
+    }
+
+    // -------------------------------------------------------------
 
     public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
         int index = usernames.indexOf(username);
@@ -115,17 +256,6 @@ public class User implements UserInterface {
         this.bio = bio;
     }
 
-    public void updateUsername(String newUsername) {
-        this.username = newUsername;
-    }
-
-    public void updateBio(String newBio) {
-        this.bio = newBio;
-    }
-
-    public void updatePassword(String newPassword) {
-        this.password = newPassword;
-    }
 
     public String getUsername(){
         return username;
