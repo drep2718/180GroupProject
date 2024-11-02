@@ -7,18 +7,20 @@ public class User implements UserInterface {
     private String password;
     private ArrayList<String> bios;
     private String bio;
-    
+    private ArrayList<User> allUsers;
+
     public User(String username, String password, String bio) {
         this.username = username;
         this.password = password;
         this.bio = bio;
     }
 
-    public static void createProfile(String username, String password, String bio) {
-        User username = new User(username, password, bio);
+    public void createProfile(String username, String password, String bio) {
+        User user = new User(username, password, bio);
         usernames.add(username);
         passwords.add(password);
         bios.add(bio);
+        allUsers.add(user); // we need an arrayList of Users 
     }
 
     public void removeProfile(String username) {
@@ -42,17 +44,17 @@ public class User implements UserInterface {
     }
 
     public boolean usernameAvail(String username){
-        return usernames.contains(username); 
+        return usernames.contains(username);
     }
-    
+
     public String getBio() {
         return bio;
     }
     public void setBio(String bio) {
         this.bio = bio;
     }
-    
-     public void updateUsername(String newUsername) {
+
+    public void updateUsername(String newUsername) {
         this.username = newUsername;
     }
 
@@ -65,14 +67,14 @@ public class User implements UserInterface {
     }
 
     public String getUsername(){
-        return username; 
+        return username;
     }
 
     public void setUsername(String username){
-        this.username = username; 
-        
+        this.username = username;
+
     }
-    
+
     // Password Methods
 
     public String getPassword() {
@@ -100,4 +102,3 @@ public class User implements UserInterface {
 
 
 }
-
