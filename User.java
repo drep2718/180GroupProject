@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class User implements UserInterface {
@@ -20,7 +23,17 @@ public class User implements UserInterface {
         usernames.add(username);
         passwords.add(password);
         bios.add(bio);
-        allUsers.add(user); // we need an arrayList of Users 
+        allUsers.add(user);
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
+            bfw.write(user.toString());
+            bfw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String toString() {
+        return username + "," + password + "," + bio;
     }
 
     public void removeProfile(String username) {
