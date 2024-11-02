@@ -23,6 +23,22 @@ public class Friends implements FriendsInterface{
             System.out.println("Blocked User not found");
         }
     }
+
+    // Adding friends & viewing
+    public void addFriend(User newFriend) {
+        if (!friendsList.contains(newFriend.username)) {
+            friendsList.add(newFriend.username);
+        }
+    }
+
+    public ArrayList<String> viewFriends(User user) {
+        return friendsList;
+    }
+
+    // Viewing blocked users
+    public ArrayList<String> viewBlockedUsers(User user) {
+        return blockedList;
+    }
     
 }
 
