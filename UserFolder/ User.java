@@ -1,29 +1,67 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class User implements UserInterface {
-    private ArrayList<String> usernames;
     private String username;
-    private ArrayList<String> passwords;
     private String password;
-    private ArrayList<String> bios;
     private String bio;
+    private BufferedImage image;
+    private String filepath;
+    private String formatName;
     private ArrayList<User> allUsers;
+    private ArrayList<BufferedImage> images;
+    private ArrayList<String> bios;
+    private ArrayList<String> passwords;
+    private ArrayList<String> usernames;
 
-    public User(String username, String password, String bio) {
+    public User(String username, String password, String bio, BufferedImage image) {
         this.username = username;
         this.password = password;
         this.bio = bio;
+        this.usernames = new ArrayList<>();
+        this.passwords = new ArrayList<>();
+        this.bios = new ArrayList<>();
+        this.images = new ArrayList<>();
+        this.allUsers = new ArrayList<>();
+
     }
 
-    public void createProfile(String username, String password, String bio) {
-        User user = new User(username, password, bio);
+    public User(String username, String password, String bio, BufferedImage image, String filepath, String formatName) {
+        this.username = username;
+        this.password = password;
+        this.bio = bio;
+        this.image = imageSave(image, filepath, formatName);
+        this.usernames = new ArrayList<>();
+        this.passwords = new ArrayList<>();
+        this.bios = new ArrayList<>();
+        this.images = new ArrayList<>();
+        this.allUsers = new ArrayList<>();
+    }
+
+    public BufferedImage imageSave(BufferedImage image, String filepath, String formatName ) {
+        try {
+            File pathToImage = new File(filepath);
+            ImageIO.write(image, formatName, pathToImage);
+            return image;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void createProfile(String username, String password, String bio, BufferedImage image) {
+        User user = new User(username, password, bio, image);
         usernames.add(username);
         passwords.add(password);
         bios.add(bio);
         allUsers.add(user);
+
+
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
             bfw.write(user.toString());
             bfw.newLine();
@@ -33,7 +71,7 @@ public class User implements UserInterface {
     }
 
     public String toString() {
-        return username + "," + password + "," + bio;
+        return username + "," + password + "," + bio + "," + filepath;
     }
 
     public void removeProfile(String username) {
@@ -58,6 +96,14 @@ public class User implements UserInterface {
 
     public boolean usernameAvail(String username){
         return usernames.contains(username);
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public BufferedImage getImage () {
+        return image;
     }
 
     public String getBio() {
