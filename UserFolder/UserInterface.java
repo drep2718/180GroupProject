@@ -1,18 +1,28 @@
+import java.awt.image.BufferedImage;
+
 public interface UserInterface {
 
-     String getUsername();
-     void setUsername (String username);
-     boolean usernameAvail(String username);
-     String getPassword();
-     void setPassword(String password);
-     boolean validatePassword(String username, String password);
-     String getBio();
-     void setBio(String bio);
-     void createProfile(String username, String password, String bio);
-     void updateUsername(String newUsername);
-     void updatePassword(String newPassword);
-     void updateBio(String newBio);
-     void removeProfile(String username);
-     String findProfile(String username);
+    String getUsername();
+    BufferedImage imageSave(BufferedImage image, String filepath, String formatName );
+    void saveToFile(User user);
+    String toString();
+    void rewriteUsers();
+    void loadUsers();
+    void setUsername (String username);
+    boolean usernameAvail(String username);
+    String getPassword();
+    void setPassword(String password);
+    boolean validatePassword(String username, String password);
+    String getBio();
+    void setBio(String bio);
+    void setImage(BufferedImage image);
+    BufferedImage getImage ();
+    User createProfile(String username, String password, String bio);
+    User createProfile(String username, String password, String bio, BufferedImage image, String filepath, String formatName);
+    void updateUsername(String newUsername);
+    void updatePassword(String newPassword);
+    void updateBio(String newBio);
+    void removeProfile(String username);
+    String findProfile(String username);
 
 }
