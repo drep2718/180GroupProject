@@ -112,7 +112,7 @@ public class Friends implements FriendsInterface {
         }
     }
 
-    public User getUser(User user) {
+    public User getUser() {
         return user;
     }
 
