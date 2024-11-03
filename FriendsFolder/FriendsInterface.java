@@ -7,7 +7,7 @@ public interface FriendsInterface {
     void unblockUser(User userToUnblock);
     boolean isFriend(User otherUser);
     boolean isBlocked(User otherUser);
-    User getUser(User user);
+    User getUser();
     public ArrayList<User> viewFriends(User user);
     public ArrayList<User> viewBlocked(User user);
     public void rewriteFriends();
