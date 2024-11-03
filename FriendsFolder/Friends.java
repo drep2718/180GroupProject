@@ -156,4 +156,12 @@ public class Friends implements FriendsInterface {
 
     }
 
+    public void sentMessage(Messaging message) {
+        messageHistory.add(message);
+    }
+
+    public void removeSentMessage(Messaging message) {
+        messageHistory.remove(message);
+    }
+
 }
