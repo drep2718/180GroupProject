@@ -59,4 +59,16 @@ public class Messaging implements MessagingInterface {
             System.out.println("Message removed for you only.");
         }
     }
+
+    public void report(User sender, User receiver, String content) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
+            String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"" +
+                    " | Reported by: " + receiver.getUsername();
+            bw.write(reportEntry);
+            bw.newLine();
+            System.out.println("Report has been filed successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
