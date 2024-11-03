@@ -38,6 +38,43 @@ public class Messaging implements MessagingInterface {
         return isRead;
     }
 
+     public void convoWriter() {
+         for(Messaging m : messageHistory){
+             
+             String[] histSplit = m.toString.split(","); 
+             String senderFile = histSplit[0]+ ".txt"; 
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile)){
+                writer.write(m.toString); 
+                writer.newLine(); 
+
+        } catch(IOException e){
+            e.printStackTrace(); 
+        }
+        
+         }
+
+    public void convoReader(String userFile){
+        
+        try(BufferedReader reader = new BufferedReader(new FileReader(userFile))){
+
+            String line; 
+             while ((line = reader.readLine()) != null) {
+                String[] totMessages = line.split(",");
+                messageHistory.add(totMessages);
+            }
+
+        }catch(IOException e){
+            e.printStackTrace(); 
+        }
+        
+            
+    }
+       
+
+    
+
+
     public void sendMessage(Friends sender, User receiver, Messaging content) {
         if (sender.isBlocked(receiver)) {
             System.out.println("Cannot send message because account you have been blocked.");
