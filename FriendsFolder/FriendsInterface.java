@@ -15,6 +15,8 @@ public interface FriendsInterface {
     public void saveFriendsToFile(User friend);
     public void saveBlockedToFile(User blocked);
     String toString();
+    public void loadFriends();
+    public void loadBlocked();
 
 
 }
