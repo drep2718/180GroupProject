@@ -6,6 +6,9 @@ public class Messaging implements MessagingInterface {
     private Messaging content;
     private String date;
     private Boolean isRead;
+    private ArrayList<Messaging> messageHistory;
+
+
 
     public Messaging(Friends sender, Friends receiver, Messaging content, String date, Boolean isRead) {
         this.sender = sender;
@@ -57,4 +60,3 @@ public class Messaging implements MessagingInterface {
         }
     }
 }
-  
