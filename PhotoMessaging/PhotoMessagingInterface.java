@@ -1,4 +1,4 @@
-public interface MessagingInterface {
+public interface PhotoMessagingInterface {
 
     void sendMessage (User sender, User receiver, String content);
     void deleteMessage (User sender, User receiver, String content);
@@ -10,6 +10,4 @@ public interface MessagingInterface {
     void rewriteMessages();
 
 
-
 }
-
