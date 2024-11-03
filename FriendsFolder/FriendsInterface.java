@@ -8,8 +8,13 @@ public interface FriendsInterface {
     boolean isFriend(User otherUser);
     boolean isBlocked(User otherUser);
     User getUser(User user);
-    public ArrayList<String> viewFriends(User user);
-    public ArrayList<String> viewBlocked(User user);
-    
+    public ArrayList<User> viewFriends(User user);
+    public ArrayList<User> viewBlocked(User user);
+    public void rewriteFriends();
+    public void rewriteBlocked();
+    public void saveFriendsToFile(User friend);
+    public void saveBlockedToFile(User blocked);
+    String toString();
+
 
 }
