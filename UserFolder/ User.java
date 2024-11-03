@@ -17,6 +17,15 @@ public class User implements UserInterface {
     private ArrayList<String> passwords;
     private ArrayList<String> usernames;
 
+    public User(String username) {
+        this.username = username;
+        this.usernames = new ArrayList<>();
+        this.passwords = new ArrayList<>();
+        this.bios = new ArrayList<>();
+        this.allUsers = new ArrayList<>();
+
+    }
+
     public User(String username, String password, String bio) {
         this.username = username;
         this.password = password;
@@ -72,7 +81,7 @@ public class User implements UserInterface {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        
+
         User user = new User(username, password, bio, image, filepath, formatName);
         usernames.add(username);
         passwords.add(password);
