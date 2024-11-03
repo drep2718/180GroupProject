@@ -71,4 +71,24 @@ public class Messaging implements MessagingInterface {
             e.printStackTrace();
         }
     }
+
+    public void deleteConversation(User userOne, User userTwo) {
+        for (int i = 0; i < messageHistory.size(); i++) {
+            Messaging message = messageHistory.get(i);
+
+            Friends sender = message.getSender();
+            Friends receiver = message.getReceiver();
+            User senderUser = sender.getUser();
+            User receiverUser = receiver.getUser();
+
+            if ((senderUser.equals(userOne) && receiverUser.equals(userTwo)) ||
+                    senderUser.equals(userTwo) && receiverUser.equals(userOne)) {
+                messageHistory.remove(i);
+                i--; // Fixes index after removing a message from messageHistory
+            }
+        }
+
+        System.out.println("Conversation between " + userOne.getUsername() + " and " +
+                userTwo.getUsername() + " has been deleted.");
+    }
 }
