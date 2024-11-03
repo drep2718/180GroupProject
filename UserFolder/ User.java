@@ -109,7 +109,7 @@ public class User implements UserInterface {
         return username + "," + password + "," + bio + "," + path;
     }
 
-    //-------------------------------------------------------------
+
 
     public void removeProfile(String username) {
         int index = usernames.indexOf(username);
@@ -144,7 +144,7 @@ public class User implements UserInterface {
         }
     }
 
-    public void loadUsers() { // this method if going to be called at the begging of each run of the program to read the saved data back into the array lists
+    public void loadUsers() { 
         try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
             String line = bfr.readLine();
             while (line != null) {
@@ -235,9 +235,8 @@ public class User implements UserInterface {
         }
     }
 
-    // -------------------------------------------------------------
 
-    public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
+    public String findProfile(String username) { 
         int index = usernames.indexOf(username);
         if (index != -1) {
             return "Name: " + usernames.get(index) + "\nBio: " + bios.get(index);
