@@ -1,16 +1,14 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Friends implements FriendsInterface {
-    private User user;
+    private User waypointUser;
     private ArrayList<User> friendsList;
     private ArrayList<User> blockedList;
 
 
-    public Friends (User user ) {
-        this.user = user;
+    public Friends(User waypointUser) {
+        this.waypointUser = waypointUser;
         this.friendsList = new ArrayList<>();
         this.blockedList = new ArrayList<>();
     }
@@ -27,8 +25,8 @@ public class Friends implements FriendsInterface {
     public void rewriteFriends() {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Friends.txt", false))) {
             for (int i = 0; i < friendsList.size(); i++) {
-                User user = friendsList.get(i);
-                bfw.write(user.toString());
+                User friend = friendsList.get(i);
+                bfw.write(waypointUser.getUsername() + ":" + friend.getUsername());
                 bfw.newLine();
             }
         } catch (IOException e) {
@@ -39,8 +37,8 @@ public class Friends implements FriendsInterface {
     public void rewriteBlocked() {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", false))) {
             for (int i = 0; i < blockedList.size(); i++) {
-                User user = blockedList.get(i);
-                bfw.write(user.toString());
+                User blocked = blockedList.get(i);
+                bfw.write(waypointUser.getUsername() + ":" + blocked.getUsername());
                 bfw.newLine();
             }
         } catch (IOException e) {
@@ -50,8 +48,8 @@ public class Friends implements FriendsInterface {
 
     public void saveFriendsToFile(User friend) {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Friends.txt", true))) {
-                bfw.write(friend.toString());
-                bfw.newLine();
+            bfw.write(waypointUser.getUsername() + ":" + friend.getUsername());
+            bfw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,15 +57,11 @@ public class Friends implements FriendsInterface {
 
     public void saveBlockedToFile(User blocked) {
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", true))) {
-            bfw.write(blocked.toString());
+            bfw.write(waypointUser.getUsername() + ":" + blocked.getUsername());
             bfw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String toString() {
-        return user.getUsername() + " ";
     }
 
 
@@ -75,7 +69,7 @@ public class Friends implements FriendsInterface {
         return friendsList.contains(otherUser);
     }
 
-    public void blockUser (User userToBlock) {
+    public void blockUser(User userToBlock) {
         if (!blockedList.contains(userToBlock)) {
             blockedList.add(userToBlock);
             friendsList.remove(userToBlock);
@@ -85,11 +79,11 @@ public class Friends implements FriendsInterface {
         }
     }
 
-    public void unblockUser (User userToUnblock) {
+    public void unblockUser(User userToUnblock) {
         if (blockedList.contains(userToUnblock)) {
             blockedList.remove(userToUnblock);
             rewriteBlocked();
-        }  else {
+        } else {
             System.out.println("Blocked User not found");
         }
     }
@@ -106,11 +100,11 @@ public class Friends implements FriendsInterface {
         return friendsList;
     }
 
-    public ArrayList<User> viewBlocked (User user) {
+    public ArrayList<User> viewBlocked(User user) {
         return blockedList;
     }
 
-    public boolean isBlocked (User otherUser) {
+    public boolean isBlocked(User otherUser) {
         if (blockedList.contains(otherUser)) {
             return true;
         } else {
@@ -118,8 +112,48 @@ public class Friends implements FriendsInterface {
         }
     }
 
-    public User getUser (User user) {
+    public User getUser(User user) {
         return user;
+    }
+
+    public void loadFriends() {
+        try (BufferedReader bfr = new BufferedReader(new FileReader("Friends.txt"))) {
+            String line = bfr.readLine();
+            while (line != null) {
+                String[] parts = line.split(":");
+                String waypoint = parts[0];
+                String friendUsername = parts[1];
+
+                if (waypoint.equals(waypointUser.getUsername())) {
+                    User friend = new User(friendUsername);
+                    friendsList.add(friend);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void loadBlocked() {
+        try (BufferedReader bfr = new BufferedReader(new FileReader("Blocked.txt"))) {
+            String line = bfr.readLine();
+            while (line != null) {
+                String[] parts = line.split(" ");
+                String waypoint = parts[0];
+                String blockedUsername = parts[1];
+
+                if (waypoint.equals(waypointUser.getUsername())) {
+                    User friend = new User(blockedUsername);
+                    friendsList.add(friend);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
