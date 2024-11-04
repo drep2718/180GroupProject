@@ -10,7 +10,7 @@ This program is a social communication platform that allows users to connect wit
 - Photo messaging: Send and receive photos from friends to capture the moment.
 ## How it works
 
-Phase 1: The program is constructed by four interfaces, four classes implemented by its matched interface, and four test cases. Each interface and its class functions as exactly what the name mentions.
+Phase 1: The program is constructed by four main folders, each comprising an interface, an implementing class, and associated test cases.
 
 ### User interface and class: 
 - Create a profile: Create a profile including username and password. Set up a profile picture if needed.
