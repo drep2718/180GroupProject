@@ -59,8 +59,22 @@ public class PhotoMessaging {
         }
     }
 
+    public void sendPhotoMessage(Friends sender, User receiver, BufferedImage imageContent, String date) {
+        if (sender.isBlocked(receiver)) {
+            System.out.println("Cannot send photo message because you have been blocked.");
+            return;
+        }
 
-  
+        if (!sender.isFriend(receiver)) {
+            System.out.println("Cannot send photo message because you are not friends.");
+            return;
+        }
+
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, imageContent, date, false);
+        photoMessageHistory.add(photoMessage);
+        System.out.println("Photo delivered");
+    }
+
 
 
 }
