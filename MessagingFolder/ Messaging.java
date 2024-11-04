@@ -38,7 +38,7 @@ public class Messaging implements MessagingInterface {
         return isRead;
     }
 
-     public void convoWriter() {
+     public void saveToFile() {
         for (Messaging m : messageHistory) {
             String[] histSplit = m.toString().split(",");
             String senderFile = histSplit[0] + ".txt";
