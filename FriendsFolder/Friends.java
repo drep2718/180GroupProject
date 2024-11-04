@@ -3,16 +3,35 @@ import java.util.ArrayList;
 
 public class Friends implements FriendsInterface {
     private User waypointUser;
-    private ArrayList<User> friendsList;
-    private ArrayList<User> blockedList;
-    private ArrayList<Messaging> messageHistory;
+    private static ArrayList<User> friendsList = new ArrayList<>();
+    private static ArrayList<User> blockedList = new ArrayList<>();
+    private ArrayList<Messaging> messageHistory = new ArrayList<>();
+
+    public static ArrayList<User> getFriendsList() {
+        return friendsList;
+    }
+
+    public static ArrayList<User> getBlockedList() {
+        return blockedList;
+    }
+
+    public static void setFriendsList(ArrayList<User> friendsList) {
+        Friends.friendsList = friendsList;
+    }
+
+    public static void setBlockedList(ArrayList<User> blockedList) {
+        Friends.blockedList = blockedList;
+    }
 
     public Friends(User waypointUser) {
         this.waypointUser = waypointUser;
-        this.friendsList = new ArrayList<>();
-        this.blockedList = new ArrayList<>();
-        this.messageHistory = new ArrayList<>();
     }
+
+    public String toString() {
+        return waypointUser.getUsername();
+    }
+
+
 
     public void removeFriend(User userToRemove) {
         if (friendsList.contains(userToRemove)) {
