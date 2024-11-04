@@ -49,7 +49,7 @@ public class PhotoMessaging {
 
     public void saveToFile() {
         for (PhotoMessaging m : photoMessageHistory) {
-            String senderFile = 
+            String senderFile = m.getSender().getUsername(); 
             try {
                 ImageIO.write(m.getImageContent(), "png", new File(senderFile));
             } catch (IOException e) {
