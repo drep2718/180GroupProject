@@ -54,22 +54,6 @@ public class Messaging implements MessagingInterface {
         
          }
 
-    public void convoReader(String userFile){
-        
-        try(BufferedReader reader = new BufferedReader(new FileReader(userFile))){
-
-            String line; 
-             while ((line = reader.readLine()) != null) {
-                String[] totMessages = line.split(",");
-                messageHistory.add(totMessages);
-            }
-
-        }catch(IOException e){
-            e.printStackTrace(); 
-        }
-        
-            
-    }
        
 
     
