@@ -9,7 +9,7 @@ public class PhotoMessaging {
     private BufferedImage imageContent;
     private String date;
     private Boolean isRead;
-    private ArrayList<PhotoMessaging> messageHistory = new ArrayList<>();
+    private ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
 
     public PhotoMessaging(Friends sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         this.sender = sender;
@@ -19,13 +19,12 @@ public class PhotoMessaging {
         this.isRead = isRead;
     }
 
-  public ArrayList<PhotoMessaging> getMessageHistory() {
-        return messageHistory;
+    public ArrayList<PhotoMessaging> getMessageHistory() {
+        return photoMessageHistory;
     }
 
-
-    public void setMessageHistory(ArrayList<PhotoMessaging> messageHistory) {
-        this.messageHistory = messageHistory;
+    public void setMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory) {
+        this.photoMessageHistory = photoMessageHistory;
     }
 
     public Friends getSender() {
@@ -48,8 +47,8 @@ public class PhotoMessaging {
         return isRead;
     }
 
-  public void saveToFile() {
-        for (PhotoMessaging m : messageHistory) {
+    public void saveToFile() {
+        for (PhotoMessaging m : photoMessageHistory) {
             String senderFile = 
             try {
                 ImageIO.write(m.getImageContent(), "png", new File(senderFile));
