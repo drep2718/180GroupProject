@@ -10,19 +10,39 @@ public class User implements UserInterface {
     private BufferedImage image;
     private String filepath;
     private String formatName;
-    private ArrayList<User> allUsers;
-    private ArrayList<BufferedImage> images;
+    private static ArrayList<User> allUsers = new ArrayList<>();
+    private static ArrayList<BufferedImage> images = new ArrayList<>();
+    private static ArrayList<String> bios = new ArrayList<>();
+    private static ArrayList<String> passwords = new ArrayList<>();
+    private static ArrayList<String> usernames = new ArrayList<>();
+    private static final Object gatekeeper = new Object();
 
-    private ArrayList<String> bios;
-    private ArrayList<String> passwords;
-    private ArrayList<String> usernames;
+    public static void setAllUsers(ArrayList<User> allUsers) {
+        User.allUsers = allUsers;
+    }
+
+    public static ArrayList<User> getAllUsers() {
+        return allUsers;
+    }
+
+    public void setFormatName(String formatName) {
+        this.formatName = formatName;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public String getFormatName() {
+        return formatName;
+    }
 
     public User(String username) {
         this.username = username;
-        this.usernames = new ArrayList<>();
-        this.passwords = new ArrayList<>();
-        this.bios = new ArrayList<>();
-        this.allUsers = new ArrayList<>();
 
     }
 
@@ -30,10 +50,7 @@ public class User implements UserInterface {
         this.username = username;
         this.password = password;
         this.bio = bio;
-        this.usernames = new ArrayList<>();
-        this.passwords = new ArrayList<>();
-        this.bios = new ArrayList<>();
-        this.allUsers = new ArrayList<>();
+
 
     }
 
@@ -44,24 +61,22 @@ public class User implements UserInterface {
         this.filepath = filepath;
         this.formatName = formatName;
         this.image = imageSave(image, filepath, formatName);
-        this.usernames = new ArrayList<>();
-        this.passwords = new ArrayList<>();
-        this.bios = new ArrayList<>();
-        this.images = new ArrayList<>();
-        this.allUsers = new ArrayList<>();
+
+
     }
 
-    public BufferedImage imageSave(BufferedImage image, String filepath, String formatName ) {
-        try {
-            File pathToImage = new File(filepath);
-            ImageIO.write(image, formatName, pathToImage);
-            return image;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+    public BufferedImage imageSave(BufferedImage image, String filepath, String formatName) {
+        synchronized (gatekeeper) {
+            try {
+                File pathToImage = new File(filepath);
+                ImageIO.write(image, formatName, pathToImage);
+                return image;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
-
 
 
     public User createProfile(String username, String password, String bio) {
@@ -76,11 +91,6 @@ public class User implements UserInterface {
     }
 
     public User createProfile(String username, String password, String bio, BufferedImage image, String filepath, String formatName) {
-        try {
-            formatName = filepath.substring(filepath.lastIndexOf(".") + 1);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
 
         User user = new User(username, password, bio, image, filepath, formatName);
         usernames.add(username);
@@ -93,11 +103,13 @@ public class User implements UserInterface {
     }
 
     public void saveToFile(User user) {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
-            bfw.write(user.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+        synchronized (gatekeeper) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
+                bfw.write(user.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -106,9 +118,8 @@ public class User implements UserInterface {
         if (filepath != null) {
             path = "," + filepath;
         }
-        return username + "," + password + "," + bio + "," + path;
+        return username + "," + password + "," + bio + path;
     }
-
 
 
     public void removeProfile(String username) {
@@ -118,12 +129,14 @@ public class User implements UserInterface {
             passwords.remove(index);
             bios.remove(index);
 
+            ArrayList<User> deleted = new ArrayList<>();
             for (User user : allUsers) {
                 if (user.toString().contains(this.username)) {
-                    allUsers.remove(user);
+                    deleted.add(user);
                 }
             }
 
+            allUsers.remove(deleted);
             rewriteUsers();
 
 
@@ -132,45 +145,37 @@ public class User implements UserInterface {
         }
     }
 
-    public void rewriteUsers() {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", false))) {
-            for (int i = 0; i < allUsers.size(); i++) {
-                User user = allUsers.get(i);
-                bfw.write(user.toString());
-                bfw.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void loadUsers() { 
-        try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
-            String line = bfr.readLine();
-            while (line != null) {
-                String[] parts = line.split(",");
-                String username = parts[0];
-                String password = parts[1];
-                String bio = parts[2];
+
+    public void loadUsers() { // this method if going to be called at the begging of each run of the program to read the saved data back into the array lists
+        synchronized (gatekeeper) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
+                String line = bfr.readLine();
+                while (line != null) {
+                    String[] parts = line.split(",");
+                    String username = parts[0];
+                    String password = parts[1];
+                    String bio = parts[2];
 
                     usernames.add(username);
                     passwords.add(password);
                     bios.add(bio);
 
-                  if (parts.length > 3) {
-                      String filepath = parts[3];
-                      BufferedImage image = ImageIO.read(new File(filepath));
+                    if (parts.length > 3) {
+                        String filepath = parts[3];
+                        BufferedImage image = ImageIO.read(new File(filepath));
 
-                      User user = new User(username, password, bio, image, filepath, filepath.substring(filepath.lastIndexOf('.') + 1));
-                      allUsers.add(user);
-                } else {
-                      User user = new User(username, password, bio);
-                      allUsers.add(user);
-                  }
+                        User user = new User(username, password, bio, image, filepath, filepath.substring(filepath.lastIndexOf('.') + 1));
+                        allUsers.add(user);
+                    } else {
+                        User user = new User(username, password, bio);
+                        allUsers.add(user);
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
@@ -179,11 +184,14 @@ public class User implements UserInterface {
         int index = usernames.indexOf(this.username);
         if (index != -1) {
             usernames.set(index, newUsername);
+            ArrayList<User> deleted = new ArrayList<>();
             for (User user : allUsers) {
                 if (user.toString().contains(this.username)) {
-                    allUsers.remove(user);
+                    deleted.add(user);
                 }
             }
+
+            allUsers.remove(deleted);
 
             User updatedUser = new User(newUsername, this.password, this.bio);
             allUsers.add(updatedUser);
@@ -199,11 +207,15 @@ public class User implements UserInterface {
         int index = bios.indexOf(this.bio);
         if (index != -1) {
             bios.set(index, newBio);
+            ArrayList<User> deleted = new ArrayList<>();
             for (User user : allUsers) {
                 if (user.toString().contains(this.bio)) {
-                    allUsers.remove(user);
+                    deleted.add(user);
                 }
             }
+
+            allUsers.remove(deleted);
+
 
             User updatedUser = new User(this.username, this.password, newBio);
             allUsers.add(updatedUser);
@@ -219,11 +231,14 @@ public class User implements UserInterface {
         int index = passwords.indexOf(this.password);
         if (index != -1) {
             passwords.set(index, newPassword);
+            ArrayList<User> deleted = new ArrayList<>();
             for (User user : allUsers) {
                 if (user.toString().contains(this.password)) {
-                    allUsers.remove(user);
+                    deleted.add(user);
                 }
             }
+
+            allUsers.remove(deleted);
 
             User updatedUser = new User(this.username, newPassword, this.bio);
             allUsers.add(updatedUser);
@@ -235,8 +250,9 @@ public class User implements UserInterface {
         }
     }
 
+    // -------------------------------------------------------------
 
-    public String findProfile(String username) { 
+    public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
         int index = usernames.indexOf(username);
         if (index != -1) {
             return "Name: " + usernames.get(index) + "\nBio: " + bios.get(index);
@@ -245,31 +261,44 @@ public class User implements UserInterface {
         }
     }
 
-    public boolean usernameAvail(String username){
+    public boolean userExists(String username) {
         return usernames.contains(username);
+    }
+
+    public boolean passwordExists(String password) {
+        return passwords.contains(password);
+    }
+
+    public boolean bioExists (String bio) {
+        return bios.contains(bio);
+    }
+
+    public boolean usernameAvail(String username) {
+        return !usernames.contains(username);
     }
 
     public void setImage(BufferedImage image) {
         this.image = image;
     }
 
-    public BufferedImage getImage () {
+    public BufferedImage getImage() {
         return image;
     }
 
     public String getBio() {
         return bio;
     }
+
     public void setBio(String bio) {
         this.bio = bio;
     }
 
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username){
+    public void setUsername(String username) {
         this.username = username;
 
     }
@@ -285,19 +314,31 @@ public class User implements UserInterface {
     }
 
     public boolean validatePassword(String username, String password) {
-        if ((password.equals(this.password) && (passwords.contains(password))
-                && (username.equals(this.username)) && usernames.contains(username))) {
+        if ((password.equals(this.password) && (username.equals(this.username)))) {
             return true;
-        } else if ((!password.equals(this.password)) || (!passwords.contains(password))) {
+        } else if ((!password.equals(this.password))) {
             System.out.println("Wrong Password!");
             return false;
-        } else if ((!usernames.contains(username)) || (!(username.equals(this.username)))) {
+        } else if ((!(username.equals(this.username)))) {
             System.out.println("Wrong Username!");
             return false;
         }
         return false;
     }
 
+    public void rewriteUsers() {
+
+        synchronized (gatekeeper) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", false))) {
+                for (User user : allUsers) {
+                    bfw.write(user.toString());
+                    bfw.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }
