@@ -39,20 +39,19 @@ public class Messaging implements MessagingInterface {
     }
 
      public void convoWriter() {
-         for(Messaging m : messageHistory){
-             
-             String[] histSplit = m.toString.split(","); 
-             String senderFile = histSplit[0]+ ".txt"; 
+        for (Messaging m : messageHistory) {
+            String[] histSplit = m.toString().split(",");
+            String senderFile = histSplit[0] + ".txt";
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile)){
-                writer.write(m.toString); 
-                writer.newLine(); 
-
-        } catch(IOException e){
-            e.printStackTrace(); 
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile))) {
+                writer.write(m.toString());
+                writer.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        
-         }
+    }
+
 
        
 
