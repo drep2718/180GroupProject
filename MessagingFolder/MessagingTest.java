@@ -82,7 +82,24 @@ class MessagingTest {
     
     @Test
     void testReport() {
-        
+        String reportMessage = "test report message";
+        message.report(userSender, userReceiver, reportMessage);
+
+        try (BufferedReader br = new BufferedReader(new FileReader("Report.txt"))) {
+            String line;
+            boolean reportFound = false;
+
+            while ((line = br.readLine()) != null) {
+                if (line.contains(reportMessage) && line.contains(userSender.getUsername()) && line.contains(userReceiver.getUsername())) {
+                    reportFound = true;
+                    break;
+                }
+            }
+            assertTrue(reportFound);
+        } catch (IOException e) {
+            e.printStackTrace();
+            assertFalse(true);
+        }
     }
     
     @Test
