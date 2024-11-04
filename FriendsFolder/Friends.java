@@ -5,11 +5,13 @@ public class Friends implements FriendsInterface {
     private User waypointUser;
     private ArrayList<User> friendsList;
     private ArrayList<User> blockedList;
+    private ArrayList<Messaging> messageHistory;
 
     public Friends(User waypointUser) {
         this.waypointUser = waypointUser;
         this.friendsList = new ArrayList<>();
         this.blockedList = new ArrayList<>();
+        this.messageHistory = new ArrayList<>();
     }
 
     public void removeFriend(User userToRemove) {
