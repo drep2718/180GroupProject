@@ -3,8 +3,8 @@ import java.io.*;
 
 public class Messaging implements MessagingInterface {
     private Friends sender;
-    private Friends receiver;
-    private Messaging content;
+    private User receiver;
+    private String content;
     private String date;
     private Boolean isRead;
     private ArrayList<Messaging> messageHistory = new ArrayList<>();
@@ -19,10 +19,31 @@ public class Messaging implements MessagingInterface {
         this.messageHistory = messageHistory;
     }
 
-    public Messaging(Friends sender, Friends receiver, Messaging content, String date, Boolean isRead) {
+    public void rewriteMessages() {
+        for (Messaging m : messageHistory) {
+            String[] histSplit = m.toString().split(":");
+            String senderFile = histSplit[0] + ".txt";
+
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
+                for (int i = 0; i < messageHistory.size(); i++) {
+                    Messaging message = messageHistory.get(i);
+                    bfw.write(message.toString());
+                    bfw.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String toString () {
+        return sender.getUser().getUsername() +":" + content + ":" + receiver.getUsername();
+    }
+
+    public Messaging(Friends sender, User receiver, String content, String date, Boolean isRead) {
         this.sender = sender;
         this.receiver = receiver;
-        this.content = null;
+        this.content = content;
         this.date = "";
         this.isRead = false;
     }
@@ -31,11 +52,11 @@ public class Messaging implements MessagingInterface {
         return sender;
     }
 
-    public Friends getReceiver() {
+    public User getReceiver() {
         return receiver;
     }
 
-    public Messaging getContent() {
+    public String getContent() {
         return content;
     }
 
@@ -51,9 +72,10 @@ public class Messaging implements MessagingInterface {
         return isRead;
     }
 
+    // message == sender : content : reciever
     public void saveToFile() {
         for (Messaging m : messageHistory) {
-            String[] histSplit = m.toString().split(",");
+            String[] histSplit = m.toString().split(":");
             String senderFile = histSplit[0] + ".txt";
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile))) {
@@ -65,7 +87,8 @@ public class Messaging implements MessagingInterface {
         }
     }
 
-    public void sendMessage(Friends sender, User receiver, Messaging content) {
+
+    public void sendMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
         if (sender.isBlocked(receiver)) {
             System.out.println("Cannot send message because account you have been blocked.");
         }
@@ -74,20 +97,35 @@ public class Messaging implements MessagingInterface {
             System.out.println("Cannot send message because you are not friends.");
         }
 
-        sender.sentMessage(content);
+        Messaging message = new Messaging(sender, receiver, content, date, isRead);
+
+        messageHistory.add(message);
         System.out.println("Delivered");
     }
 
-    public void deleteMessage(Friends sender, User receiver, Messaging content) {
-        if (content.getSender().equals(sender)) {
-            sender.removeSentMessage(content);
-            System.out.println("Removed messages for both parties.");
-        } else {
-            System.out.println("Message removed for you only.");
+    public void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
+        Messaging message = new Messaging(sender, receiver, content, date, isRead);
+        boolean messageRemoved = false;
+        for (int i = 0; i < messageHistory.size(); i++) {
+            Messaging messages = messageHistory.get(i);
+
+            if (messages.getSender().equals(sender) && messages.getReceiver().equals(receiver)
+            && messages.getContent().equals(content)) {
+                messageHistory.remove(i);
+                messageRemoved = true;
+                break;
+            }
+
+
+            if (messageRemoved) {
+                System.out.println("Removed messages for both parties.");
+            } else {
+                System.out.println("Message not removed.");
+            }
         }
     }
 
-    public void report(User sender, User receiver, Messaging content) {
+    public void report(User sender, User receiver, String content) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
             String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"" +
                     " | Reported by: " + receiver.getUsername();
