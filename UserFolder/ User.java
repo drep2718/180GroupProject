@@ -54,7 +54,8 @@ public class User implements UserInterface {
 
     }
 
-    public User(String username, String password, String bio, BufferedImage image, String filepath, String formatName) {
+    public User(String username, String password, String bio,
+                BufferedImage image, String filepath, String formatName) {
         this.username = username;
         this.password = password;
         this.bio = bio;
@@ -90,7 +91,8 @@ public class User implements UserInterface {
         return user;
     }
 
-    public User createProfile(String username, String password, String bio, BufferedImage image, String filepath, String formatName) {
+    public User createProfile(String username, String password, String bio,
+                              BufferedImage image, String filepath, String formatName) {
 
         User user = new User(username, password, bio, image, filepath, formatName);
         usernames.add(username);
@@ -104,7 +106,8 @@ public class User implements UserInterface {
 
     public void saveToFile(User user) {
         synchronized (gatekeeper) {
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", true))) {
+            try (BufferedWriter bfw =
+                         new BufferedWriter(new FileWriter("Users.txt", true))) {
                 bfw.write(user.toString());
                 bfw.newLine();
             } catch (IOException e) {
@@ -146,7 +149,6 @@ public class User implements UserInterface {
     }
 
 
-
     public void loadUsers() { // this method if going to be called at the begging of each run of the program to read the saved data back into the array lists
         synchronized (gatekeeper) {
             try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
@@ -165,7 +167,8 @@ public class User implements UserInterface {
                         String filepath = parts[3];
                         BufferedImage image = ImageIO.read(new File(filepath));
 
-                        User user = new User(username, password, bio, image, filepath, filepath.substring(filepath.lastIndexOf('.') + 1));
+                        User user = new User(username, password, bio, image, filepath,
+                                filepath.substring(filepath.lastIndexOf('.') + 1));
                         allUsers.add(user);
                     } else {
                         User user = new User(username, password, bio);
@@ -269,7 +272,7 @@ public class User implements UserInterface {
         return passwords.contains(password);
     }
 
-    public boolean bioExists (String bio) {
+    public boolean bioExists(String bio) {
         return bios.contains(bio);
     }
 

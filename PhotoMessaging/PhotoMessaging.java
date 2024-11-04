@@ -11,7 +11,8 @@ public class PhotoMessaging {
     private Boolean isRead;
     private ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
 
-    public PhotoMessaging(Friends sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
+    public PhotoMessaging(Friends sender, Friends receiver,
+                          BufferedImage imageContent, String date, Boolean isRead) {
         this.sender = sender;
         this.receiver = receiver;
         this.imageContent = imageContent;

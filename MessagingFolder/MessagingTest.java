@@ -20,8 +20,10 @@ class MessagingTest {
 
     @BeforeEach
     public void setUpMessages() {
-        userSender = new User("senderUsername", "password123", "senderBio");
-        userReceiver = new User("receiverUsername", "password456", "receiverBio");
+        userSender =
+                new User("senderUsername", "password123", "senderBio");
+        userReceiver =
+                new User("receiverUsername", "password456", "receiverBio");
         sender = new Friends(userSender);
         receiver = new Friends(userReceiver);
         date = "11-03-2024";
@@ -93,7 +95,9 @@ class MessagingTest {
             boolean reportFound = false;
 
             while ((line = br.readLine()) != null) {
-                if (line.contains(reportMessage) && line.contains(userSender.getUsername()) && line.contains(userReceiver.getUsername())) {
+                if (line.contains(reportMessage)
+                        && line.contains(userSender.getUsername())
+                        && line.contains(userReceiver.getUsername())) {
                     reportFound = true;
                     break;
                 }

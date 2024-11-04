@@ -32,7 +32,6 @@ public class Friends implements FriendsInterface {
     }
 
 
-
     public void removeFriend(User userToRemove) {
         if (friendsList.contains(userToRemove)) {
             friendsList.remove(userToRemove);
@@ -55,7 +54,8 @@ public class Friends implements FriendsInterface {
     }
 
     public void rewriteBlocked() {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", false))) {
+        try (BufferedWriter bfw =
+                     new BufferedWriter(new FileWriter("Blocked.txt", false))) {
             for (int i = 0; i < blockedList.size(); i++) {
                 User blocked = blockedList.get(i);
                 bfw.write(waypointUser.getUsername() + ":" + blocked.getUsername());
@@ -67,7 +67,8 @@ public class Friends implements FriendsInterface {
     }
 
     public void saveFriendsToFile(User friend) {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Friends.txt", true))) {
+        try (BufferedWriter bfw =
+                     new BufferedWriter(new FileWriter("Friends.txt", true))) {
             bfw.write(waypointUser.getUsername() + ":" + friend.getUsername());
             bfw.newLine();
         } catch (IOException e) {
@@ -76,7 +77,8 @@ public class Friends implements FriendsInterface {
     }
 
     public void saveBlockedToFile(User blocked) {
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", true))) {
+        try (BufferedWriter bfw =
+                     new BufferedWriter(new FileWriter("Blocked.txt", true))) {
             bfw.write(waypointUser.getUsername() + ":" + blocked.getUsername());
             bfw.newLine();
         } catch (IOException e) {

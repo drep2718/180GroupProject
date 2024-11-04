@@ -53,8 +53,7 @@ class FriendsTest {
 
 
         assertEquals(1, lines.size());
-        assertEquals(friend1.toString() + ":" +friend.toString(), lines.get(0));
-
+        assertEquals(friend1.toString() + ":" + friend.toString(), lines.get(0));
 
 
     }
@@ -90,7 +89,7 @@ class FriendsTest {
 
 
         assertEquals(1, lines.size());
-        assertEquals(friend1.toString() + ":" +friend.toString(), lines.get(0));
+        assertEquals(friend1.toString() + ":" + friend.toString(), lines.get(0));
 
     }
 
