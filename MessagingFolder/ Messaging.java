@@ -65,12 +65,6 @@ public class Messaging implements MessagingInterface {
         }
     }
 
-
-
-
-
-
-
     public void sendMessage(Friends sender, User receiver, Messaging content) {
         if (sender.isBlocked(receiver)) {
             System.out.println("Cannot send message because account you have been blocked.");
