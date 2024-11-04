@@ -104,6 +104,27 @@ class MessagingTest {
             assertFalse(true);
         }
     }
+
+    @Test
+    void testSaveToFile() {
+        message.saveToFile();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("senderUsername.txt"))) {
+            String line;
+            boolean convoFound = false;
+            
+            while ((line = br.readLine()) != null) {
+                if (line.contains(message.toString())) {
+                    convoFound = true;
+                    break;
+                }
+            }
+            assertTrue(convoFound);
+        } catch (IOException e) {
+            e.printStackTrace();
+            assertFalse(true);
+        }
+    }
     
     @Test
     void testDeleteConversation() {
