@@ -87,7 +87,7 @@ public class Messaging implements MessagingInterface {
         }
     }
 
-    public void report(User sender, User receiver, String content) {
+    public void report(User sender, User receiver, Messaging content) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
             String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"" +
                     " | Reported by: " + receiver.getUsername();
