@@ -7,7 +7,6 @@ public interface FriendsInterface {
     void unblockUser(User userToUnblock);
     boolean isFriend(User otherUser);
     boolean isBlocked(User otherUser);
-    User getUser();
     public ArrayList<User> viewFriends(User user);
     public ArrayList<User> viewBlocked(User user);
     public void rewriteFriends();
@@ -17,6 +16,21 @@ public interface FriendsInterface {
     String toString();
     public void loadFriends();
     public void loadBlocked();
+    public void sentMessage(Messaging message);
+    public void removeSentMessage(Messaging message);
+    User getUser();
 
+    static ArrayList<User> getFriendsList() {
+        return new ArrayList<>();
+    }
+    public static ArrayList<User> getBlockedList() {
+        return new ArrayList<>();
+    }
+    static void setBlockedList(ArrayList<User> blockedList) {
+        Friends.setBlockedList(blockedList);
+    }
 
+    public static void setFriendsList(ArrayList<User> friendsList) {
+        Friends.setFriendsList(friendsList);
+    }
 }
