@@ -6,7 +6,6 @@ public class Friends implements FriendsInterface {
     private ArrayList<User> friendsList;
     private ArrayList<User> blockedList;
 
-
     public Friends(User waypointUser) {
         this.waypointUser = waypointUser;
         this.friendsList = new ArrayList<>();
@@ -113,7 +112,7 @@ public class Friends implements FriendsInterface {
     }
 
     public User getUser() {
-        return user;
+        return waypointUser;
     }
 
     public void loadFriends() {
