@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public interface UserInterface {
 
@@ -24,5 +25,13 @@ public interface UserInterface {
     void updateBio(String newBio);
     void removeProfile(String username);
     String findProfile(String username);
+    void setFormatName(String formatName);
+    void setFilepath(String filepath);
+    String getFilepath ();
+    String getFormatName();
+    boolean userExists(String username);
+    boolean passwordExists(String password);
+    boolean bioExists(String bio);
+
 
 }
