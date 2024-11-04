@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 
 public class Messaging implements MessagingInterface {
     private Friends sender;
@@ -6,9 +7,17 @@ public class Messaging implements MessagingInterface {
     private Messaging content;
     private String date;
     private Boolean isRead;
-    private ArrayList<Messaging> messageHistory;
+    private ArrayList<Messaging> messageHistory = new ArrayList<>();
 
+    @Override
+    public ArrayList<Messaging> getMessageHistory() {
+        return messageHistory;
+    }
 
+    @Override
+    public void setMessageHistory(ArrayList<Messaging> messageHistory) {
+        this.messageHistory = messageHistory;
+    }
 
     public Messaging(Friends sender, Friends receiver, Messaging content, String date, Boolean isRead) {
         this.sender = sender;
@@ -34,11 +43,15 @@ public class Messaging implements MessagingInterface {
         return date;
     }
 
+    public boolean isRead() {
+        return false;
+    }
+
     public Boolean getIsRead() {
         return isRead;
     }
 
-     public void saveToFile() {
+    public void saveToFile() {
         for (Messaging m : messageHistory) {
             String[] histSplit = m.toString().split(",");
             String senderFile = histSplit[0] + ".txt";
@@ -53,9 +66,9 @@ public class Messaging implements MessagingInterface {
     }
 
 
-       
 
-    
+
+
 
 
     public void sendMessage(Friends sender, User receiver, Messaging content) {
