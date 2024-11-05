@@ -1,22 +1,18 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class PhotoMessagingTest {
     private User sender = new User("Username");
-    User user = new User("Username");
-    Friends receiver = new Friends(user);
-    private User userSender;
-    private User userReceiver;
-    private String date = "11-03-2024";
-    private BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-    private ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
+    private User user = new User("Username");
+    private Friends receiver = new Friends(user);
+    private BufferedImage testImage;
+    private String date = "2024-11-03";
+    private ArrayList<PhotoMessaging> photoMessageHistory;
 
     @Test
     void getMessageHistory() {
@@ -69,7 +65,14 @@ class PhotoMessagingTest {
     }
 
     @Test
-    void sendPhotoMessage() {
+    void testSendPhotoMessage() {
+        receiver.addFriend(sender);
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, testImage, date, false);
+        photoMessage.sendPhotoMessage(sender, receiver, testImage, date, false);
+
+        photoMessageHistory = PhotoMessaging.getMessageHistory();
+        String answer = "Username:[Photo]:Username"; // Expected format if photo messages are displayed this way
+        assertEquals(answer, photoMessageHistory.get(0).toString());
     }
 
     @Test
@@ -81,7 +84,18 @@ class PhotoMessagingTest {
     }
 
     @Test
-    void deletePhotoMessage() {
+    void testDeletePhotoMessage() {
+        receiver.addFriend(sender);
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, testImage, date, false);
+        photoMessage.sendPhotoMessage(sender, receiver, testImage, date, false);
+
+        photoMessageHistory = PhotoMessaging.getMessageHistory();
+        String answer = "Username:[Photo]:Username";
+        assertEquals(answer, photoMessageHistory.get(0).toString());
+
+        photoMessage.deletePhotoMessage(sender, receiver, testImage, date, false);
+        photoMessageHistory = PhotoMessaging.getMessageHistory();
+        assertTrue(photoMessageHistory.isEmpty());
     }
 
     @Test
