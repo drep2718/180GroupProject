@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-public class PhotoMessaging {
+public class PhotoMessaging implements PhotoMessagingInterface{
 
     private User sender;
     private Friends receiver;
@@ -11,7 +11,7 @@ public class PhotoMessaging {
     private String date;
     private Boolean isRead;
     private String messageType;
-    private ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
+    private static ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
 
     public PhotoMessaging(User sender, Friends receiver,
                           BufferedImage imageContent, String date, Boolean isRead) {
@@ -35,7 +35,7 @@ public class PhotoMessaging {
     }
 
     public void setMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory) {
-        this.photoMessageHistory = photoMessageHistory;
+        PhotoMessaging.photoMessageHistory = photoMessageHistory;
     }
 
     public User getSender() {
@@ -114,21 +114,55 @@ public class PhotoMessaging {
     }
 
     public void sendPhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
+        boolean isBlocked = false;
+        boolean isFriend = false;
         if (receiver.isBlocked(sender)) {
             System.out.println("Cannot send photo message because you have been blocked.");
-            return;
+            isBlocked = true;
         }
 
-        if (!receiver.isFriend(sender)) {
+        if (!receiver.isFriend(sender) && !receiver.isBlocked(sender)) {
             System.out.println("Cannot send photo message because you are not friends.");
-            return;
+            isFriend = true;
         }
 
-        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
-        photoMessageHistory.add(photoMessage);
+        if (receiver.isFriend(sender)) {
+            PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
+            photoMessageHistory.add(photoMessage);
 
-        try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt",true))) {
-            bfw.write(photoMessage.toString());
+            try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt",true))) {
+                bfw.write(photoMessage.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Delivered");
+        }
+
+    }
+
+    public void sendAllFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+        ArrayList<User> allFriends = Friends.getFriendsList();
+        ArrayList<User> friendsToUser = new ArrayList<>();
+
+
+        for (User user : allFriends) {
+            String[] histSplit = user.toString().split(":");
+            String senderFile = histSplit[0] + ".txt";
+            if (histSplit[0].equals(sender.getUsername())) {
+                friendsToUser.add(user);
+            } else {
+                System.out.println("Cannot send message because you have no friends");
+            }
+        }
+
+        PhotoMessaging friendsPhotoMessage = new PhotoMessaging(sender, imageContent, friendsToUser, date, isRead, "AllFriends");
+        photoMessageHistory.add(friendsPhotoMessage);
+
+        String senderFile = sender.getUsername() + "AllFriends.txt";
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
+            bfw.write(friendsPhotoMessage.toString());
             bfw.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -136,12 +170,31 @@ public class PhotoMessaging {
 
         System.out.println("Delivered");
     }
-    
+
+
+    public void sendAllUsersMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+        ArrayList<User> allUsers = User.getAllUsers();
+
+        PhotoMessaging usersPhotoMessage = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
+        photoMessageHistory.add(usersPhotoMessage);
+
+        String senderFile = sender.getUsername() + "AllUsers.txt";
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
+            bfw.write(usersPhotoMessage.toString());
+            bfw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Delivered");
+    }
+
+
     public void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> photoMessagesToDelete = new ArrayList<>();
-        
+
         for (PhotoMessaging photoMessage : photoMessageHistory) {
-            if (photoMessage.getSender().equals(sender) && photoMessage.getDate().equals(date) && 
+            if (photoMessage.getSender().equals(sender) && photoMessage.getReceiver().equals(receiver) &&
                     photoMessage.getImageContent().equals(imageContent)) {
                 photoMessagesToDelete.add(photoMessage);
                 break;
@@ -152,4 +205,52 @@ public class PhotoMessaging {
         photoMessageHistory.removeAll(photoMessagesToDelete);
         rewritePhotoMessages();
     }
+
+    public void deleteFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+        ArrayList<PhotoMessaging> deletedFriendsMessages = new ArrayList<>();
+
+        for (PhotoMessaging message : photoMessageHistory) {
+            if (message.getSender().equals(sender)
+                    && message.getImageContent().equals(imageContent)
+                    && message.getMessageType().equals("AllFriends")) {
+                deletedFriendsMessages.add(message);
+                break;
+            } else {
+                System.out.println("You are not the sender of the message or no matching message found.");
+            }
+        }
+
+        photoMessageHistory.removeAll(deletedFriendsMessages);
+        rewritePhotoMessages();
+    }
+
+    public void deleteAllMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+        ArrayList<PhotoMessaging> deletedAllMessages = new ArrayList<>();
+
+        for (PhotoMessaging message : photoMessageHistory) {
+            if (message.getSender().equals(sender)
+                    && message.getImageContent().equals(imageContent)
+                    && message.getMessageType().equals("AllUsers")) {
+                deletedAllMessages.add(message);
+                break;
+            } else {
+                System.out.println("You are not the sender of the message or no matching message found.");
+            }
+        }
+
+        photoMessageHistory.removeAll(deletedAllMessages);
+        rewritePhotoMessages();
+    }
+
+    public void report(User sender, BufferedImage imageContent) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
+            String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + imageContent + "\"";
+            bw.write(reportEntry);
+            bw.newLine();
+            System.out.println("Report has been filed successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
