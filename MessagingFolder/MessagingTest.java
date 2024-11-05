@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessagingTest {
+class MessagingTest implements MessagingTestInterface {
     private User sender = new User("Username");
     private User sender1 = new User("Username1");
     private User sender2 = new User("Username2");
@@ -22,7 +22,7 @@ class MessagingTest {
     ArrayList<User> allUsers = new ArrayList<>();
 
     @Test
-    void testSendMessage() {
+    public void testSendMessage() {
 
 
         receiver.addFriend(sender);
@@ -50,7 +50,7 @@ class MessagingTest {
     }
 
     @Test
-    void sendAllFriendsMessage() {
+    public void sendAllFriendsMessage() {
 
         receiver.addFriend(sender);
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllFriends.txt", false))) {
@@ -76,7 +76,7 @@ class MessagingTest {
     }
 
     @Test
-    void sendAllUsersMessage() {
+    public void sendAllUsersMessage() {
 
         receiver.addFriend(sender);
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllUsers.txt", false))) {
@@ -105,7 +105,7 @@ class MessagingTest {
     }
 
     @Test
-    void testSendMessageToBlockedUser() {
+    public void testSendMessageToBlockedUser() {
 
         receiver.blockUser(sender);
         Messaging messages = new Messaging(sender, receiver, message, date, false);
@@ -113,7 +113,7 @@ class MessagingTest {
     }
 
     @Test
-    void testDeleteMessage() {
+    public void testDeleteMessage() {
         receiver.addFriend(sender);
 
 
@@ -144,7 +144,7 @@ class MessagingTest {
     }
 
     @Test
-    void deleteFriendsMessage() {
+    public void deleteFriendsMessage() {
 
         receiver.addFriend(sender);
 
@@ -176,7 +176,7 @@ class MessagingTest {
     }
 
     @Test
-    void deleteAllMessage() {
+    public void deleteAllMessage() {
         receiver.addFriend(sender);
 
 
@@ -208,7 +208,7 @@ class MessagingTest {
     }
 
     @Test
-    void testReport() {
+    public void testReport() {
 
         String reportMessage = "test report message";
         userSender = new User("Username");
@@ -235,7 +235,7 @@ class MessagingTest {
 
 
     @Test
-    void testSaveToFile() {
+    public void testSaveToFile() {
         Messaging messaging = new Messaging(sender, receiver, message, date, false);
         messaging.saveToFile();
 
@@ -257,7 +257,7 @@ class MessagingTest {
     }
 
     @Test
-    void testDeleteConversation() {
+    public void testDeleteConversation() {
         userSender = new User("Username1");
         userReceiver = new User("Username2");
 
@@ -281,7 +281,7 @@ class MessagingTest {
     }
 
     @Test
-    void testDeleteAllFriendsConversation() {
+    public void testDeleteAllFriendsConversation() {
         userSender = new User("Username1");
         userReceiver = new User("Username2");
 
@@ -307,7 +307,7 @@ class MessagingTest {
     }
 
     @Test
-    void testDeleteAllUsersConversation() {
+    public void testDeleteAllUsersConversation() {
         userSender = new User("Username1");
         userReceiver = new User("Username2");
 
@@ -329,15 +329,6 @@ class MessagingTest {
                 assertTrue(messageHistoryFriends.isEmpty());
             }
         }
-    }
-
-
-    @Test
-    void rewriteMessages() {
-    }
-
-    @Test
-    void testToString() {
     }
 
 

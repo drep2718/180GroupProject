@@ -1,17 +1,6 @@
 import java.util.ArrayList;
 
 public interface MessagingInterface {
-    String getMessageType();
-
-    void setMessageType(String messageType);
-
-    ArrayList<Messaging> getMessageHistory();
-
-    void setMessageHistory(ArrayList<Messaging> messageHistory);
-
-    void rewriteMessages();
-
-    String toString();
 
     User getSender();
 
@@ -21,9 +10,21 @@ public interface MessagingInterface {
 
     String getDate();
 
-    boolean isRead();
-
     Boolean getIsRead();
+
+    String getMessageType();
+
+    static ArrayList<Messaging> getMessageHistory() {
+        return Messaging.getMessageHistory();
+    }
+
+    static void setMessageHistory(ArrayList<Messaging> messageHistory) {
+        Messaging.setMessageHistory(messageHistory);
+    }
+
+    void setMessageType(String messageType);
+
+    void rewriteMessages();
 
     void saveToFile();
 
@@ -33,11 +34,7 @@ public interface MessagingInterface {
 
     void sendAllUsersMessage(User sender, String content, String date, Boolean isRead);
 
-    void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead);
-
-    void deleteFriendsPhotoMessage(User sender, String content, String date, Boolean isRead);
-
-    void deleteAllPhotoMessage(User sender, String content, String date, Boolean isRead);
+    void deleteMessage(User receiver, Friends sender, String content, String date, Boolean isRead);
 
     void report(User sender, String content);
 
@@ -46,4 +43,9 @@ public interface MessagingInterface {
     void deleteAllFriendsConversation(User userOne);
 
     void deleteAllUsersConversation(User userOne);
+
+    public void deleteFriendsMessage(User sender, String content, String date, Boolean isRead);
+
+    public void deleteAllMessage(User sender, String content, String date, Boolean isRead);
+
 }
