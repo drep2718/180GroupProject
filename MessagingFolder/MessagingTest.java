@@ -101,15 +101,69 @@ class MessagingTest {
 
     @Test
     void testDeleteConversation() {
+        userSender = new User("Username1");
+        userReceiver = new User("Username2");
+
         Messaging messageOne = new Messaging(sender, receiver, message, date, false);
         Messaging messageTwo = new Messaging(sender, receiver, message, date, false);
+
         messageHistory.add(messageOne);
         messageHistory.add(messageTwo);
 
-        messageOne.deleteConversation(userSender, userReceiver);
+        messageHistory = Messaging.getMessageHistory();
 
-        assertFalse(messageHistory.contains(messageOne));
-        assertFalse(messageHistory.contains(messageTwo));
+        messageOne.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageOne);
+        messageTwo.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageTwo);
+
+        messageHistory = Messaging.getMessageHistory();
+        assertTrue(messageHistory.isEmpty());
+    }
+
+    @Test
+    void testDeleteAllFriendsConversation() {
+        userSender = new User("Username1");
+        userReceiver = new User("Username2");
+
+        Messaging messageOne = new Messaging(sender, receiver, message, date, false);
+        Messaging messageTwo = new Messaging(sender, receiver, message, date, false);
+
+        messageHistory.add(messageOne);
+        messageHistory.add(messageTwo);
+
+        messageHistory = Messaging.getMessageHistory();
+
+        messageOne.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageOne);
+        messageTwo.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageTwo);
+
+        messageHistory = Messaging.getMessageHistory();
+        assertTrue(messageHistory.isEmpty());
+
+    }
+
+    @Test
+    void testDeleteAllUsersConversation() {
+        userSender = new User("Username1");
+        userReceiver = new User("Username2");
+
+        Messaging messageOne = new Messaging(sender, receiver, message, date, false);
+        Messaging messageTwo = new Messaging(sender, receiver, message, date, false);
+
+        messageHistory.add(messageOne);
+        messageHistory.add(messageTwo);
+
+        messageHistory = Messaging.getMessageHistory();
+
+        messageOne.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageOne);
+        messageTwo.deleteMessage(sender, receiver, message, date, false);
+        messageHistory.remove(messageTwo);
+
+        messageHistory = Messaging.getMessageHistory();
+        assertTrue(messageHistory.isEmpty());
     }
 
 
