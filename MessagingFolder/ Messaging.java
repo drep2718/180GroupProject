@@ -109,17 +109,17 @@ public class Messaging implements MessagingInterface {
 
 
     public void saveToFile() {
-            String senderFile;
-            for (Messaging m : messageHistory) {
-                if (m.getMessageType().equals("Single")) {
-                    senderFile = m.getSender().getUsername() + ".txt";
-                } else if (m.getMessageType().equals("AllFriends")) {
-                    senderFile = m.getSender().getUsername() + "AllFriends.txt";
-                } else if (m.getMessageType().equals("AllUsers")) {
-                    senderFile = m.getSender().getUsername() + "AllUsers.txt";
-                } else {
-                    continue;
-                }
+        String senderFile;
+        for (Messaging m : messageHistory) {
+            if (m.getMessageType().equals("Single")) {
+                senderFile = m.getSender().getUsername() + ".txt";
+            } else if (m.getMessageType().equals("AllFriends")) {
+                senderFile = m.getSender().getUsername() + "AllFriends.txt";
+            } else if (m.getMessageType().equals("AllUsers")) {
+                senderFile = m.getSender().getUsername() + "AllUsers.txt";
+            } else {
+                continue;
+            }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile, true))) {
                 writer.write(m.toString());
@@ -206,8 +206,8 @@ public class Messaging implements MessagingInterface {
 
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
         for (Messaging messages : messageHistory) {
-                messagesToDelete.add(messages);
-                break;
+            messagesToDelete.add(messages);
+            break;
         }
         messageHistory.removeAll(messagesToDelete);
         rewriteMessages();
