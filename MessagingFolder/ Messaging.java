@@ -7,8 +7,10 @@ public class Messaging implements MessagingInterface {
     private String content;
     private String date;
     private Boolean isRead;
-    private ArrayList<Messaging> messageHistory = new ArrayList<>();
+    private static ArrayList<Messaging> messageHistory = new ArrayList<>();
     private String messageType;
+
+
 
     public String getMessageType() {
         return messageType;
@@ -36,15 +38,15 @@ public class Messaging implements MessagingInterface {
     }
 
 
-    @Override
-    public ArrayList<Messaging> getMessageHistory() {
+    public static ArrayList<Messaging> getMessageHistory() {
         return messageHistory;
     }
 
-    @Override
-    public void setMessageHistory(ArrayList<Messaging> messageHistory) {
-        this.messageHistory = messageHistory;
+
+    public static void setMessageHistory(ArrayList<Messaging> messageHistory) {
+        Messaging.messageHistory = messageHistory;
     }
+
 
     public void rewriteMessages() {
         String senderFile;
@@ -130,25 +132,32 @@ public class Messaging implements MessagingInterface {
 
 
     public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
+        Boolean isBlocked = false;
+        Boolean isFriend = true;
         if (receiver.isBlocked(sender)) {
             System.out.println("Cannot send message because account you have been blocked.");
+            isBlocked = true;
         }
 
-        if (!receiver.isFriend(sender)) {
+        if (!receiver.isFriend(sender) && !receiver.isBlocked(sender)) {
             System.out.println("Cannot send message because you are not friends.");
+            isFriend = true;
         }
 
-        Messaging message = new Messaging(sender, receiver, content, date, isRead);
-        messageHistory.add(message);
+        if (receiver.isFriend(sender)) {
 
-        try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt",true))) {
-            bfw.write(message.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Messaging message = new Messaging(sender, receiver, content, date, isRead);
+            messageHistory.add(message);
+
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt", true))) {
+                bfw.write(message.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Delivered");
         }
 
-        System.out.println("Delivered");
     }
 
     public void sendAllFriendsMessage(User sender, String content, String date, Boolean isRead) {
@@ -196,13 +205,11 @@ public class Messaging implements MessagingInterface {
 
 
 
-    public void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
+    public void deleteMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
 
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender)
-                    && messages.getContent().equals(content)) {
-                messageHistory.remove(messages);
+            if (messages.getSender().equals(sender) && messages.getContent().equals(content) && messages.getReceiver().equals(receiver)) {
                 messagesToDelete.add(messages);
                 break;
             } else {
