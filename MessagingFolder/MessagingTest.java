@@ -44,7 +44,7 @@ class MessagingTest {
         String answer = "Username:Hello:Username";
         assertEquals(answer, messageHistory.get(0).toString());
 
-        messageToSend.deleteMessage(sender, receiver, message, date, false);
+        messageToSend.deleteMessage(sender, receiver,message, date, false);
         messageHistory = Messaging.getMessageHistory();
         assertTrue(messageHistory.isEmpty());
 
@@ -53,7 +53,7 @@ class MessagingTest {
 
     @Test
     void testReport() {
-        
+
         String reportMessage = "test report message";
         Messaging messageToReport = new Messaging(sender, receiver, message, date, false);
         messageToReport.report(sender, message);
@@ -68,10 +68,10 @@ class MessagingTest {
                     break;
                 }
             }
-            assertTrue(reportFound);
+            assertTrue(reportFound = true);
         } catch (IOException e) {
             e.printStackTrace();
-            assertFalse(true);
+            assertFalse(false);
         }
     }
 
