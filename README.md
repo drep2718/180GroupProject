@@ -19,7 +19,7 @@ Phase 1: The program is constructed by four main folders, each comprising an int
 - Social interaction: Search up others' usernames and add friends.
 - Privacy controls: Block or restrict other users.
 ### Messaging interface and class: 
-- Message history: Store messages in the conversation history with friends.
+- Message history: Store messages in the conversation history with friends or all users.
 - Privacy: Delete messages from conversation history.
 ## PhotoMessaging interface and class:
 - Send and receive photos: Send and receive photos from each other.
