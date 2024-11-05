@@ -199,18 +199,19 @@ public class Messaging implements MessagingInterface {
     public void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
         Messaging message = new Messaging(receiver, sender, content, date, isRead);
         boolean messageRemoved = false;
+        ArrayList<Messaging> messagesToDelete = new ArrayList<>();
         for (int i = 0; i < messageHistory.size(); i++) {
             Messaging messages = messageHistory.get(i);
 
             if (messages.getSender().equals(sender) && messages.getReceiver().equals(receiver)
             && messages.getContent().equals(content)) {
-                messageHistory.remove(i);
+                messagesToDelete.add(message);
                 messageRemoved = true;
                 break;
             }
-
-
+            
             if (messageRemoved) {
+                rewriteMessages();
                 System.out.println("Removed messages for both parties.");
             } else {
                 System.out.println("Message not removed.");
