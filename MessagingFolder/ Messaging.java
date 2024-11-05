@@ -10,20 +10,29 @@ public class Messaging implements MessagingInterface {
     private ArrayList<Messaging> messageHistory = new ArrayList<>();
     private String messageType;
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
     public Messaging(User sender, Friends receiver, String content, String date, Boolean isRead) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.date = "";
         this.isRead = false;
-        this.messageType = Single;
+        this.messageType = "Single";
     }
 
-    public Messaging(User sender, String content, ArrayList<User> users, String date, Boolean isRead) {
+    public Messaging(User sender, String content, ArrayList<User> users, String date, Boolean isRead, String messageType) {
         this.sender = sender;
         this.content = content;
         this.date = "";
         this.isRead = false;
+        this.messageType = messageType;
     }
 
 
@@ -40,11 +49,14 @@ public class Messaging implements MessagingInterface {
     public void rewriteMessages() {
         String senderFile;
         for (Messaging m : messageHistory) {
-            String[] histSplit = m.toString().split(":");
-            if (histSplit.length == 2) {
-                 senderFile = histSplit[0] + ".txt";
-            }if (histSplit.length == 3) {
-                 senderFile = histSplit[0] + "AllFriends.txt";
+            if (m.getMessageType().equals("Single")) {
+                senderFile = m.getSender().getUsername() + ".txt";
+            } else if (m.getMessageType().equals("AllFriends")) {
+                senderFile = m.getSender().getUsername() + "AllFriends.txt";
+            } else if (m.getMessageType().equals("AllUsers")) {
+                senderFile = m.getSender().getUsername() + "AllUsers.txt";
+            } else {
+                continue;
             }
 
             try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
@@ -92,9 +104,7 @@ public class Messaging implements MessagingInterface {
         return isRead;
     }
 
-    // SINGLE MESSAGE , message == sender : content : RECEIVER.  singleMessageToString, sendFriendMessage, rewriteSingleMessage
-    // ALL FRIENDS, message == sender: content: All FRIENDS.     allFriendsToString, sendAllFriendsMessage, rewriteAllFriendsMessage
-    // ALL USERS, message == sender: content: ALL USERS.         allUsersToString, sendAllUsersMessage, rewriteAllUsersMessage
+
 
     public void saveToFile() {
         for (Messaging m : messageHistory) {
@@ -147,7 +157,7 @@ public class Messaging implements MessagingInterface {
             }
         }
 
-        Messaging friendsToMessage = new Messaging(sender, content, friendsToUser, date, isRead);
+        Messaging friendsToMessage = new Messaging(sender, content, friendsToUser, date, isRead, "AllFriends");
         messageHistory.add(friendsToMessage);
 
         try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllFriends.txt",true))) {
@@ -163,7 +173,7 @@ public class Messaging implements MessagingInterface {
     public void sendAllUsersMessage(User sender, String content, String date, Boolean isRead) {
         ArrayList<User> AllUsers = User.getAllUsers();
 
-        Messaging usersToMessage = new Messaging(sender, content, AllUsers, date, isRead);
+        Messaging usersToMessage = new Messaging(sender, content, AllUsers, date, isRead, "AllUsers");
         messageHistory.add(usersToMessage);
 
         try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllUsers.txt",true))) {
