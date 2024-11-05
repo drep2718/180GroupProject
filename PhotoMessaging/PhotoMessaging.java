@@ -137,7 +137,7 @@ public class PhotoMessaging {
         System.out.println("Delivered");
     }
     
-    public void deletePhotoMessage(User sender, String date) {
+    public void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> photoMessagesToDelete = new ArrayList<>();
         
         for (PhotoMessaging photoMessage : photoMessageHistory) {
