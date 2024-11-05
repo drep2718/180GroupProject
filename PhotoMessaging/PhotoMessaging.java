@@ -65,7 +65,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
     public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
-    
+
     public void rewritePhotoMessages() {
         String senderFile;
 
@@ -90,7 +90,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
             }
         }
     }
-    
+
     public String toString() {
         if (receiver != null) {
             return sender.getUsername() + ":" + imageContent + ":" + receiver.getUser().getUsername();
@@ -152,7 +152,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
     }
 
     
-    public void sendAllFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+    public void sendAllFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> allFriends = Friends.getFriendsList();
         ArrayList<User> friendsToUser = new ArrayList<>();
 
@@ -183,7 +183,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
 
     
-    public void sendAllUsersMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+    public void sendAllUsersPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> allUsers = User.getAllUsers();
 
         PhotoMessaging usersPhotoMessage = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
@@ -219,7 +219,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
     }
 
     
-    public void deleteFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+    public void deleteFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedFriendsMessages = new ArrayList<>();
 
         for (PhotoMessaging message : photoMessageHistory) {
@@ -238,7 +238,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
     }
 
     
-    public void deleteAllMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
+    public void deleteAllPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedAllMessages = new ArrayList<>();
 
         for (PhotoMessaging message : photoMessageHistory) {
