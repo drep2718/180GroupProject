@@ -1,20 +1,48 @@
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 public interface PhotoMessagingInterface {
+    ArrayList<PhotoMessaging> getMessageHistory();
 
-    void sendMessage(User sender, User receiver, String content);
+    void setMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory);
 
-    void deleteMessage(User sender, User receiver, String content);
+    User getSender();
 
-    boolean isRead();
+    Friends getReceiver();
 
-    void Report(User sender, User receiver);
+    BufferedImage getImageContent();
 
-    void deleteConversation(User sender, User receiver);
+    String getDate();
+
+    Boolean getIsRead();
+
+    String getMessageType();
+
+    void setMessageType(String messageType);
+
+    void rewritePhotoMessages();
 
     String toString();
 
-    void saveToFile(Messaging messages); // make sure each User has a separate .txt file for all their messages
+    void saveToFile();
 
-    void rewriteMessages();
+    void sendPhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead);
 
+    void sendAllFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead);
 
+    void sendAllUsersPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead);
+
+    void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead);
+
+    void deleteFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead);
+
+    void deleteAllPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead);
+
+    void report(User sender, BufferedImage imageContent);
+
+    void deleteConversation(User userOne, User userTwo);
+
+    void deleteAllFriendsConversation(User userOne);
+
+    void deleteAllUsersConversation(User userOne);
 }
