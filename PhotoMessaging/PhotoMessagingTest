@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PhotoMessagingTest {
-    private User sender = new User("Username");
-    private User user = new User("Username");
-    private Friends receiver = new Friends(user);
-    private BufferedImage testImage;
-    private String date = "2024-11-03";
-    private ArrayList<PhotoMessaging> photoMessageHistory;
+    private User sender = new User("testSender");
+    private Friends receiver = new Friends(new User("testReceiver"));
+    private BufferedImage imageContent = ImageIO.read(new File("testImage.png"));
+    private String date = "2024-11-05";
+    private Boolean isRead = false;
+    private ArrayList<User> allUsers = new ArrayList<>();
+    allUsers.add(receiver.getUser());
 
     @Test
     void getMessageHistory() {
