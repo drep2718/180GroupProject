@@ -1,5 +1,94 @@
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class PhotoMessagingTest {
 
+    @Test
+    void getMessageHistory() {
+    }
+
+    @Test
+    void setMessageHistory() {
+    }
+
+    @Test
+    void getSender() {
+    }
+
+    @Test
+    void getReceiver() {
+    }
+
+    @Test
+    void getImageContent() {
+    }
+
+    @Test
+    void getDate() {
+    }
+
+    @Test
+    void getIsRead() {
+    }
+
+    @Test
+    void getMessageType() {
+    }
+
+    @Test
+    void setMessageType() {
+    }
+
+    @Test
+    void rewritePhotoMessages() {
+    }
+
+    @Test
+    void testToString() {
+    }
+
+    @Test
+    void saveToFile() {
+    }
+
+    @Test
+    void sendPhotoMessage() {
+    }
+
+    @Test
+    void sendAllFriendsPhotoMessage() {
+    }
+
+    @Test
+    void sendAllUsersPhotoMessage() {
+    }
+
+    @Test
+    void deletePhotoMessage() {
+    }
+
+    @Test
+    void deleteFriendsPhotoMessage() {
+    }
+
+    @Test
+    void deleteAllPhotoMessage() {
+    }
+
+    @Test
+    void report() {
+    }
+
+    @Test
+    void deleteConversation() {
+    }
+
+    @Test
+    void deleteAllFriendsConversation() {
+    }
+
+    @Test
+    void deleteAllUsersConversation() {
+    }
 }
