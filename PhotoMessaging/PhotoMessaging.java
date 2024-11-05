@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-public class PhotoMessaging implements PhotoMessagingInterface{
+public class PhotoMessaging implements PhotoMessagingInterface {
 
     private User sender;
     private Friends receiver;
@@ -33,7 +33,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
     public ArrayList<PhotoMessaging> getMessageHistory() {
         return photoMessageHistory;
     }
-
+    
     public void setMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory) {
         PhotoMessaging.photoMessageHistory = photoMessageHistory;
     }
@@ -65,7 +65,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
     public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
-
+    
     public void rewritePhotoMessages() {
         String senderFile;
 
@@ -88,6 +88,14 @@ public class PhotoMessaging implements PhotoMessagingInterface{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    public String toString() {
+        if (receiver != null) {
+            return sender.getUsername() + ":" + imageContent + ":" + receiver.getUser().getUsername();
+        } else {
+            return sender.getUsername() + ":" + imageContent;
         }
     }
 
@@ -113,6 +121,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
         }
     }
 
+    
     public void sendPhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         boolean isBlocked = false;
         boolean isFriend = false;
@@ -142,6 +151,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
 
     }
 
+    
     public void sendAllFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> allFriends = Friends.getFriendsList();
         ArrayList<User> friendsToUser = new ArrayList<>();
@@ -172,6 +182,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
     }
 
 
+    
     public void sendAllUsersMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> allUsers = User.getAllUsers();
 
@@ -190,6 +201,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
     }
 
 
+    
     public void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> photoMessagesToDelete = new ArrayList<>();
 
@@ -206,6 +218,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
         rewritePhotoMessages();
     }
 
+    
     public void deleteFriendsMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedFriendsMessages = new ArrayList<>();
 
@@ -224,6 +237,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
         rewritePhotoMessages();
     }
 
+    
     public void deleteAllMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedAllMessages = new ArrayList<>();
 
@@ -242,6 +256,7 @@ public class PhotoMessaging implements PhotoMessagingInterface{
         rewritePhotoMessages();
     }
 
+    
     public void report(User sender, BufferedImage imageContent) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
             String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + imageContent + "\"";
@@ -250,6 +265,72 @@ public class PhotoMessaging implements PhotoMessagingInterface{
             System.out.println("Report has been filed successfully");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    
+    public void deleteConversation(User userOne, User userTwo) {
+        ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
+
+        for (PhotoMessaging photoMessage : photoMessageHistory) {
+            User sender = photoMessage.getSender();
+            Friends receiver = photoMessage.getReceiver();
+            User receiverUser = receiver.getUser();
+
+            if ((sender.equals(userOne) && receiverUser.equals(userTwo)) ||
+                    (sender.equals(userTwo) && receiverUser.equals(userOne))) {
+                tempArray.add(photoMessage);
+            }
+        }
+        photoMessageHistory.removeAll(tempArray);
+
+        if (!tempArray.isEmpty()) {
+            System.out.println("Conversation between " + userOne.getUsername() + " and " + userTwo.getUsername() + " has been deleted.");
+            rewritePhotoMessages();
+        } else {
+            System.out.println("No conversation found between " + userOne.getUsername() + " and " + userTwo.getUsername() + ".");
+        }
+    }
+
+    
+    public void deleteAllFriendsConversation(User userOne) {
+        ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
+
+        for (PhotoMessaging photoMessage : photoMessageHistory) {
+            User sender = photoMessage.getSender();
+
+            if (photoMessage.getMessageType().equals("AllFriends") && sender.equals(userOne)) {
+                tempArray.add(photoMessage);
+            }
+        }
+        photoMessageHistory.removeAll(tempArray);
+
+        if (!tempArray.isEmpty()) {
+            System.out.println("Conversations involving " + userOne.getUsername() + " have been deleted.");
+            rewritePhotoMessages();
+        } else {
+            System.out.println("No conversation found involving " + userOne.getUsername() + ".");
+        }
+    }
+
+    
+    public void deleteAllUsersConversation(User userOne) {
+        ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
+
+        for (PhotoMessaging photoMessage : photoMessageHistory) {
+            User sender = photoMessage.getSender();
+
+            if (photoMessage.getMessageType().equals("AllUsers") && sender.equals(userOne)) {
+                tempArray.add(photoMessage);
+            }
+        }
+        photoMessageHistory.removeAll(tempArray);
+
+        if (!tempArray.isEmpty()) {
+            System.out.println("Conversations involving " + userOne.getUsername() + " have been deleted.");
+            rewritePhotoMessages();
+        } else {
+            System.out.println("No conversation found involving " + userOne.getUsername() + ".");
         }
     }
 
