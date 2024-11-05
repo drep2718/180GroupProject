@@ -76,12 +76,22 @@ class PhotoMessagingTest {
     }
 
     @Test
-    void sendAllFriendsPhotoMessage() {
+    void testSendAllFriendsPhotoMessage() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllFriends");
+        message.sendAllFriendsPhotoMessage(sender, imageContent, date, isRead);
+
+        assertTrue(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
 
+
     @Test
-    void sendAllUsersPhotoMessage() {
+    void testSendAllUsersPhotoMessage() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
+        message.sendAllUsersPhotoMessage(sender, imageContent, date, isRead);
+
+        assertTrue(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
+
 
     @Test
     void testDeletePhotoMessage() {
@@ -98,27 +108,66 @@ class PhotoMessagingTest {
         assertTrue(photoMessageHistory.isEmpty());
     }
 
-    @Test
-    void deleteFriendsPhotoMessage() {
+     @Test
+    void testDeleteFriendsPhotoMessage() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllFriends");
+        PhotoMessaging.getPhotoMessageHistory().add(message);
+        
+        message.deleteFriendsPhotoMessage(sender, imageContent, date, isRead);
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message));
+    }
+
+   @Test
+    void testDeleteAllPhotoMessage() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
+        PhotoMessaging.getPhotoMessageHistory().add(message);
+
+        message.deleteAllPhotoMessage(sender, imageContent, date, isRead);
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
 
     @Test
-    void deleteAllPhotoMessage() {
+    void testReport() {
+        PhotoMessaging message = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
+        
+        // Redirect system output to capture the report message
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        
+        message.report(sender, imageContent);
+        assertTrue(outContent.toString().contains("Report has been filed successfully"));
     }
 
     @Test
-    void report() {
+    void testDeleteConversation() {
+        User userTwo = new User("testUserTwo");
+        PhotoMessaging message1 = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
+        PhotoMessaging message2 = new PhotoMessaging(userTwo, receiver, imageContent, date, isRead);
+
+        PhotoMessaging.getPhotoMessageHistory().add(message1);
+        PhotoMessaging.getPhotoMessageHistory().add(message2);
+
+        message1.deleteConversation(sender, userTwo);
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message1));
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message2));
     }
 
     @Test
-    void deleteConversation() {
+    void testDeleteAllFriendsConversation() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllFriends");
+        PhotoMessaging.getPhotoMessageHistory().add(message);
+
+        message.deleteAllFriendsConversation(sender);
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
 
-    @Test
-    void deleteAllFriendsConversation() {
-    }
 
     @Test
-    void deleteAllUsersConversation() {
+    void testDeleteAllUsersConversation() {
+        PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
+        PhotoMessaging.getPhotoMessageHistory().add(message);
+
+        message.deleteAllUsersConversation(sender);
+        assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
 }
