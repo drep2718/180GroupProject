@@ -1,4 +1,3 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -7,66 +6,54 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessagingTest {
-    private User sender;
-    private Friends receiver;
+    private User sender = new User("Username");
+    User user = new User("Username");
+    Friends receiver = new Friends(user);
     private User userSender;
     private User userReceiver;
     private String date;
-    private String message;
-    private ArrayList<Messaging> messageHistory;
+    private String message = "Hello";
+    private ArrayList<Messaging> messageHistory = new ArrayList<>();
 
     @Test
     void testSendMessage() {
 
-//        public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
-//            if (receiver.isBlocked(sender)) {
-//                System.out.println("Cannot send message because account you have been blocked.");
-//            }
-//
-//            if (!receiver.isFriend(sender)) {
-//                System.out.println("Cannot send message because you are not friends.");
-//            }
-//
-//            Messaging message = new Messaging(sender, receiver, content, date, isRead);
-//            messageHistory.add(message);
-//
-//            try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt",true))) {
-//                bfw.write(message.toString());
-//                bfw.newLine();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            System.out.println("Delivered");
-//        }
+        receiver.addFriend(sender);
+        Messaging messages = new Messaging(sender, receiver, message, date, false);
+        messages.sendMessage(sender, receiver,message, date, false);
+        messageHistory = Messaging.getMessageHistory();
+        String answer = "Username:Hello:Username";
+        assertEquals(answer, messageHistory.get(0).toString());
 
-
-        Messaging messageToSend = new Messaging(sender, receiver,message, date, false);
-        messageToSend.sendMessage(sender, receiver, message, date, false);
-
-        assertTrue(messageHistory.contains(messageToSend));
     }
 
     @Test
     void testSendMessageToBlockedUser() {
-        receiver.blockUser(userSender);
-        Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
-        messageToSend.sendMessage(sender, receiver, message, date, false);
 
-        assertFalse(messageHistory.contains(messageToSend));
+        receiver.blockUser(sender);
+        Messaging messages = new Messaging(sender, receiver, message, date, false);
+        messages.sendMessage(sender, receiver,message, date, false);
     }
 
     @Test
     void testDeleteMessage() {
-        Messaging messageToDelete = new Messaging(sender, receiver, message, date, false);
-        messageHistory.add(messageToDelete);
+        receiver.addFriend(sender);
+        Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
+        messageToSend.sendMessage(sender, receiver,message, date, false);
+        messageHistory = Messaging.getMessageHistory();
+        String answer = "Username:Hello:Username";
+        assertEquals(answer, messageHistory.get(0).toString());
 
-        messageToDelete.deleteMessage(receiver, sender, message,date,false);
-        assertFalse(messageHistory.contains(messageToDelete));
+        messageToSend.deleteMessage(sender, receiver, message, date, false);
+        messageHistory = Messaging.getMessageHistory();
+        assertTrue(messageHistory.isEmpty());
+
+
     }
 
     @Test
     void testReport() {
+        
         String reportMessage = "test report message";
         Messaging messageToReport = new Messaging(sender, receiver, message, date, false);
         messageToReport.report(sender, message);
