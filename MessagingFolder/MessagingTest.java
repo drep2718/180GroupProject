@@ -1,68 +1,48 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessagingTest {
-    private Friends sender;
+    private User sender;
     private Friends receiver;
     private User userSender;
     private User userReceiver;
     private String date;
-    private Messaging message;
+    private String message;
     private ArrayList<Messaging> messageHistory;
-
-
-    @BeforeEach
-    public void setUpMessages() {
-        userSender =
-                new User("senderUsername", "password123", "senderBio");
-        userReceiver =
-                new User("receiverUsername", "password456", "receiverBio");
-        sender = new Friends(userSender);
-        receiver = new Friends(userReceiver);
-        date = "11-03-2024";
-
-        message = new Messaging(sender, receiver, null, date, true);
-
-        messageHistory = new ArrayList<>();
-        messageHistory.add(message);
-    }
-
-    @Test
-    void testGetSender() {
-        assertEquals(sender, message.getSender());
-    }
-
-    @Test
-    void testGetReceiver() {
-        assertEquals(receiver, message.getReceiver());
-    }
-
-    @Test
-    void testGetContent() {
-        assertNull(message.getContent());
-    }
-
-    @Test
-    void testGetDate() {
-        assertEquals(date, message.getDate());
-    }
-
-    @Test
-    void testGetIsRead() {
-        assertTrue(message.isRead());
-    }
 
     @Test
     void testSendMessage() {
-        Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
-        message.sendMessage(sender, userReceiver, messageToSend);
+
+//        public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
+//            if (receiver.isBlocked(sender)) {
+//                System.out.println("Cannot send message because account you have been blocked.");
+//            }
+//
+//            if (!receiver.isFriend(sender)) {
+//                System.out.println("Cannot send message because you are not friends.");
+//            }
+//
+//            Messaging message = new Messaging(sender, receiver, content, date, isRead);
+//            messageHistory.add(message);
+//
+//            try(BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt",true))) {
+//                bfw.write(message.toString());
+//                bfw.newLine();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println("Delivered");
+//        }
+
+
+        Messaging messageToSend = new Messaging(sender, receiver,message, date, false);
+        messageToSend.sendMessage(sender, receiver, message, date, false);
 
         assertTrue(messageHistory.contains(messageToSend));
     }
@@ -71,7 +51,7 @@ class MessagingTest {
     void testSendMessageToBlockedUser() {
         receiver.blockUser(userSender);
         Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
-        message.sendMessage(sender, userReceiver, messageToSend);
+        messageToSend.sendMessage(sender, receiver, message, date, false);
 
         assertFalse(messageHistory.contains(messageToSend));
     }
@@ -81,23 +61,22 @@ class MessagingTest {
         Messaging messageToDelete = new Messaging(sender, receiver, message, date, false);
         messageHistory.add(messageToDelete);
 
-        message.deleteMessage(sender, userReceiver, messageToDelete);
+        messageToDelete.deleteMessage(receiver, sender, message,date,false);
         assertFalse(messageHistory.contains(messageToDelete));
     }
-    
+
     @Test
     void testReport() {
         String reportMessage = "test report message";
-        message.report(userSender, userReceiver, reportMessage);
+        Messaging messageToReport = new Messaging(sender, receiver, message, date, false);
+        messageToReport.report(sender, message);
 
         try (BufferedReader br = new BufferedReader(new FileReader("Report.txt"))) {
             String line;
             boolean reportFound = false;
 
             while ((line = br.readLine()) != null) {
-                if (line.contains(reportMessage)
-                        && line.contains(userSender.getUsername())
-                        && line.contains(userReceiver.getUsername())) {
+                if (line.contains(reportMessage) && line.contains(userSender.getUsername()) && line.contains(userReceiver.getUsername())) {
                     reportFound = true;
                     break;
                 }
@@ -111,12 +90,13 @@ class MessagingTest {
 
     @Test
     void testSaveToFile() {
-        message.saveToFile();
+        Messaging messaging = new Messaging(sender, receiver, message, date, false);
+        messaging.saveToFile();
 
         try (BufferedReader br = new BufferedReader(new FileReader("senderUsername.txt"))) {
             String line;
             boolean convoFound = false;
-            
+
             while ((line = br.readLine()) != null) {
                 if (line.contains(message.toString())) {
                     convoFound = true;
@@ -129,17 +109,62 @@ class MessagingTest {
             assertFalse(true);
         }
     }
-    
+
     @Test
     void testDeleteConversation() {
         Messaging messageOne = new Messaging(sender, receiver, message, date, false);
-        Messaging messageTwo = new Messaging(receiver, sender, message, date, false);
+        Messaging messageTwo = new Messaging(sender, receiver, message, date, false);
         messageHistory.add(messageOne);
         messageHistory.add(messageTwo);
-        
-        message.deleteConversation(userSender, userReceiver);
-        
+
+        messageOne.deleteConversation(userSender, userReceiver);
+
         assertFalse(messageHistory.contains(messageOne));
         assertFalse(messageHistory.contains(messageTwo));
+    }
+
+
+    @Test
+    void rewriteMessages() {
+    }
+
+    @Test
+    void testToString() {
+    }
+
+    @Test
+    void saveToFile() {
+    }
+
+    @Test
+    void sendMessage() {
+    }
+
+    @Test
+    void sendAllFriendsMessage() {
+    }
+
+    @Test
+    void sendAllUsersMessage() {
+    }
+
+    @Test
+    void deleteMessage() {
+    }
+
+    @Test
+    void report() {
+    }
+
+    @Test
+    void deleteConversation() {
+    }
+
+    @Test
+    void deleteAllFriendsConversation() {
+    }
+
+    @Test
+    void deleteAllUsersConversation() {
     }
 }
