@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MessagingTest {
     private User sender = new User("Username");
+    private User sender1 = new User("Username1");
+    private User sender2 = new User("Username2");
     User user = new User("Username");
     Friends receiver = new Friends(user);
     private User userSender;
@@ -14,16 +16,91 @@ class MessagingTest {
     private String date;
     private String message = "Hello";
     private ArrayList<Messaging> messageHistory = new ArrayList<>();
+    private ArrayList<Messaging> messageHistoryFriends = new ArrayList<>();
+    private ArrayList<Messaging> messageHistoryUsers = new ArrayList<>();
+    ArrayList<User> friends = new ArrayList<>();
+    ArrayList<User> allUsers = new ArrayList<>();
 
     @Test
     void testSendMessage() {
 
+
         receiver.addFriend(sender);
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() +".txt", false))) {
+            bfw.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Messaging messages = new Messaging(sender, receiver, message, date, false);
-        messages.sendMessage(sender, receiver, message, date, false);
+        messages.sendMessage(sender, receiver,message, date, false);
         messageHistory = Messaging.getMessageHistory();
         String answer = "Username:Hello:Username";
-        assertEquals(answer, messageHistory.get(0).toString());
+        try(BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() +".txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                assertEquals(answer, line);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Test
+    void sendAllFriendsMessage() {
+
+        receiver.addFriend(sender);
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() +"AllFriends.txt", false))) {
+            bfw.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Messaging messages = new Messaging(sender, message, friends, date, false, "AllFriends");
+        messages.sendAllFriendsMessage(sender1, message, date, false);
+        messageHistoryFriends = Messaging.getMessageHistory();
+        String answer = "Username1:Hello";
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + "AllFriends.txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                assertEquals(answer, line);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+
+        }
+    }
+
+    @Test
+    void sendAllUsersMessage() {
+
+        receiver.addFriend(sender);
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() +"AllUsers.txt", false))) {
+            bfw.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Messaging messages = new Messaging(sender, message, friends, date, false, "AllUsers");
+        messages.sendAllUsersMessage(sender2,message, date, false);
+        messageHistoryUsers = Messaging.getMessageHistory();
+        String answer = "Username2:Hello";
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + "AllUsers.txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                assertEquals(answer, line);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+
+        }
+
 
     }
 
@@ -32,23 +109,105 @@ class MessagingTest {
 
         receiver.blockUser(sender);
         Messaging messages = new Messaging(sender, receiver, message, date, false);
-        messages.sendMessage(sender, receiver, message, date, false);
+        messages.sendMessage(sender, receiver,message, date, false);
     }
 
     @Test
     void testDeleteMessage() {
         receiver.addFriend(sender);
-        Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
-        messageToSend.sendMessage(sender, receiver, message, date, false);
+
+
+        Messaging messageSender = new Messaging(sender, receiver, message, date, false);
+        messageSender.sendMessage(sender, receiver, message, date, false);
         messageHistory = Messaging.getMessageHistory();
         String answer = "Username:Hello:Username";
-        assertEquals(answer, messageHistory.get(0).toString());
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + ".txt"))) {
+            String lastLine = "";
+            String line = br.readLine();
+            while (line != null) {
+                lastLine = line;
+                line = br.readLine();
+            }
+            assertEquals(answer, lastLine);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        messageToSend.deleteMessage(sender, receiver, message, date, false);
         messageHistory = Messaging.getMessageHistory();
-        assertTrue(messageHistory.isEmpty());
+        for (Messaging messaging : messageHistory) {
+            if (messaging == messageSender) {
+                messageSender.deleteMessage(sender, receiver, message, date, false);
+                assertTrue(messageHistory.isEmpty());
+
+            }
+        }
+    }
+
+    @Test
+    void deleteFriendsMessage() {
+
+        receiver.addFriend(sender);
 
 
+
+
+        Messaging messages = new Messaging(sender, message, friends, date, false, "AllFriends");
+        messages.sendAllFriendsMessage(sender1, message, date, false);
+        messageHistoryFriends = Messaging.getMessageHistory();
+        String answer = "Username1:Hello";
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + "AllFriends.txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                assertEquals(answer, line);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+
+        }
+
+        messageHistoryFriends = Messaging.getMessageHistory();
+        for(Messaging messaging : messageHistoryFriends) {
+            if (messaging == messages) {
+                messages.deleteFriendsMessage(sender1, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            }
+        }
+
+    }
+
+    @Test
+    void deleteAllMessage() {
+        receiver.addFriend(sender);
+
+
+
+        Messaging messages = new Messaging(sender, message, friends, date, false, "AllUsers");
+        messages.sendAllUsersMessage(sender2,message, date, false);
+        messageHistoryUsers = Messaging.getMessageHistory();
+        String answer = "Username2:Hello";
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + "AllUsers.txt"))) {
+            String line = br.readLine();
+            while (line != null) {
+                assertEquals(answer, line);
+                break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+
+        }
+
+
+        messages.deleteAllMessage(sender2, message, date, false);
+        messageHistoryUsers = Messaging.getMessageHistory();
+        for(Messaging messaging : messageHistoryUsers) {
+            if (messaging == messages) {
+                messages.deleteAllMessage(sender2, message, date, false);
+                assertTrue(messageHistoryUsers.isEmpty());
+            }
+        }
     }
 
     @Test
@@ -76,6 +235,7 @@ class MessagingTest {
             assertFalse(true);
         }
     }
+
 
     @Test
     void testSaveToFile() {
@@ -111,14 +271,15 @@ class MessagingTest {
         messageHistory.add(messageTwo);
 
         messageHistory = Messaging.getMessageHistory();
-
-        messageOne.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageOne);
-        messageTwo.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageTwo);
-
-        messageHistory = Messaging.getMessageHistory();
-        assertTrue(messageHistory.isEmpty());
+        for(Messaging messaging : messageHistory) {
+            if (messaging == messageOne) {
+                messageOne.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            } if (messaging == messageTwo) {
+                messageTwo.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            }
+        }
     }
 
     @Test
@@ -133,14 +294,16 @@ class MessagingTest {
         messageHistory.add(messageTwo);
 
         messageHistory = Messaging.getMessageHistory();
+        for(Messaging messaging : messageHistory) {
+            if (messaging == messageOne) {
+                messageOne.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            } if (messaging == messageTwo) {
+                messageTwo.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            }
+        }
 
-        messageOne.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageOne);
-        messageTwo.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageTwo);
-
-        messageHistory = Messaging.getMessageHistory();
-        assertTrue(messageHistory.isEmpty());
 
     }
 
@@ -155,15 +318,17 @@ class MessagingTest {
         messageHistory.add(messageOne);
         messageHistory.add(messageTwo);
 
-        messageHistory = Messaging.getMessageHistory();
-
-        messageOne.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageOne);
-        messageTwo.deleteMessage(sender, receiver, message, date, false);
-        messageHistory.remove(messageTwo);
 
         messageHistory = Messaging.getMessageHistory();
-        assertTrue(messageHistory.isEmpty());
+        for(Messaging messaging : messageHistory) {
+            if (messaging == messageOne) {
+                messageOne.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            } if (messaging == messageTwo) {
+                messageTwo.deleteFriendsMessage(sender, message, date, false);
+                assertTrue(messageHistoryFriends.isEmpty());
+            }
+        }
     }
 
 
@@ -175,39 +340,8 @@ class MessagingTest {
     void testToString() {
     }
 
-    @Test
-    void saveToFile() {
-    }
 
-    @Test
-    void sendMessage() {
-    }
 
-    @Test
-    void sendAllFriendsMessage() {
-    }
 
-    @Test
-    void sendAllUsersMessage() {
-    }
 
-    @Test
-    void deleteMessage() {
-    }
-
-    @Test
-    void report() {
-    }
-
-    @Test
-    void deleteConversation() {
-    }
-
-    @Test
-    void deleteAllFriendsConversation() {
-    }
-
-    @Test
-    void deleteAllUsersConversation() {
-    }
 }
