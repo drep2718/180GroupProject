@@ -20,7 +20,7 @@ class MessagingTest {
 
         receiver.addFriend(sender);
         Messaging messages = new Messaging(sender, receiver, message, date, false);
-        messages.sendMessage(sender, receiver,message, date, false);
+        messages.sendMessage(sender, receiver, message, date, false);
         messageHistory = Messaging.getMessageHistory();
         String answer = "Username:Hello:Username";
         assertEquals(answer, messageHistory.get(0).toString());
@@ -32,19 +32,19 @@ class MessagingTest {
 
         receiver.blockUser(sender);
         Messaging messages = new Messaging(sender, receiver, message, date, false);
-        messages.sendMessage(sender, receiver,message, date, false);
+        messages.sendMessage(sender, receiver, message, date, false);
     }
 
     @Test
     void testDeleteMessage() {
         receiver.addFriend(sender);
         Messaging messageToSend = new Messaging(sender, receiver, message, date, false);
-        messageToSend.sendMessage(sender, receiver,message, date, false);
+        messageToSend.sendMessage(sender, receiver, message, date, false);
         messageHistory = Messaging.getMessageHistory();
         String answer = "Username:Hello:Username";
         assertEquals(answer, messageHistory.get(0).toString());
 
-        messageToSend.deleteMessage(sender, receiver,message, date, false);
+        messageToSend.deleteMessage(sender, receiver, message, date, false);
         messageHistory = Messaging.getMessageHistory();
         assertTrue(messageHistory.isEmpty());
 
@@ -55,6 +55,8 @@ class MessagingTest {
     void testReport() {
 
         String reportMessage = "test report message";
+        userSender = new User("Username");
+        userReceiver = new User("Username");
         Messaging messageToReport = new Messaging(sender, receiver, message, date, false);
         messageToReport.report(sender, message);
 
@@ -63,15 +65,15 @@ class MessagingTest {
             boolean reportFound = false;
 
             while ((line = br.readLine()) != null) {
-                if (line.contains(reportMessage) && line.contains(userSender.getUsername()) && line.contains(userReceiver.getUsername())) {
+                if (line.contains(messageToReport.getContent()) && line.contains(userSender.getUsername()) && line.contains(userReceiver.getUsername())) {
                     reportFound = true;
                     break;
                 }
             }
-            assertTrue(reportFound = true);
+            assertTrue(reportFound);
         } catch (IOException e) {
             e.printStackTrace();
-            assertFalse(false);
+            assertFalse(true);
         }
     }
 
@@ -80,7 +82,7 @@ class MessagingTest {
         Messaging messaging = new Messaging(sender, receiver, message, date, false);
         messaging.saveToFile();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("senderUsername.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(sender.getUsername() + ".txt"))) {
             String line;
             boolean convoFound = false;
 
