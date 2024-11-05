@@ -57,10 +57,6 @@ class PhotoMessagingTest {
     }
 
     @Test
-    void setMessageType() {
-    }
-
-    @Test
     void rewritePhotoMessages() {
     }
 
