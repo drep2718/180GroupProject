@@ -166,11 +166,8 @@ public class Messaging implements MessagingInterface {
 
         for (User user : AllFriends) {
             String[] histSplit = user.toString().split(":");
-            String senderFile = histSplit[0] + ".txt";
             if (histSplit[0].equals(sender.getUsername())) {
                 friendsToUser.add(user);
-            } else {
-                System.out.println("Cannot send message because you have no friends");
             }
         }
 
@@ -209,12 +206,8 @@ public class Messaging implements MessagingInterface {
 
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender) && messages.getContent().equals(content) && messages.getReceiver().equals(receiver)) {
                 messagesToDelete.add(messages);
                 break;
-            } else {
-                System.out.println("You are not the sender of the message");
-            }
         }
         messageHistory.removeAll(messagesToDelete);
         rewriteMessages();
@@ -223,8 +216,7 @@ public class Messaging implements MessagingInterface {
     public void deleteFriendsMessage(User sender, String content, String date, Boolean isRead) {
         ArrayList<Messaging> deletedFriendsMessages = new ArrayList<>();
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender)
-                    && messages.getContent().equals(content) && (messageType.equals("AllFriends"))) {
+            if (messages.getSender().equals(sender) && messages.getContent().equals(content) && (messageType.equals("AllFriends"))) {
                 deletedFriendsMessages.add(messages);
                 break;
             } else {
@@ -242,8 +234,6 @@ public class Messaging implements MessagingInterface {
                     && messages.getContent().equals(content) && (messageType.equals("AllUsers"))) {
                 deletedAllMessages.add(messages);
                 break;
-            } else {
-                System.out.println("You are not the sender of the message");
             }
         }
         messageHistory.removeAll(deletedAllMessages);
