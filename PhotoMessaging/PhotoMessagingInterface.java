@@ -2,9 +2,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public interface PhotoMessagingInterface {
-    ArrayList<PhotoMessaging> getMessageHistory();
+    ArrayList<PhotoMessaging> getPhotoMessageHistory();
 
-    void setMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory);
+    void setPhotoMessageHistory(ArrayList<PhotoMessaging> photoMessageHistory);
 
     User getSender();
 
