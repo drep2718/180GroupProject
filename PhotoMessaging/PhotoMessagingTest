@@ -1,8 +1,22 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 class PhotoMessagingTest {
+    private User sender = new User("Username");
+    User user = new User("Username");
+    Friends receiver = new Friends(user);
+    private User userSender;
+    private User userReceiver;
+    private String date = "11-03-2024";
+    private BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+    private ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
 
     @Test
     void getMessageHistory() {
@@ -14,14 +28,20 @@ class PhotoMessagingTest {
 
     @Test
     void getSender() {
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
+        assertEquals(sender, photoMessage.getSender());
     }
 
     @Test
     void getReceiver() {
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
+        assertEquals(receiver, photoMessage.getReceiver());
     }
 
     @Test
     void getImageContent() {
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
+        assertEquals(image, photoMessage.getImageContent());
     }
 
     @Test
