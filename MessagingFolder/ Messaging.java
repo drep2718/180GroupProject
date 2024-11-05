@@ -107,11 +107,19 @@ public class Messaging implements MessagingInterface {
 
 
     public void saveToFile() {
-        for (Messaging m : messageHistory) {
-            String[] histSplit = m.toString().split(":");
-            String senderFile = histSplit[0] + ".txt";
+            String senderFile;
+            for (Messaging m : messageHistory) {
+                if (m.getMessageType().equals("Single")) {
+                    senderFile = m.getSender().getUsername() + ".txt";
+                } else if (m.getMessageType().equals("AllFriends")) {
+                    senderFile = m.getSender().getUsername() + "AllFriends.txt";
+                } else if (m.getMessageType().equals("AllUsers")) {
+                    senderFile = m.getSender().getUsername() + "AllUsers.txt";
+                } else {
+                    continue;
+                }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile, true))) {
                 writer.write(m.toString());
                 writer.newLine();
             } catch (IOException e) {
@@ -210,10 +218,9 @@ public class Messaging implements MessagingInterface {
         }
     }
 
-    public void report(User sender, User receiver, String content) {
+    public void report(User sender, String content) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
-            String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"" +
-                    " | Reported by: " + receiver.getUsername();
+            String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"";
             bw.write(reportEntry);
             bw.newLine();
             System.out.println("Report has been filed successfully");
@@ -222,28 +229,78 @@ public class Messaging implements MessagingInterface {
         }
     }
 
+
     public void deleteConversation(User userOne, User userTwo) {
         boolean conversationDeleted = false;
+        ArrayList<Messaging> tempArray = new ArrayList<>();
         for (int i = 0; i < messageHistory.size(); i++) {
             Messaging message = messageHistory.get(i);
 
             User sender = message.getSender();
             Friends receiver = message.getReceiver();
-            User senderUser = sender;
             Friends receiverUser = receiver;
 
-            if ((senderUser.equals(userOne) && receiverUser.equals(userTwo)) ||
-                    senderUser.equals(userTwo) && receiverUser.equals(userOne)) {
-                messageHistory.remove(i);
-                conversationDeleted = true;
-                i--; // Fixes index after removing a message from messageHistory
+            if ((sender.equals(userOne) && receiverUser.equals(userTwo)) ||
+                    sender.equals(userTwo) && receiverUser.equals(userOne)) {
+                tempArray.add(message);
             }
         }
+        messageHistory.remove(tempArray);
+        conversationDeleted = true;
 
         if (conversationDeleted) {
             System.out.println("Conversation between " + userOne.getUsername() + " and " + userTwo.getUsername() + " has been deleted.");
+            rewriteMessages();
         } else {
             System.out.println("No conversation found between " + userOne.getUsername() + " and " + userTwo.getUsername() + ".");
+        }
+    }
+
+    public void deleteAllFriendsConversation(User userOne) {
+        boolean conversationDeleted = false;
+        ArrayList<Messaging> tempArray = new ArrayList<>();
+        for (int i = 0; i < messageHistory.size(); i++) {
+            Messaging message = messageHistory.get(i);
+            User sender = message.getSender();
+
+            if (message.getMessageType().equals("AllFriends") && sender.equals(userOne)) {
+                tempArray.add(message);
+            }
+
+        }
+
+        messageHistory.remove(tempArray);
+        conversationDeleted = true;
+
+        if (conversationDeleted) {
+            System.out.println("Conversations involving " + userOne.getUsername() +  " has been deleted.");
+            rewriteMessages();
+        } else {
+            System.out.println("No conversation found between " + userOne.getUsername() + ".");
+        }
+    }
+
+    public void deleteAllUsersConversation(User userOne) {
+        boolean conversationDeleted = false;
+        ArrayList<Messaging> tempArray = new ArrayList<>();
+        for (int i = 0; i < messageHistory.size(); i++) {
+            Messaging message = messageHistory.get(i);
+            User sender = message.getSender();
+
+            if (message.getMessageType().equals("AllUsers") && sender.equals(userOne)) {
+                tempArray.add(message);
+            }
+
+        }
+
+        messageHistory.remove(tempArray);
+        conversationDeleted = true;
+
+        if (conversationDeleted) {
+            System.out.println("Conversations involving " + userOne.getUsername() +  " has been deleted.");
+            rewriteMessages();
+        } else {
+            System.out.println("No conversation found between " + userOne.getUsername() + ".");
         }
     }
 }
