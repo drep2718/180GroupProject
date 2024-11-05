@@ -46,14 +46,14 @@ class PhotoMessagingTest {
 
     @Test
     void getDate() {
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
+        assertEquals(date, photoMessage.getDate());
     }
 
     @Test
     void getIsRead() {
-    }
-
-    @Test
-    void getMessageType() {
+        PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
+        assertFalse(photoMessage.getIsRead());
     }
 
     @Test
