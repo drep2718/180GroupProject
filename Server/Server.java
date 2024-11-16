@@ -21,9 +21,8 @@ public class Server implements FlagInterface {
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
             while (true) {
-
+                String message = reader.readLine();
                 for (User[] user : userDatabase) {
-                    String message = reader.readLine();
                     if (message.contains(LOGIN)) {
                         String[] index = message.split(";");
                         if (index.length > 1) {
@@ -33,32 +32,61 @@ public class Server implements FlagInterface {
                             for (String users : User.getUsernames()) {
                                 if (users.contains(username)) {
                                     validUser = true;
-                                    writer.println("Correct username");
+                                    writer.println(LOGIN + "Correct username");
+                                    writer.flush();
                                     break;
                                 }
                                 if (!validUser) {
-                                    writer.println("User does not exist. Create user?");
-                                    String password = "";
-                                    String bio = "";
-                                    if (message.contains(CREATE)) {
-                                        User userNew = new User(username, password, bio);
-                                        String[] indexCreate = message.split(";");
-                                        username = index[1];
-                                        password = index[2];
-                                        bio = index[3];
-                                        userNew.createProfile(username, password, bio);
-                                        userNew.validatePassword(username, password);
-                                        writer.println(CREATE + "User created");
-                                    }
-
+                                    writer.println(LOGIN + "User does not exist");
+                                    writer.flush();
                                     return;
                                 } else {
-                                    writer.println("No username provided");
+                                    writer.println(LOGIN + "No username provided");
+                                    writer.flush();
                                     return;
                                 }
                             }
                         }
                     }
+                }
+
+                for (User[] passwordArray : passwordsDatabase) {
+                    if (message.contains(LOGIN)) {
+                        String[] index = message.split(";");
+                        if (index.length > 1) {
+                            String password = index[2];
+                            boolean validPassword = false;
+
+                            for (String passwords : User.getPasswords()) {
+                                if (passwords.contains(password)) {
+                                    validPassword = true;
+                                    writer.println(LOGIN + "Login Successful");
+                                    writer.flush();
+                                    break;
+                                }
+                                if (!validPassword) {
+                                    writer.println(LOGIN + "Login Failed");
+                                    writer.flush();
+                                    return;
+                                } else {
+                                    writer.println(LOGIN + "No password provided");
+                                    writer.flush();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (message.contains(CREATE)) {
+                    String username = message.split(";")[1];
+                    String password = message.split(";")[2];
+                    String bio = message.split(";")[3];
+                    User userNew = new User(username, password, bio);
+                    userNew.createProfile(username, password, bio);
+                    userNew.validatePassword(username, password);
+                    writer.println(CREATE + "User created");
+                    writer.flush();
                 }
 
                 for (User[] passwordArray : passwordsDatabase) {
