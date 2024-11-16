@@ -8,8 +8,13 @@ public class Server implements FlagInterface {
 
     private static List<User[]> userDatabase = new ArrayList<>();
     private static List<User[]> passwordsDatabase = new ArrayList<>();
+    private static ArrayList<Messaging> messageHistoryFriends = new ArrayList<>();
+    private ArrayList<Messaging> messageHistoryUsers = new ArrayList<>();
+    private ArrayList<Messaging> messageHistory = new ArrayList<>();
+
 
     public static void main(String[] args) throws UnknownHostException, IOException {
+        User currentUser = null;
 
         ServerSocket serverSocket = new ServerSocket(2727);
 
@@ -32,17 +37,17 @@ public class Server implements FlagInterface {
                             for (String users : User.getUsernames()) {
                                 if (users.contains(username)) {
                                     validUser = true;
-                                    writer.println(LOGIN + "Correct username
+                                    writer.println(LOGIN + ";" + "Correct username");
                                     currentUser = new User(username);
                                     writer.flush();
                                     break;
                                 }
                                 if (!validUser) {
-                                    writer.println(LOGIN + "User does not exist");
+                                    writer.println(LOGIN + ";" + "User does not exist");
                                     writer.flush();
                                     return;
                                 } else {
-                                    writer.println(LOGIN + "No username provided");
+                                    writer.println(LOGIN + ";" + "No username provided");
                                     writer.flush();
                                     return;
                                 }
@@ -61,16 +66,16 @@ public class Server implements FlagInterface {
                             for (String passwords : User.getPasswords()) {
                                 if (passwords.contains(password)) {
                                     validPassword = true;
-                                    writer.println(LOGIN + "Login Successful");
+                                    writer.println(LOGIN + ";" + "Login Successful");
                                     writer.flush();
                                     break;
                                 }
                                 if (!validPassword) {
-                                    writer.println(LOGIN + "Login Failed");
+                                    writer.println(LOGIN + ";" + "Login Failed");
                                     writer.flush();
                                     return;
                                 } else {
-                                    writer.println(LOGIN + "No password provided");
+                                    writer.println(LOGIN + ";" + "No password provided");
                                     writer.flush();
                                     return;
                                 }
@@ -83,243 +88,240 @@ public class Server implements FlagInterface {
                     String username = message.split(";")[1];
                     String password = message.split(";")[2];
                     String bio = message.split(";")[3];
+                    currentUser = new User(username);
                     User userNew = new User(username, password, bio);
                     userNew.createProfile(username, password, bio);
                     userNew.validatePassword(username, password);
-                    writer.println(CREATE + "User created");
+                    writer.println(CREATE + ";" + "User created");
                     writer.flush();
                 }
 
-                    String operation = reader.readLine();
+                String operation = reader.readLine();
+
+                if (operation.contains(FRIENDS_ADD)) {
+
                     String[] operationed = operation.split(";");
 
-                    String operation = reader.readLine();
+                    String target = operationed[1];
 
-                    if (operation.contains(FRIENDS_ADD)) {
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
 
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
+                            writer.write(FRIENDS_ADD + ";" + "false");
+                            writer.println();
+                            writer.flush();
                         }
-
-                        friend1.addFriend(friend);
-                        boolean added = friend1.isFriend(friend);
-                        writer.write(String.valueOf(added));
-                        writer.println();
-                        writer.flush();
-
-
-                    } else if (operation.contains(FRIENDS_REMOVE)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        friend1.removeFriend(friend);
-                        boolean removed = friend1.isFriend(friend);
-                        writer.write(String.valueOf(!removed));
-                        writer.println();
-                        writer.flush();
-
-                    } else if (operation.contains(FRIENDS_BLOCK)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        friend1.blockUser(friend);
-                        boolean blocked = friend1.isBlocked(friend);
-                        writer.write(String.valueOf(blocked));
-                        writer.println();
-                        writer.flush();
-
-                    } else if (operation.contains(FRIENDS_UNBLOCK)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        friend1.unblockUser(friend);
-                        boolean unblocked = friend1.isBlocked(friend);
-                        writer.write(String.valueOf(!unblocked));
-                        writer.println();
-                        writer.flush();
-
-                    } else if (operation.contains(TEXT_ALL_FRIENDS)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        String content = operationed[2];
-                        Friends reciver = new Friends(friend);
-
-                        Messaging messaging = new Messaging(currentUser,reciver,content,"Date", false);
-
-                        String date = null;
-                        boolean isRead = false;
-                        messaging.sendAllFriendsMessage(currentUser, content, date, isRead);
-                        boolean sent = true;
-                        writer.write(String.valueOf(sent));
-                        writer.println();
-                        writer.flush();
-
-
-                    } else if (operation.contains(TEXT_ALL_USERS)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        String content = operationed[2];
-                        Friends reciver = new Friends(friend);
-
-                        Messaging messaging = new Messaging(currentUser,reciver,content,"Date", false);
-
-
-                        String date = null;
-                        boolean isRead = false;
-                       messaging.sendAllUsersMessage(currentUser, content, date, isRead);
-                        boolean sent = true;
-                        writer.write(String.valueOf(sent));
-                        writer.println();
-                        writer.flush();
-
-                    } else if (operation.contains(TEXT_SINGLE_FRIEND)) {
-
-                        String[] operationed = operation.split(";");
-
-                        String target = operationed[1];
-
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser); // this makes the current user into a friend object so you can all the methods from the friend class on it
-                        for (User friends: Friends.getFriendsList()) {
-                            if (friends.toString().contains(target)) {
-                                friend = friends; // this is the friend that the user wants to add
-                            } else {
-
-                                writer.write("false");
-                                writer.println();
-                                writer.flush();
-                            }
-                        }
-
-                        String content = operationed[2];
-                        Friends reciver = new Friends(friend);
-
-                        Messaging messaging = new Messaging(currentUser,reciver,content,"Date", false);
-
-
-
-                        String date = null;
-                        boolean isRead = false;
-                        messaging.sendMessage(currentUser, reciver, content, date, isRead);
-                        boolean sent = true;
-                        writer.write(String.valueOf(sent));
-                        writer.println();
-                        writer.flush();
-
-                    } else if (operation.contains(MESSAGE_ALL_FRIENDS)) {
-                        
-                        String date = null;
-                        boolean isRead = false;
-
-
-                    } else if (operation.contains(MESSAGE_ALL_USERS)) {
-
-                        String date = null;
-                        boolean isRead = false;
-
-
-                    } else if (operation.contains(MESSAGE_SINGLE_FRIEND)) {
-
-                        String date = null;
-                        boolean isRead = false;
-
-
                     }
 
+                    friend1.addFriend(friend);
+                    boolean added = friend1.isFriend(friend);
+                    writer.write(String.valueOf(added));
+                    writer.println();
+                    writer.flush();
+
+
+                } else if (operation.contains(FRIENDS_REMOVE)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(FRIENDS_REMOVE + ";" + "false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    friend1.removeFriend(friend);
+                    boolean removed = friend1.isFriend(friend);
+                    writer.write(String.valueOf(!removed));
+                    writer.println();
+                    writer.flush();
+
+                } else if (operation.contains(FRIENDS_BLOCK)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(FRIENDS_BLOCK + ";" +"false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    friend1.blockUser(friend);
+                    boolean blocked = friend1.isBlocked(friend);
+                    writer.write(String.valueOf(blocked));
+                    writer.println();
+                    writer.flush();
+
+                } else if (operation.contains(FRIENDS_UNBLOCK)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(FRIENDS_UNBLOCK + ";" + "false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    friend1.unblockUser(friend);
+                    boolean unblocked = friend1.isBlocked(friend);
+                    writer.write(String.valueOf(!unblocked));
+                    writer.println();
+                    writer.flush();
+
+                } else if (operation.contains(TEXT_ALL_FRIENDS)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(TEXT_ALL_FRIENDS + ";" +"false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    String content = operationed[2];
+                    Friends receiver = new Friends(friend);
+
+                    Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
+
+                    String date = null;
+                    boolean isRead = false;
+                    messaging.sendAllFriendsMessage(currentUser, content, "date", isRead);
+                    boolean sent = true;
+                    writer.write(String.valueOf(sent));
+                    writer.println();
+                    writer.flush();
+
+
+                } else if (operation.contains(TEXT_ALL_USERS)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(TEXT_ALL_USERS + ";" + "false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    String content = operationed[2];
+                    Friends reciver = new Friends(friend);
+
+                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
+
+
+                    String date = null;
+                    boolean isRead = false;
+                    messaging.sendAllUsersMessage(currentUser, content, "date", isRead);
+                    boolean sent = true;
+                    writer.write(String.valueOf(sent));
+                    writer.println();
+                    writer.flush();
+
+                } else if (operation.contains(TEXT_SINGLE_FRIEND)) {
+
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+                    User friend = null;
+                    Friends friend1 = new Friends(currentUser);
+                    for (User friends : Friends.getFriendsList()) {
+                        if (friends.toString().contains(target)) {
+                            friend = friends;
+                        } else {
+
+                            writer.write(TEXT_SINGLE_FRIEND + ";" + "false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+
+                    String content = operationed[2];
+                    Friends reciver = new Friends(friend);
+
+                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false);
+
+
+                    String date = null;
+                    boolean isRead = false;
+                    messaging.sendMessage(currentUser, reciver, content, "date", isRead);
+                    boolean sent = true; 
+                    writer.write(String.valueOf(sent));
+                    writer.println();
+                    writer.flush();
+
+                } else if (operation.contains(MESSAGE_ALL_FRIENDS)) {
+
+                    String date = null;
+                    boolean isRead = false;
+
+
+                } else if (operation.contains(MESSAGE_ALL_USERS)) {
+
+                    String date = null;
+                    boolean isRead = false;
+
+
+                } else if (operation.contains(MESSAGE_SINGLE_FRIEND)) {
+
+                    String date = null;
+                    boolean isRead = false;
+                    break;
+
+
                 }
-                writer.close();
-                reader.close();
+
             }
+            writer.close();
+            reader.close();
         }
     }
 }
