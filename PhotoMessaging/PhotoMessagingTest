@@ -7,20 +7,19 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PhotoMessagingTest {
-    private User sender = new User("testSender");
-    private Friends receiver = new Friends(new User("testReceiver"));
-    private BufferedImage imageContent = ImageIO.read(new File("testImage.png"));
-    private String date = "2024-11-05";
+    private User sender = new User("Username");
+    private User user = new User("Username");
+    private Friends receiver = new Friends(user);
+    private BufferedImage imageContent;
+    private BufferedImage image;
+    private BufferedImage testImage;
+    private String date = "2024-11-03";
+    private ArrayList<PhotoMessaging> photoMessageHistory;
     private Boolean isRead = false;
     private ArrayList<User> allUsers = new ArrayList<>();
-    allUsers.add(receiver.getUser());
 
-    @Test
-    void getMessageHistory() {
-    }
-
-    @Test
-    void setMessageHistory() {
+    PhotoMessagingTest() throws IOException {
+        BufferedImage imageContent = ImageIO.read(new File("testImage.png"));
     }
 
     @Test
@@ -51,18 +50,6 @@ class PhotoMessagingTest {
     void getIsRead() {
         PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, image, date, false);
         assertFalse(photoMessage.getIsRead());
-    }
-
-    @Test
-    void rewritePhotoMessages() {
-    }
-
-    @Test
-    void testToString() {
-    }
-
-    @Test
-    void saveToFile() {
     }
 
     @Test
@@ -109,16 +96,16 @@ class PhotoMessagingTest {
         assertTrue(photoMessageHistory.isEmpty());
     }
 
-     @Test
+    @Test
     void testDeleteFriendsPhotoMessage() {
         PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllFriends");
         PhotoMessaging.getPhotoMessageHistory().add(message);
-        
+
         message.deleteFriendsPhotoMessage(sender, imageContent, date, isRead);
         assertFalse(PhotoMessaging.getPhotoMessageHistory().contains(message));
     }
 
-   @Test
+    @Test
     void testDeleteAllPhotoMessage() {
         PhotoMessaging message = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
         PhotoMessaging.getPhotoMessageHistory().add(message);
@@ -130,11 +117,11 @@ class PhotoMessagingTest {
     @Test
     void testReport() {
         PhotoMessaging message = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
-        
+
         // Redirect system output to capture the report message
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
-        
+
         message.report(sender, imageContent);
         assertTrue(outContent.toString().contains("Report has been filed successfully"));
     }

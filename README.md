@@ -14,12 +14,30 @@ Phase 1: The program is constructed by four main folders, each comprising an int
 
 ### User interface and class: 
 - Create a profile: Create a profile including username and password. Set up a profile picture if needed.
+- Contains methods for managing user interactions, such as checking friends and blocked users
 - Secure login: Validate their password while logging in for security.
+- Used by Messaging, PhotoMessaging, and Friends classes for message and interaction tracking
 ### Friends interface and class: 
 - Social interaction: Search up others' usernames and add friends.
+- Manages a User's friends list and blocked users
+- Provides methods to add, remove, and block/unblock users
 - Privacy controls: Block or restrict other users.
+- Used by Messaging and PhotoMessaging to validate interactions between users
 ### Messaging interface and class: 
 - Message history: Store messages in the conversation history with friends or all users.
 - Privacy: Delete messages from conversation history.
+- Represents a text message sent from one user to another
+- Contains fields for the sender, receiver, message content, date, and read status
+- Provides methods for sending, deleting, and saving messages to files
 ## PhotoMessaging interface and class:
 - Send and receive photos: Send and receive photos from each other.
+- Uses the basic Messaging functionality to include photo messages
+- Contains fields for storing image content utilizing BufferedImage
+- Provides methods to send, delete, and save photo messages, as well as reporting content
+
+## How to compile and run the project
+- Ensure JUnit 5 library is set up and use an IDE such as IntelliJ or use command line
+- Compile all files using the test cases in the src/test folder.
+- To run the project, use a JUnit Platform Console Launcher on an IDE
+## Who submitted what
+- Aiden submitted the report and the Vocareum workspace
