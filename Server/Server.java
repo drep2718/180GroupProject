@@ -78,6 +78,107 @@ public class Server implements FlagInterface {
                             }
                         }
                     }
+
+                    String operation = reader.readLine();
+                    String[] operationed = operation.split(";");
+
+                    String target = operationed[1];
+
+
+                    User friend = null;
+                    for (User user : User.getAllUsers()) {
+
+                        if (user.toString().contains(target)) {
+                            friend = user;
+                        } else {
+
+                            writer.write("false");
+                            writer.println();
+                            writer.flush();
+                        }
+                    }
+                    if (operation.contains(FRIENDS_ADD)) {
+                        currentUser.addFriend(friend);
+                        boolean added = currentUser.isFriend(friend);
+                        writer.write(String.valueOf(added));
+                        writer.println();
+                        writer.flush();
+
+
+                    } else if (operation.contains(FRIENDS_REMOVE)) {
+                        currentUser.removeFriend(friend);
+                        boolean removed = currentUser.isFriend(friend);
+                        writer.write(String.valueOf(!removed));
+                        writer.println();
+                        writer.flush();
+
+                    } else if (operation.contains(FRIENDS_BLOCK)) {
+                        currentUser.blockFriend(friend);
+                        boolean blocked = currentUser.isBlocked(friend);
+                        writer.write(String.valueOf(blocked));
+                        writer.println();
+                        writer.flush();
+
+                    } else if (operation.contains(FRIENDS_UNBLOCK)) {
+                        currentUser.unblockFriend(friend);
+                        boolean unblocked = currentUser.isBlocked(friend);
+                        writer.write(String.valueOf(!unblocked));
+                        writer.println();
+                        writer.flush();
+
+                    } else if (operation.contains(TEXT_ALL_FRIENDS)) {
+                        String content = operationed[2];
+
+                        String date = null;
+                        boolean isRead = false;
+                        currentUser.sendAllFriendsMessage(currentUser, content, date, isRead);
+                        boolean sent = true;
+                        writer.write(String.valueOf(sent));
+                        writer.println();
+                        writer.flush();
+
+
+                    } else if (operation.contains(TEXT_ALL_USERS)) {
+                        String content = operationed[2];
+                        String date = null;
+                        boolean isRead = false;
+                        currentUser.sendAllUsersMessage(currentUser, content, date, isRead);
+                        boolean sent = true;
+                        writer.write(String.valueOf(sent));
+                        writer.println();
+                        writer.flush();
+
+                    } else if (operation.contains(TEXT_SINGLE_FRIEND)) {
+                        String content = operationed[2];
+                        String date = null;
+                        boolean isRead = false;
+                        currentUser.sendMessage(currentUser, friend, content, date, isRead);
+                        boolean sent = true;
+                        writer.write(String.valueOf(sent));
+                        writer.println();
+                        writer.flush();
+
+                    } else if (operation.contains(MESSAGE_ALL_FRIENDS)) {
+                        String content = operationed[2];
+                        String date = null;
+                        boolean isRead = false;
+
+
+                    } else if (operation.contains(MESSAGE_ALL_USERS)) {
+                        String content = operationed[2];
+                        String date = null;
+                        boolean isRead = false;
+
+
+                    } else if (operation.contains(MESSAGE_SINGLE_FRIEND)) {
+                        String content = operationed[2];
+                        String date = null;
+                        boolean isRead = false;
+
+
+                    }
+
+
                 }
                 writer.close();
                 reader.close();
@@ -85,5 +186,4 @@ public class Server implements FlagInterface {
         }
     }
 }
-
 
