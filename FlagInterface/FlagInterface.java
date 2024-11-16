@@ -1,4 +1,3 @@
-
 public interface FlagInterface {
 
     // Login;username;password
@@ -7,40 +6,34 @@ public interface FlagInterface {
     // create;username;password
     String CREATE = "Create";
 
-    //FriendsAdd; PARAMETERS NEEDED
+    //FriendsAdd; friendName
     String FRIENDS_ADD = "friendsAdd";
 
-    // FriendsRemove; PARAMETERS NEEDED
+    // FriendsRemove; friend name
     String FRIENDS_REMOVE = "friendsRemove";
 
-    //Block; PARAMETERS NEEDED
+    //Block; friend name
     String FRIENDS_BLOCK = "friendsBlocked";
 
-    // Unblock; PARAMETERS NEEDED
+    // Unblock; friend name
     String FRIENDS_UNBLOCK = "friendsUnblocked";
 
-    // TextMessage; PARAMETERS NEEDED
-    String TEXT_MESSAGE = "TextMessage";
-
-    // TextAllFriends; PARAMETERS NEEDED
+    // TextAllFriends; text to send
     String TEXT_ALL_FRIENDS = "TextAllFriends";
 
-    // TextAllUsers; PARAMETERS NEEDED
+    // TextAllUsers; text to send
     String TEXT_ALL_USERS = "TextAllUsers";
 
-    // TextSingleFriend; PARAMETERS NEEDED
+    // TextSingleFriend; friend username; text to send 
     String TEXT_SINGLE_FRIEND = "TextSingleFriend";
 
-    // PhotoMessage; PARAMETERS NEEDED
-    String PHOTO_MESSAGE = "PhotoMessage";
-
-    // MessageAllFriends; PARAMETERS NEEDED
+    // MessageAllFriends; text to send
     String MESSAGE_ALL_FRIENDS = "MessageAllFriends";
 
-    // MessageAllUsers; PARAMETERS NEEDED
+    // MessageAllUsers; text to send
     String MESSAGE_ALL_USERS = "MessageAllUsers";
 
-    // MessageSingleFriend; PARAMETERS NEEDED
+    // MessageSingleFriend; friend username; text to send
     String MESSAGE_SINGLE_FRIEND = "MessageSingleFriend";
 
 
