@@ -1,39 +1,44 @@
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
 
 public class Client {
-  
-    private Socket socket;
-    private boolean connected;
+    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 
-    public Client() {
-        this.connected = false;
-    }
-   
-    public boolean connectToServer(String serverAddress, int port) {
-    
-    }
 
-    public void disconnectFromServer() {
-     
-    }
+        int portNumber = 2727;
+        Socket socket;
+        String host = "localhost";
 
-    public boolean isConnected() {
-        return connected;
-    }
+        try {
+            socket = new Socket(host, portNumber);
+        } catch (IOException e) {
+            return;
+        }
 
-    public boolean login(String username, String password) {
-       
-    }
 
-    public void sendRequest(String request) {
-  
-    }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
-    public String receiveResponse() {
-      
-    }
+        while (true) {
+            System.out.println("1 - Login");
 
+            ArrayList<String> title = new ArrayList<>();
+            String message;
+
+            while (true) {
+                message = reader.readLine();
+                break;
+            }
+
+            writer.close();
+            reader.close();
+
+
+        }
+    }
 }
-
