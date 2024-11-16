@@ -252,9 +252,9 @@ public class Server implements FlagInterface {
                     }
 
                     String content = operationed[2];
-                    Friends reciver = new Friends(friend);
+                    Friends receiver = new Friends(friend);
 
-                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
+                    Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
 
 
                     String date = null;
@@ -285,14 +285,14 @@ public class Server implements FlagInterface {
                     }
 
                     String content = operationed[2];
-                    Friends reciver = new Friends(friend);
+                    Friends receiver = new Friends(friend);
 
-                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false);
+                    Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false);
 
 
                     String date = null;
                     boolean isRead = false;
-                    messaging.sendMessage(currentUser, reciver, content, "date", isRead);
+                    messaging.sendMessage(currentUser, receiver, content, "date", isRead);
                     boolean sent = true; 
                     writer.write(String.valueOf(sent));
                     writer.println();
