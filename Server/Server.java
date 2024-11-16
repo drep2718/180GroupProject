@@ -32,7 +32,8 @@ public class Server implements FlagInterface {
                             for (String users : User.getUsernames()) {
                                 if (users.contains(username)) {
                                     validUser = true;
-                                    writer.println(LOGIN + "Correct username");
+                                    writer.println(LOGIN + "Correct username
+                                    currentUser = new User(username);
                                     writer.flush();
                                     break;
                                 }
