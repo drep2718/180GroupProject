@@ -25,6 +25,14 @@ public class User implements UserInterface {
         return allUsers;
     }
 
+    public static ArrayList<String> getUsernames() {
+        return usernames;
+    }
+
+    public static ArrayList<String> getPasswords() {
+        return passwords;
+    }
+
     public void setFormatName(String formatName) {
         this.formatName = formatName;
     }
