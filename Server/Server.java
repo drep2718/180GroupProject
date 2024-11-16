@@ -91,8 +91,8 @@ public class Server implements FlagInterface {
                     currentUser = new User(username);
                     User userNew = new User(username, password, bio);
                     userNew.createProfile(username, password, bio);
-                    userNew.validatePassword(username, password);
-                    writer.println(CREATE + ";" + "User created");
+                    boolean validate = userNew.validatePassword(username, password);
+                    writer.println(CREATE + ";" + validate);
                     writer.flush();
                 }
 
@@ -119,8 +119,7 @@ public class Server implements FlagInterface {
 
                     friend1.addFriend(friend);
                     boolean added = friend1.isFriend(friend);
-                    writer.write(String.valueOf(added));
-                    writer.println();
+                    writer.println(FRIENDS_ADD + ";" + added);
                     writer.flush();
 
 
@@ -145,8 +144,7 @@ public class Server implements FlagInterface {
 
                     friend1.removeFriend(friend);
                     boolean removed = friend1.isFriend(friend);
-                    writer.write(String.valueOf(!removed));
-                    writer.println();
+                    writer.println(FRIENDS_REMOVE + ";" + removed);
                     writer.flush();
 
                 } else if (operation.contains(FRIENDS_BLOCK)) {
@@ -162,7 +160,7 @@ public class Server implements FlagInterface {
                             friend = friends;
                         } else {
 
-                            writer.write(FRIENDS_BLOCK + ";" +"false");
+                            writer.write(FRIENDS_BLOCK + ";" + "false");
                             writer.println();
                             writer.flush();
                         }
@@ -170,8 +168,7 @@ public class Server implements FlagInterface {
 
                     friend1.blockUser(friend);
                     boolean blocked = friend1.isBlocked(friend);
-                    writer.write(String.valueOf(blocked));
-                    writer.println();
+                    writer.println(FRIENDS_BLOCK + ";" + blocked);
                     writer.flush();
 
                 } else if (operation.contains(FRIENDS_UNBLOCK)) {
@@ -195,9 +192,9 @@ public class Server implements FlagInterface {
 
                     friend1.unblockUser(friend);
                     boolean unblocked = friend1.isBlocked(friend);
-                    writer.write(String.valueOf(!unblocked));
-                    writer.println();
+                    writer.println(FRIENDS_UNBLOCK + ";" + unblocked);
                     writer.flush();
+
 
                 } else if (operation.contains(TEXT_ALL_FRIENDS)) {
 
@@ -212,7 +209,7 @@ public class Server implements FlagInterface {
                             friend = friends;
                         } else {
 
-                            writer.write(TEXT_ALL_FRIENDS + ";" +"false");
+                            writer.write(TEXT_ALL_FRIENDS + ";" + "false");
                             writer.println();
                             writer.flush();
                         }
@@ -226,9 +223,8 @@ public class Server implements FlagInterface {
                     String date = null;
                     boolean isRead = false;
                     messaging.sendAllFriendsMessage(currentUser, content, "date", isRead);
-                    boolean sent = true;
-                    writer.write(String.valueOf(sent));
-                    writer.println();
+                    boolean sent = true; //CHECK MORE THAN TRUE
+                    writer.println(TEXT_ALL_FRIENDS + ";" + sent);
                     writer.flush();
 
 
@@ -252,17 +248,16 @@ public class Server implements FlagInterface {
                     }
 
                     String content = operationed[2];
-                    Friends receiver = new Friends(friend);
+                    Friends reciver = new Friends(friend);
 
-                    Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
+                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
 
 
                     String date = null;
                     boolean isRead = false;
                     messaging.sendAllUsersMessage(currentUser, content, "date", isRead);
                     boolean sent = true;
-                    writer.write(String.valueOf(sent));
-                    writer.println();
+                    writer.println(TEXT_ALL_USERS + ";" + sent);
                     writer.flush();
 
                 } else if (operation.contains(TEXT_SINGLE_FRIEND)) {
@@ -285,17 +280,16 @@ public class Server implements FlagInterface {
                     }
 
                     String content = operationed[2];
-                    Friends receiver = new Friends(friend);
+                    Friends reciver = new Friends(friend);
 
-                    Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false);
+                    Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false);
 
 
                     String date = null;
                     boolean isRead = false;
-                    messaging.sendMessage(currentUser, receiver, content, "date", isRead);
-                    boolean sent = true; 
-                    writer.write(String.valueOf(sent));
-                    writer.println();
+                    messaging.sendMessage(currentUser, reciver, content, "date", isRead);
+                    boolean sent = true;
+                    writer.println(TEXT_SINGLE_FRIEND + ";" + sent);
                     writer.flush();
 
                 } else if (operation.contains(MESSAGE_ALL_FRIENDS)) {
