@@ -89,31 +89,6 @@ public class Server implements FlagInterface {
                     writer.flush();
                 }
 
-                for (User[] passwordArray : passwordsDatabase) {
-                    String message = reader.readLine();
-                    if (message.contains(LOGIN)) {
-                        String[] index = message.split(";");
-                        if (index.length > 1) {
-                            String password = index[2];
-                            boolean validPassword = false;
-
-                            for (String passwords : User.getPasswords()) {
-                                if (passwords.contains(password)) {
-                                    validPassword = true;
-                                    writer.println("Login Successful");
-                                    break;
-                                }
-                                if (!validPassword) {
-                                    writer.println("Login Failed");
-                                    return;
-                                } else {
-                                    writer.println("No password provided");
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
                     String operation = reader.readLine();
                     String[] operationed = operation.split(";");
 
