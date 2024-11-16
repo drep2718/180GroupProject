@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-public class User implements UserInterface {
+class User implements UserInterface {
     private String username;
     private String password;
     private String bio;
@@ -23,6 +23,14 @@ public class User implements UserInterface {
 
     public static ArrayList<User> getAllUsers() {
         return allUsers;
+    }
+
+    public static ArrayList<String> getUsernames() {
+        return usernames;
+    }
+
+    public static ArrayList<String> getPasswords() {
+        return passwords;
     }
 
     public void setFormatName(String formatName) {
