@@ -6,6 +6,12 @@ public class ThreadSafe extends Thread {
     private Server[] servers;
     private Client[][] clients;
 
+    static {
+        for (int i = 0; i < 10; i++ ) {
+            locked.add(false);
+        }
+    }
+
     public ThreadSafe() {
 
         servers = new Server[10];
