@@ -14,9 +14,9 @@ public class Server implements FlagInterface {
     private static ArrayList<String> usernames = new ArrayList<>();
     private static ArrayList<User> allUsers = new ArrayList<>();
     private static ArrayList<User> friendsList = new ArrayList<>();
-    private static ArrayList<User> friends = new ArrayList<>();
 
-
+    private static final Object SERVER_LOCK = new Object();
+    private int serverNum;
 
 
     public static void main(String[] args) throws UnknownHostException, IOException {
@@ -249,8 +249,6 @@ public class Server implements FlagInterface {
                         } else if (secondMessage.contains(TEXT_ALL_FRIENDS)) {
 
                             String[] operation = secondMessage.split(";");
-                            String date = "TODAY";
-                            boolean isRead = false;
                             User friend = null;
                             Friends friend1 = new Friends(currentUser);
                             friend1.loadFriends();
@@ -258,84 +256,86 @@ public class Server implements FlagInterface {
                             currentUser.loadUsers();
                             allUsers = User.getAllUsers();
                             friendsList = Friends.getFriendsList();
+
+
                             String content = operation[1];
+                            Friends receiver = new Friends(friend); // this is null, use the correct constructor for text all friends
 
+                            Messaging messaging = new Messaging(currentUser, receiver, content, "Date", false);
 
-
-                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                            messages.sendAllFriendsMessage(currentUser, content, date, isRead);
-                            boolean sent = true;
+                            String date = null;
+                            boolean isRead = false;
+                            messaging.sendAllFriendsMessage(currentUser, content, "date", isRead);
+                            boolean sent = true; //CHECK MORE THAN TRUE
                             writer.println(TEXT_ALL_FRIENDS + ";" + sent);
                             writer.flush();
 
 
                         } else if (secondMessage.contains(TEXT_ALL_USERS)) {
 
-                            String[] operation = secondMessage.split(";");
-                            String date = "TODAY";
-                            boolean isRead = false;
+                            String[] operationed = secondMessage.split(";");
+
+                            String target = operationed[1];
+
                             User friend = null;
                             Friends friend1 = new Friends(currentUser);
-                            friend1.loadFriends();
-                            friend1.loadBlocked();
-                            currentUser.loadUsers();
-                            allUsers = User.getAllUsers();
-                            friendsList = Friends.getFriendsList();
-                            String content = operation[1];
+                            for (User friends : Friends.getFriendsList()) {
+                                if (friends.toString().contains(target)) {
+                                    friend = friends;
+                                } else {
 
-
-
-                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                            messages.sendAllUsersMessage(currentUser, content, date, isRead);
-                            boolean sent = true;
-                            writer.println(TEXT_ALL_FRIENDS + ";" + sent);
-                            writer.flush();
-
-
-
-                        } else if (secondMessage.contains(TEXT_SINGLE_FRIEND)) {
-                            String[] operation = secondMessage.split(";");
-                            String date = "TODAY";
-                            boolean isRead = false;
-
-                            Friends friend1 = new Friends(currentUser);
-                            friend1.loadFriends();
-                            friend1.loadBlocked();
-                            currentUser.loadUsers();
-                            friendsList = Friends.getFriendsList();
-                            allUsers = User.getAllUsers();
-                            String friendUsername = operation[1];
-                            String content = operation[2];
-
-                            for (User user: friendsList) {
-                                System.out.println(user);
-                            }
-
-                            Friends receiver = null;
-                            for (User user : allUsers) {
-                                if (user.getUsername().equals(friendUsername)) {
-                                    System.out.println(user);
-                                    receiver = new Friends(user);
-                                    System.out.println(receiver);
-                                    break;
+                                    writer.write(TEXT_ALL_USERS + ";" + "false");
+                                    writer.println();
+                                    writer.flush();
                                 }
                             }
 
-                            if (receiver.isFriend(currentUser)) {
-                                System.out.println("FRIENDS");
+                            String content = operationed[2];
+                            Friends reciver = new Friends(friend);
+
+                            Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false); // WRONG CONSTRUCTOR LOOK AT METHOD
+
+
+                            String date = null;
+                            boolean isRead = false;
+                            messaging.sendAllUsersMessage(currentUser, content, "date", isRead);
+                            boolean sent = true;
+                            writer.println(TEXT_ALL_USERS + ";" + sent);
+                            writer.flush();
+
+                        } else if (secondMessage.contains(TEXT_SINGLE_FRIEND)) {
+
+                            String[] operationed = secondMessage.split(";");
+
+                            String target = operationed[1];
+
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            for (User friends : Friends.getFriendsList()) {
+                                if (friends.toString().contains(target)) {
+                                    friend = friends;
+                                } else {
+
+                                    writer.write(TEXT_SINGLE_FRIEND + ";" + "false");
+                                    writer.println();
+                                    writer.flush();
+                                }
                             }
 
-                            if (receiver != null) {
-                                Messaging messaging = new Messaging(currentUser, receiver, content, date, isRead);
-                                messaging.sendMessage(currentUser, receiver, content, date, isRead);
-                                boolean sent = true;
-                                writer.println(TEXT_SINGLE_FRIEND + ";" + sent);
-                                writer.flush();
-                            } else {
-                                writer.println(TEXT_SINGLE_FRIEND + ";false");
-                                writer.flush();
-                            }
-                        }else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+                            String content = operationed[2];
+                            Friends reciver = new Friends(friend);
+
+                            Messaging messaging = new Messaging(currentUser, reciver, content, "Date", false);
+
+
+                            String date = null;
+                            boolean isRead = false;
+                            messaging.sendMessage(currentUser, reciver, content, "date", isRead);
+                            boolean sent = true;
+                            writer.println(TEXT_SINGLE_FRIEND + ";" + sent);
+                            writer.flush();
+
+                        } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
 
                             String date = null;
                             boolean isRead = false;
@@ -368,6 +368,10 @@ public class Server implements FlagInterface {
             serverSocket.close();
         }
     }
+
+    public void serverStart(int value) {
+        synchronized (SERVER_LOCK) {
+            serverNum += value;
+        }
+    }
 }
-
-
