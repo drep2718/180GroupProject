@@ -3,9 +3,7 @@ import java.net.*;
 import java.util.Scanner;
 
 
-public class Client extends Thread implements FlagInterface {
-    private final Server server;
-
+public class Client implements FlagInterface {
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
@@ -421,21 +419,6 @@ public class Client extends Thread implements FlagInterface {
             writer.close();
             reader.close();
             socket.close();
-        }
-    }
-
-    public Client(Server server) {
-        this.server = server;
-    }
-
-    public void run() {
-        for (int i = 0; i < 10; i++) {
-            server.serverStart(i);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
