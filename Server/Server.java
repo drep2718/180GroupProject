@@ -15,6 +15,9 @@ public class Server implements FlagInterface {
     private static ArrayList<User> allUsers = new ArrayList<>();
     private static ArrayList<User> friendsList = new ArrayList<>();
 
+    private static final Object SERVER_LOCK = new Object();
+    private int serverNum;
+
 
     public static void main(String[] args) throws UnknownHostException, IOException {
         ServerSocket serverSocket = new ServerSocket(2727);
@@ -365,6 +368,11 @@ public class Server implements FlagInterface {
             serverSocket.close();
         }
     }
-}
 
+    public void serverStart(int value) {
+        synchronized (SERVER_LOCK) {
+            serverNum += value;
+        }
+    }
+}
 
