@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-class User implements UserInterface {
+public class User implements UserInterface {
     private String username;
     private String password;
     private String bio;
@@ -157,38 +157,48 @@ class User implements UserInterface {
     }
 
 
-    public void loadUsers() { // this method if going to be called at the begging of each run of the program to read the saved data back into the array lists
+    public void loadUsers() {
         synchronized (gatekeeper) {
+            usernames.clear();
+            passwords.clear();
+            bios.clear();
+            allUsers.clear();
+
             try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
-                String line = bfr.readLine();
-                while (line != null) {
+                String line;
+                while ((line = bfr.readLine()) != null) {
                     String[] parts = line.split(",");
-                    String username = parts[0];
-                    String password = parts[1];
-                    String bio = parts[2];
+                    if (parts.length >= 3) {
+                        String username = parts[0];
+                        String password = parts[1];
+                        String bio = parts[2];
 
-                    usernames.add(username);
-                    passwords.add(password);
-                    bios.add(bio);
+                        usernames.add(username);
+                        passwords.add(password);
+                        bios.add(bio);
 
-                    if (parts.length > 3) {
-                        String filepath = parts[3];
-                        BufferedImage image = ImageIO.read(new File(filepath));
-
-                        User user = new User(username, password, bio, image, filepath,
-                                filepath.substring(filepath.lastIndexOf('.') + 1));
-                        allUsers.add(user);
-                    } else {
-                        User user = new User(username, password, bio);
+                        User user;
+                        if (parts.length > 3) {
+                            String filepath = parts[3];
+                            try {
+                                BufferedImage image = ImageIO.read(new File(filepath));
+                                String formatName = filepath.substring(filepath.lastIndexOf('.') + 1);
+                                user = new User(username, password, bio, image, filepath, formatName);
+                            } catch (IOException e) {
+                                user = new User(username, password, bio);
+                                System.err.println("Warning: Could not load image for user " + username);
+                            }
+                        } else {
+                            user = new User(username, password, bio);
+                        }
                         allUsers.add(user);
                     }
                 }
-
             } catch (IOException e) {
+                System.err.println("Error loading users: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-
     }
 
     public void updateUsername(String newUsername) {
@@ -352,4 +362,25 @@ class User implements UserInterface {
     }
 
 
-}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+
+            User otherUser = (User) obj;
+            if (this.username == null) {
+                return otherUser.username == null;
+            }
+            return this.username.equals(otherUser.username);
+        }
+
+    }
+
