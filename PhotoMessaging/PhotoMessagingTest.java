@@ -1,17 +1,17 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Team Project -- Photomessaging Test
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
 
 class PhotoMessagingTest {
@@ -28,7 +28,7 @@ class PhotoMessagingTest {
         sender = new User("testSender", "password", "Test User");
         receiverUser = new User("testReceiver", "password", "Receiver User");
         receiver = new Friends(sender);
-        receiver.addFriend(receiverUser); 
+        receiver.addFriend(receiverUser);
         imageContent = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         date = "2024-11-17";
         photoMessaging = new PhotoMessaging(sender, receiver, imageContent, date, false);
@@ -131,7 +131,6 @@ class PhotoMessagingTest {
             fail("IOException");
         }
     }
-
 
 
     @Test
