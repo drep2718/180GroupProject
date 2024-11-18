@@ -9,13 +9,12 @@ public class Server implements FlagInterface {
     private static List<User[]> passwordsDatabase = new ArrayList<>();
     private static ArrayList<Messaging> messageHistoryFriends = new ArrayList<>();
     private ArrayList<Messaging> messageHistoryUsers = new ArrayList<>();
-    private ArrayList<Messaging> messageHistory = new ArrayList<>();
 
     private static ArrayList<String> usernames = new ArrayList<>();
     private static ArrayList<User> allUsers = new ArrayList<>();
     private static ArrayList<User> friendsList = new ArrayList<>();
     private static ArrayList<User> friends = new ArrayList<>();
-
+    private static ArrayList<Messaging> messageHistory = new ArrayList<>();
     private static final Object SERVER_LOCK = new Object();
     private int serverNum;
 
@@ -327,7 +326,26 @@ public class Server implements FlagInterface {
                             writer.flush();
 
 
+                        } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+
+                            String date = null;
+                            boolean isRead = false;
+
+
+                        } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+
+                            String date = null;
+                            boolean isRead = false;
+
+
+                        } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+
+                            String date = null;
+                            boolean isRead = false;
+                            break;
+
                         } else if (secondMessage.contains(DELETE_SINGLE_FRIEND)) {
+
 
                             String[] operation = secondMessage.split(";");
                             String date = "TODAY";
@@ -339,6 +357,7 @@ public class Server implements FlagInterface {
                             currentUserFriends.loadBlocked();
                             allUsers = User.getAllUsers();
                             friendsList = Friends.getFriendsList();
+                            messageHistory = Messaging.getMessageHistory();
 
                             User friendUser = null;
                             for (User user : User.getAllUsers()) {
@@ -358,13 +377,48 @@ public class Server implements FlagInterface {
                             System.out.println(friendFriends);
                             System.out.println(friendsList);
 
-                            Messaging messaging = new Messaging(currentUser, friendFriends, content, date, isRead);
-                            messaging.deleteMessage(currentUser, friendFriends, content, date, isRead);
-                            writer.println(TEXT_SINGLE_FRIEND + ";true");
+                            Messaging messageTemp = new Messaging(currentUser, friendFriends, content, date, isRead);
+                            messageTemp.loadMessages(currentUser);
+
+
+                            System.out.println(messageHistory);
+
+
+                            friendUser = null;
+                            for (User user : User.getAllUsers()) {
+                                if (user.getUsername().equals(friendUsername)) {
+                                    friendUser = user;
+                                    break;
+                                }
+                            }
+
+                            if (friendUser == null) {
+                                writer.println(DELETE_SINGLE_FRIEND + ";false");
+                                writer.flush();
+                                return;
+                            }
+
+                            friendFriends = new Friends(friendUser);
+
+
+                            boolean messageDeleted = false;
+                            for (Messaging message1 : messageHistory) {
+                                if (message1.getSender().equals(currentUser) &&
+                                        message1.getReceiver().equals(friendFriends) &&
+                                        message1.getContent().equals(content)) {
+                                    message1.deleteMessage(currentUser, friendFriends, content, date, isRead);
+                                    messageDeleted = true;
+                                    break;
+                                }
+                            }
+
+
+                            if (messageDeleted) {
+                                writer.println(DELETE_SINGLE_FRIEND + ";true");
+                            } else {
+                                writer.println(DELETE_SINGLE_FRIEND + ";false");
+                            }
                             writer.flush();
-
-                      
-
 
                         } else if (secondMessage.contains(DELETE_ALL_FRIENDS)) {
 
@@ -379,55 +433,49 @@ public class Server implements FlagInterface {
                             allUsers = User.getAllUsers();
                             friendsList = Friends.getFriendsList();
                             String content = operation[1];
+                            messageHistory = Messaging.getMessageHistory();
 
 
                             Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                            messages.deleteFriendsMessage(currentUser, content, date, isRead);
-                            boolean sent = true;
-                            writer.println(DELETE_ALL_FRIENDS + ";" + sent);
-                            writer.flush();
-                            
-                        } else if (secondMessage.contains(DELETE_ALL_USERS)) {
-                            String[] operation = secondMessage.split(";");
-                            String date = "TODAY";
-                            boolean isRead = false;
-                            User friend = null;
-                            Friends friend1 = new Friends(currentUser);
-                            friend1.loadFriends();
-                            friend1.loadBlocked();
-                            currentUser.loadUsers();
-                            allUsers = User.getAllUsers();
-                            friendsList = Friends.getFriendsList();
-                            String content = operation[1];
+                            messages.loadAllFriendMessages(currentUser);
 
+                            boolean messageDeleted = false;
+                            for (Messaging message2 : messageHistory) {
+                                if (message2.getSender().equals(currentUser) && message2.getContent().equals(content) &&
+                                        message2.getMessageType().equals("AllFriends")) {
+                                    message2.deleteFriendsMessage(currentUser, content, date, isRead);
+                                    messageDeleted = true;
+                                    break;
+                                }
+                            }
 
-                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                            messages.deleteAllMessage(currentUser, content, date, isRead);
-                            boolean sent = true;
-                            writer.println(DELETE_ALL_USERS + ";" + sent);
+                            boolean sent = messageDeleted;
+                            writer.println(TEXT_ALL_FRIENDS + ";" + sent);
                             writer.flush();
 
 
                         }
-                    
 
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    socket.close();
+
                 }
+            } catch(IOException e){
+                e.printStackTrace();
+            } finally{
+                socket.close();
             }
-
-        } finally {
-            serverSocket.close();
         }
-    }
 
-    public void serverStart(int value) {
-        synchronized (SERVER_LOCK) {
-            serverNum += value;
-        }
+    } finally
+
+    {
+        serverSocket.close();
     }
+}
+
+public void serverStart(int value) {
+    synchronized (SERVER_LOCK) {
+        serverNum += value;
+    }
+}
 }
 
