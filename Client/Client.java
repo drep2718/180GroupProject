@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 public class Client extends Thread implements FlagInterface {
     private final Server server;
+
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
