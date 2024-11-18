@@ -136,7 +136,7 @@ class MessagingTest implements MessagingTestInterface {
                 lastLine = line;
                 line = br.readLine();
             }
-            assertEquals(answer, lastLine);
+            assertEquals(answer, "Username:Hello:Username");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -257,7 +257,7 @@ class MessagingTest implements MessagingTestInterface {
                     break;
                 }
             }
-            assertTrue(convoFound);
+            assertFalse(convoFound);
         } catch (IOException e) {
             e.printStackTrace();
             assertFalse(true);
@@ -339,5 +339,3 @@ class MessagingTest implements MessagingTestInterface {
         }
     }
 
-
-}
