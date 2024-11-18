@@ -1,5 +1,14 @@
 public interface FlagInterface {
 
+    /**
+ * Team Project -- Flag Interface
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
+
     // Login;username;password
     String LOGIN = "Login";
 
