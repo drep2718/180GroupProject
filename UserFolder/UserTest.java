@@ -6,6 +6,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Team Project -- UserTest Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 class UserTest implements UserTestInterface {
     private User user = new User("Username", "Password", "Bio");
     BufferedImage image;
