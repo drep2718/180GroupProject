@@ -54,6 +54,71 @@ public class Messaging implements MessagingInterface {
         Messaging.messageHistory = messageHistory;
     }
 
+    public void loadMessages(User user) {
+        messageHistory.clear();
+        String filename = user.getUsername() + ".txt";
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length >= 2) {
+                    String senderUsername = parts[0];
+                    String content = parts[1];
+
+                    if (parts.length == 3) {
+                        String receiverUsername = parts[2];
+                        User sender = new User(senderUsername);
+                        Friends receiver = new Friends(new User(receiverUsername));
+                        Messaging message = new Messaging(sender, receiver, content, "datePlaceholder", false);
+                        messageHistory.add(message);
+                    } else {
+                        User sender = new User(senderUsername);
+                        Messaging message = new Messaging(sender, content, new ArrayList<>(), "datePlaceholder", false, "Single");
+                        messageHistory.add(message);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading messages for user " + user.getUsername() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void loadAllFriendMessages(User user) {
+        messageHistory.clear();
+        String filename = user.getUsername() + "AllFriends.txt";
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length >= 2) {
+                    String senderUsername = parts[0];
+                    String content = parts[1];
+
+                    if (parts.length == 3) {
+                        String receiverUsername = parts[2];
+                        User sender = new User(senderUsername);
+                        Friends receiver = new Friends(new User(receiverUsername));
+                        Messaging message = new Messaging(sender, receiver, content, "datePlaceholder", false);
+                        messageHistory.add(message);
+                    } else {
+                        User sender = new User(senderUsername);
+                        Messaging message = new Messaging(sender, content, new ArrayList<>(), "datePlaceholder", false, "Single");
+                        messageHistory.add(message);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading messages for user " + user.getUsername() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
     public void rewriteMessages() {
         String senderFile;
@@ -198,29 +263,49 @@ public class Messaging implements MessagingInterface {
 
 
     public void deleteMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
-
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
-        for (Messaging messages : messageHistory) {
-            messagesToDelete.add(messages);
-            break;
+        boolean messageDeleted = false;
+
+        for (Messaging message : messageHistory) {
+            if (message.getSender().equals(sender) &&
+                    message.getReceiver().equals(receiver) &&
+                    message.getContent().equals(content)) {
+
+                messagesToDelete.add(message);
+                messageDeleted = true;
+            }
         }
-        messageHistory.removeAll(messagesToDelete);
-        rewriteMessages();
+
+        if (messageDeleted) {
+            messageHistory.removeAll(messagesToDelete);
+            rewriteMessages();
+            System.out.println("Message deleted.");
+        } else {
+            System.out.println("No matching message found to delete.");
+        }
     }
+
 
     public void deleteFriendsMessage(User sender, String content, String date, Boolean isRead) {
         ArrayList<Messaging> deletedFriendsMessages = new ArrayList<>();
+        boolean messageFound = false;
+
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender) && messages.getContent().equals(content) && (messageType.equals("AllFriends"))) {
+            if (messages.getSender().equals(sender) && messages.getContent().equals(content) ) {
                 deletedFriendsMessages.add(messages);
-                break;
-            } else {
-                System.out.println("You are not the sender of the message");
+                messageFound = true;
             }
         }
-        messageHistory.removeAll(deletedFriendsMessages);
-        rewriteMessages();
+
+        if (messageFound) {
+            messageHistory.removeAll(deletedFriendsMessages);
+            rewriteMessages();
+            System.out.println("Message deleted successfully.");
+        } else {
+            System.out.println("Message not found for deletion.");
+        }
     }
+
 
     public void deleteAllMessage(User sender, String content, String date, Boolean isRead) {
         ArrayList<Messaging> deletedAllMessages = new ArrayList<>();
