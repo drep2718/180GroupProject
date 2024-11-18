@@ -29,15 +29,27 @@ Phase 1: The program is constructed by four main folders, each comprising an int
 - Represents a text message sent from one user to another
 - Contains fields for the sender, receiver, message content, date, and read status
 - Provides methods for sending, deleting, and saving messages to files
-## PhotoMessaging interface and class:
+### PhotoMessaging interface and class:
 - Send and receive photos: Send and receive photos from each other.
 - Uses the basic Messaging functionality to include photo messages
 - Contains fields for storing image content utilizing BufferedImage
 - Provides methods to send, delete, and save photo messages, as well as reporting content
 
+Phase 2: The program is now thread safe, with added servers that can work with clients concurrently.
+### Client class:
+- Allows users to connect with the server class
+- Displays choices for users to choose (logging in/out, creating accounts, exit, etc.)
+### Server class:
+Processes every command that the user wishes to make, including logging in/out, creating accounts, adding/blocking/removing friends, and sending/deleting messages.
+### ThreadSafe class:
+Allows multiple clients to be online in the same server without running into errors/conflicts.
+
+NOTE: There is no test cases as we do not have anything that does not relate to the client and server classes, along with concurrency.
+
 ## How to compile and run the project
 - Ensure JUnit 5 library is set up and use an IDE such as IntelliJ or use command line
 - Compile all files using the test cases in the src/test folder.
 - To run the project, use a JUnit Platform Console Launcher on an IDE
+  
 ## Who submitted what
 - Aiden submitted the report and the Vocareum workspace
