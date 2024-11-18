@@ -100,9 +100,6 @@ public class Server implements FlagInterface {
                             usernames = User.getUsernames();
                             boolean validUser = false;
                             User newUser = currentUser.createProfile(username, password, bio);
-                            String check = newUser.getUsername();
-                            String check1 = newUser.getPassword();
-                            System.out.println(check + " " + check1);
 
 
                             for (String existingUsername : User.getUsernames()) {
@@ -334,31 +331,31 @@ public class Server implements FlagInterface {
                             writer.println(TEXT_SINGLE_FRIEND + ";true");
                             writer.flush();
 
+
                         } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
-                                try {
-                                    InputStream inputStream = socket.getInputStream();
-                                    BufferedImage imageContent = ImageIO.read(inputStream);
+                            try {
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
 
-                                    String date = "TODAY";
-                                    boolean isRead = false;
+                                String date = "TODAY";
+                                boolean isRead = false;
 
-                                    Friends currentUserFriends = new Friends(currentUser);
-                                    currentUserFriends.loadFriends();
-                                    currentUserFriends.loadBlocked();
-                                    allUsers = User.getAllUsers();
-                                    friendsList = Friends.getFriendsList();
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
+                                friendsList = Friends.getFriendsList();
 
-                                    PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
-                                    photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
+                                photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
 
-                                    boolean sent = true;
-                                    writer.println(MESSAGE_ALL_FRIENDS + ";" + sent);
-                                    writer.flush();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                boolean sent = true;
+                                writer.println(MESSAGE_ALL_FRIENDS + ";" + sent);
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+                        } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
                             try {
                                 InputStream inputStream = socket.getInputStream();
                                 BufferedImage imageContent = ImageIO.read(inputStream);
@@ -380,8 +377,7 @@ public class Server implements FlagInterface {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        }
-                        else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+                        } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
                             try {
                                 String[] operation = secondMessage.split(";");
                                 String date = "TODAY";
@@ -421,8 +417,6 @@ public class Server implements FlagInterface {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        }
-
                         } else if (secondMessage.contains(DELETE_SINGLE_FRIEND)) {
 
 
@@ -517,7 +511,7 @@ public class Server implements FlagInterface {
 
 
                             Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
-                            messageTemp.loadMessages(currentUser);
+                            messageTemp.loadAllFriendMessages(currentUser);
 
                             System.out.println(messageHistory);
 
@@ -540,7 +534,7 @@ public class Server implements FlagInterface {
                             writer.flush();
 
 
-                        } else if (secondMessage.contains(DELETE_ALL_USERS)){
+                        } else if (secondMessage.contains(DELETE_ALL_USERS)) {
 
                             String[] operation = secondMessage.split(";");
                             String date = "TODAY";
@@ -581,25 +575,22 @@ public class Server implements FlagInterface {
                         }
 
 
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    socket.close();
                 }
-            } catch(IOException e){
-                e.printStackTrace();
-            } finally{
-                socket.close();
             }
+
+        } finally {
+            serverSocket.close();
         }
+    }
 
-    } finally
-
-    {
-        serverSocket.close();
+    public void serverStart(int value) {
+        synchronized (SERVER_LOCK) {
+            serverNum += value;
+        }
     }
 }
-
-public void serverStart(int value) {
-    synchronized (SERVER_LOCK) {
-        serverNum += value;
-    }
-}
-}
-
