@@ -24,7 +24,7 @@ public interface FlagInterface {
     // TextAllUsers; text to send
     String TEXT_ALL_USERS = "TextAllUsers";
 
-    // TextSingleFriend; friend username; text to send 
+    // TextSingleFriend; friend username; text to send
     String TEXT_SINGLE_FRIEND = "TextSingleFriend";
 
     // MessageAllFriends; text to send
@@ -35,6 +35,13 @@ public interface FlagInterface {
 
     // MessageSingleFriend; friend username; text to send
     String MESSAGE_SINGLE_FRIEND = "MessageSingleFriend";
+    
+    // friend username:content
+    String DELETE_ALL_FRIENDS = "DeleteMessageToAllFriends";
+    
+    // friend username: content
+    String DELETE_ALL_USERS = "DeleteMessageToAllUsers";
 
+    String DELETE_SINGLE_FRIEND = "DeleteSingleFriendMessage";
 
 }
