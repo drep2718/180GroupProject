@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 
 public class Server implements FlagInterface {
@@ -325,24 +327,94 @@ public class Server implements FlagInterface {
                             writer.println(TEXT_SINGLE_FRIEND + ";true");
                             writer.flush();
 
-
                         } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+                                try {
+                                    InputStream inputStream = socket.getInputStream();
+                                    BufferedImage imageContent = ImageIO.read(inputStream);
 
-                            String date = null;
-                            boolean isRead = false;
+                                    String date = "TODAY";
+                                    boolean isRead = false;
 
+                                    Friends currentUserFriends = new Friends(currentUser);
+                                    currentUserFriends.loadFriends();
+                                    currentUserFriends.loadBlocked();
+                                    allUsers = User.getAllUsers();
+                                    friendsList = Friends.getFriendsList();
 
-                        } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+                                    PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
+                                    photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
 
-                            String date = null;
-                            boolean isRead = false;
+                                    boolean sent = true;
+                                    writer.println(MESSAGE_ALL_FRIENDS + ";" + sent);
+                                    writer.flush();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+                            try {
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
 
+                                String date = "TODAY";
+                                boolean isRead = false;
 
-                        } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
 
-                            String date = null;
-                            boolean isRead = false;
-                            break;
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, allUsers, date, isRead, "AllUsers");
+                                photoMessage.sendAllUsersPhotoMessage(currentUser, imageContent, date, isRead);
+
+                                boolean sent = true;
+                                writer.println(MESSAGE_ALL_USERS + ";" + sent);
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+                            try {
+                                String[] operation = secondMessage.split(";");
+                                String date = "TODAY";
+                                boolean isRead = false;
+                                String friendUsername = operation[1];
+
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
+
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
+                                friendsList = Friends.getFriendsList();
+
+                                User friendUser = null;
+                                for (User user : allUsers) {
+                                    if (user.getUsername().equals(friendUsername)) {
+                                        friendUser = user;
+                                        break;
+                                    }
+                                }
+
+                                if (friendUser == null) {
+                                    writer.println(MESSAGE_SINGLE_FRIEND + ";false");
+                                    writer.flush();
+                                    return;
+                                }
+
+                                Friends friendFriends = new Friends(friendUser);
+
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, friendFriends, imageContent, date, isRead);
+                                photoMessage.sendPhotoMessage(currentUser, friendFriends, imageContent, date, isRead);
+
+                                writer.println(MESSAGE_SINGLE_FRIEND + ";true");
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                         } else if (secondMessage.contains(DELETE_SINGLE_FRIEND)) {
 
