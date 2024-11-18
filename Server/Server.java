@@ -4,7 +4,14 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-
+/**
+ * Team Project -- Server Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 public class Server implements FlagInterface {
 
     private static List<User[]> userDatabase = new ArrayList<>();
