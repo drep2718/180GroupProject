@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.io.*;
 
+/**
+ * Team Project -- Messaging Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 public class Messaging implements MessagingInterface {
     private User sender;
     private Friends receiver;
