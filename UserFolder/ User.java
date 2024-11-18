@@ -7,9 +7,7 @@ import java.util.ArrayList;
  * Team Project -- User Class
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
 public class User implements UserInterface {
     private String username;
@@ -370,25 +368,24 @@ public class User implements UserInterface {
     }
 
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-
-            User otherUser = (User) obj;
-            if (this.username == null) {
-                return otherUser.username == null;
-            }
-            return this.username.equals(otherUser.username);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
 
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        User otherUser = (User) obj;
+        if (this.username == null) {
+            return otherUser.username == null;
+        }
+        return this.username.equals(otherUser.username);
     }
 
+}
