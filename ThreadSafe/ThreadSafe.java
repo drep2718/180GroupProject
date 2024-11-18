@@ -1,5 +1,14 @@
 import java.util.*;
 
+/**
+ * Team Project -- ThreadSafe Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
+
 public class ThreadSafe extends Thread {
     private static final Object MAIN_LOCK = new Object();
     private static List<Boolean> locked;
