@@ -280,6 +280,7 @@ public class Client extends Thread implements FlagInterface {
                             writer.flush();
                             System.out.println("1- Send a text message");
                             System.out.println("2- Send a photo message");
+                            System.out.println("3- Delete text message");
                             String whichMessage = scan.nextLine();
                             if (whichMessage.equals("1")) {
                                 System.out.println("1- Send text message to all friends");
@@ -310,7 +311,9 @@ public class Client extends Thread implements FlagInterface {
                                     writer.println();
                                     writer.flush();
                                 }
-                                                        } else if (whichMessage.equals("2")) {
+
+
+                            } else if (whichMessage.equals("2")) {
                                 try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
 
                                     System.out.println("1- Send photo message to all friends");
@@ -347,7 +350,6 @@ public class Client extends Thread implements FlagInterface {
                                             File imageFile = new File(photoPath);
                                             byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
                                             dataOutputStream.writeInt(imageBytes.length);
-
                                             dataOutputStream.write(imageBytes);
                                             dataOutputStream.flush();
                                             System.out.println("Photo message sent to all users.");
@@ -378,7 +380,38 @@ public class Client extends Thread implements FlagInterface {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            
+
+
+                            } else if (whichMessage.equals("3")) {
+                                System.out.println("1- Delete message to all friends");
+                                System.out.println("2- Delete message to all users");
+                                System.out.println("3- Delete message to single friend");
+                                String textType = scan.nextLine();
+
+                                if (textType.equals("1")) {
+                                    System.out.println("What message to all your friends would you like to delete");
+                                    String text = scan.nextLine();
+                                    String messageALlFriends = DELETE_ALL_FRIENDS + ";" + text;
+                                    writer.write(messageALlFriends);
+                                    writer.println();
+                                    writer.flush();
+                                } else if (textType.equals("2")) {
+                                    System.out.println("What message to all your users would you like to delete");
+                                    String text = scan.nextLine();
+                                    String messageAllUsers = DELETE_ALL_USERS + ";" + text;
+                                    writer.write(messageAllUsers);
+                                    writer.println();
+                                    writer.flush();
+                                } else if (textType.equals("3")) {
+                                    System.out.println("Who would you like to delete the message from");
+                                    String friend = scan.nextLine();
+                                    System.out.println("What did the message say");
+                                    String text = scan.nextLine();
+                                    String textSingleFriend = DELETE_SINGLE_FRIEND + ";" + friend + ";" + text;
+                                    writer.write(textSingleFriend);
+                                    writer.println();
+                                    writer.flush();
+                                }
 
                                 String message2 = reader.readLine();
                                 String[] index = message2.split(";");
@@ -436,6 +469,36 @@ public class Client extends Thread implements FlagInterface {
                                 } else if (message2.contains(MESSAGE_SINGLE_FRIEND)) {
                                     if (trueOrFalse.equals("true")) {
                                         System.out.println("You successfully messaged a friend");
+                                    } else if (trueOrFalse.equals("false")) {
+                                        System.out.println("You cannot message this friend");
+                                        continue;
+                                    } else {
+                                        System.out.println("Failure");
+                                        continue;
+                                    }
+                                } else if (message2.contains(DELETE_ALL_FRIENDS)) {
+                                    if (trueOrFalse.equals("true")) {
+                                        System.out.println("You successfully deleted all friend");
+                                    } else if (trueOrFalse.equals("false")) {
+                                        System.out.println("You cannot message this friend");
+                                        continue;
+                                    } else {
+                                        System.out.println("Failure");
+                                        continue;
+                                    }
+                                } else if (message2.contains(DELETE_ALL_USERS)) {
+                                    if (trueOrFalse.equals("true")) {
+                                        System.out.println("You successfully deleted all users");
+                                    } else if (trueOrFalse.equals("false")) {
+                                        System.out.println("You cannot message this friend");
+                                        continue;
+                                    } else {
+                                        System.out.println("Failure");
+                                        continue;
+                                    }
+                                } else if (message2.contains(DELETE_SINGLE_FRIEND)) {
+                                    if (trueOrFalse.equals("true")) {
+                                        System.out.println("You successfully deleted a message");
                                     } else if (trueOrFalse.equals("false")) {
                                         System.out.println("You cannot message this friend");
                                         continue;
