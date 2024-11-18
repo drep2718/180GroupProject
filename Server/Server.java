@@ -425,7 +425,9 @@ public class Server implements FlagInterface {
                             String[] operation = secondMessage.split(";");
                             String date = "TODAY";
                             boolean isRead = false;
-                            User friend = null;
+                            String content = operation[1];
+
+                        
                             Friends friend1 = new Friends(currentUser);
                             friend1.loadFriends();
                             friend1.loadBlocked();
