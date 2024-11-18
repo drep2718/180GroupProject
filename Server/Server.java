@@ -327,7 +327,67 @@ public class Server implements FlagInterface {
                             writer.flush();
 
 
+                        } else if (secondMessage.contains(DELETE_SINGLE_FRIEND)) {
+
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            String friendUsername = operation[1];
+                            String content = operation[2];
+                            Friends currentUserFriends = new Friends(currentUser);
+                            currentUserFriends.loadFriends();
+                            currentUserFriends.loadBlocked();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+
+                            User friendUser = null;
+                            for (User user : User.getAllUsers()) {
+                                if (user.getUsername().equals(friendUsername)) {
+                                    friendUser = user;
+                                    break;
+                                }
+                            }
+
+                            if (friendUser == null) {
+                                writer.println(TEXT_SINGLE_FRIEND + ";false");
+                                writer.flush();
+                                return;
+                            }
+
+                            Friends friendFriends = new Friends(friendUser);
+                            System.out.println(friendFriends);
+                            System.out.println(friendsList);
+
+                            Messaging messaging = new Messaging(currentUser, friendFriends, content, date, isRead);
+                            messaging.deleteMessage(currentUser, friendFriends, content, date, isRead);
+                            writer.println(TEXT_SINGLE_FRIEND + ";true");
+                            writer.flush();
+
+                      
+
+
+                        } else if (secondMessage.contains(DELET_ALL_FRIENDS)) {
+
+                            String date = null;
+                            boolean isRead = false;
+
+
                         } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+
+                            String date = null;
+                            boolean isRead = false;
+
+
+                        }
+                    
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                          else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
 
                             String date = null;
                             boolean isRead = false;
