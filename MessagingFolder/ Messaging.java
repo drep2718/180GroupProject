@@ -130,32 +130,22 @@ public class Messaging implements MessagingInterface {
 
 
     public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
-        Boolean isBlocked = false;
-        Boolean isFriend = true;
         if (receiver.isBlocked(sender)) {
             System.out.println("Cannot send message because account you have been blocked.");
-            isBlocked = true;
+            return;
         }
 
-        if (!receiver.isFriend(sender) && !receiver.isBlocked(sender)) {
-            System.out.println("Cannot send message because you are not friends.");
-            isFriend = true;
+
+        Messaging message = new Messaging(sender, receiver, content, date, isRead);
+        messageHistory.add(message);
+
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt", true))) {
+            bfw.write(message.toString());
+            bfw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        if (receiver.isFriend(sender)) {
-
-            Messaging message = new Messaging(sender, receiver, content, date, isRead);
-            messageHistory.add(message);
-
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt", true))) {
-                bfw.write(message.toString());
-                bfw.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Delivered");
-        }
-
+        System.out.println("Delivered");
     }
 
     public void sendAllFriendsMessage(User sender, String content, String date, Boolean isRead) {
@@ -322,4 +312,6 @@ public class Messaging implements MessagingInterface {
             System.out.println("No conversation found between " + userOne.getUsername() + ".");
         }
     }
+
+
 }
