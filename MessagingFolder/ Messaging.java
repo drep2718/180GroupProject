@@ -117,9 +117,6 @@ public class Messaging implements MessagingInterface {
     }
 
 
-
-
-
     public void rewriteMessages() {
         String senderFile;
         for (Messaging m : messageHistory) {
@@ -291,7 +288,7 @@ public class Messaging implements MessagingInterface {
         boolean messageFound = false;
 
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender) && messages.getContent().equals(content) ) {
+            if (messages.getSender().equals(sender) && messages.getContent().equals(content)) {
                 deletedFriendsMessages.add(messages);
                 messageFound = true;
             }
