@@ -38,7 +38,7 @@ This program is a social communication platform that allows users to connect wit
 ## Phase 2: The program is now thread safe, with added servers that can work with clients concurrently.
 ### Client class:
 - Allows users to connect with the server class
-- Displays choices for users to choose (logging in/out, creating accounts, exit, etc.)
+- Displays choices for users to choose (logging in/out, creating accounts, exiting, etc.)
 ### Server class:
 Processes every command that the user wishes to make, including logging in/out, creating accounts, adding/blocking/removing friends, and sending/deleting messages.
 ### ThreadSafe class:
@@ -52,4 +52,4 @@ NOTE: There is no test cases as we do not have anything that does not relate to 
 - To run the project, use a JUnit Platform Console Launcher on an IDE
   
 ## Who submitted what
-- Aiden submitted the report and the Vocareum workspace
+- Aiden submitted the report and the Vocareum workspace (Phase 1)
