@@ -5,6 +5,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Team Project -- MessagingTest Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 class MessagingTest implements MessagingTestInterface {
     private User sender = new User("Username");
     private User sender1 = new User("Username1");
