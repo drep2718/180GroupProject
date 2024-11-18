@@ -1,6 +1,15 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Team Project -- Friends Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
+
 public class Friends implements FriendsInterface {
     private User waypointUser;
     private static ArrayList<User> friendsList = new ArrayList<>();
