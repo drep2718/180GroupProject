@@ -366,47 +366,50 @@ public class Server implements FlagInterface {
                       
 
 
-                        } else if (secondMessage.contains(DELET_ALL_FRIENDS)) {
+                        } else if (secondMessage.contains(DELETE_ALL_FRIENDS)) {
 
-                            String date = null;
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
                             boolean isRead = false;
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            friend1.loadBlocked();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            String content = operation[1];
 
 
-                        } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
-
-                            String date = null;
+                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
+                            messages.deleteFriendsMessage(currentUser, content, date, isRead);
+                            boolean sent = true;
+                            writer.println(DELETE_ALL_FRIENDS + ";" + sent);
+                            writer.flush();
+                            
+                        } else if (secondMessage.contains(DELETE_ALL_USERS)) {
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
                             boolean isRead = false;
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            friend1.loadBlocked();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            String content = operation[1];
+
+
+                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
+                            messages.deleteAllMessage(currentUser, content, date, isRead);
+                            boolean sent = true;
+                            writer.println(DELETE_ALL_USERS + ";" + sent);
+                            writer.flush();
 
 
                         }
                     
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                          else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
-
-                            String date = null;
-                            boolean isRead = false;
-
-
-                        } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
-
-                            String date = null;
-                            boolean isRead = false;
-
-
-                        } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
-
-                            String date = null;
-                            boolean isRead = false;
-                            break;
-
-
-                        }
 
                     }
                 } catch (IOException e) {
