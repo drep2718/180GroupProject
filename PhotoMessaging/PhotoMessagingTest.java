@@ -5,6 +5,15 @@ import java.io.*;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Team Project -- Photomessaging Test
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
+
 class PhotoMessagingTest {
     private User sender;
     private User receiverUser;
