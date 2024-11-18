@@ -159,7 +159,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         }
     }
 
-    
+
     public void sendAllFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> friendsList = Friends.getFriendsList();
         ArrayList<User> friendsToUser = new ArrayList<>();
@@ -188,7 +188,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         System.out.println("Delivered");
     }
 
-    
+
     public void sendAllUsersPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<User> allUsers = User.getAllUsers();
         PhotoMessaging allUsersPhotoMessage = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
@@ -205,7 +205,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         System.out.println("Delivered");
     }
 
-    
+
     public void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> messagesToDelete = new ArrayList<>();
         for (PhotoMessaging message : photoMessageHistory) {
@@ -221,7 +221,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         rewritePhotoMessages();
     }
 
-    
+
     public void deleteFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedMessages = new ArrayList<>();
         for (PhotoMessaging message : photoMessageHistory) {
@@ -237,7 +237,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         rewritePhotoMessages();
     }
 
-    
+
     public void deleteAllPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedMessages = new ArrayList<>();
         for (PhotoMessaging message : photoMessageHistory) {
@@ -253,7 +253,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         rewritePhotoMessages();
     }
 
-    
+
     public void report(User sender, BufferedImage imageContent) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("PhotoReport.txt", true))) {
             String reportEntry = "Reported User: " + sender.getUsername();
@@ -265,7 +265,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         }
     }
 
-    
+
     public void deleteConversation(User userOne, User userTwo) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
         for (PhotoMessaging message : photoMessageHistory) {
@@ -284,7 +284,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         }
     }
 
-    
+
     public void deleteAllFriendsConversation(User userOne) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
 
@@ -303,7 +303,7 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         }
     }
 
-    
+
     public void deleteAllUsersConversation(User userOne) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
         for (PhotoMessaging message : photoMessageHistory) {
