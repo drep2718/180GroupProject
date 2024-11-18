@@ -9,131 +9,356 @@ import java.io.*;
  * @version November 17, 2024
  *
  */
-public class Messaging implements MessagingInterface {
-    private User sender;
-    private Friends receiver;
-    private String content;
-    private String date;
-    private Boolean isRead;
-    private static ArrayList<Messaging> messageHistory = new ArrayList<>();
-    private String messageType;
+public class User implements UserInterface {
+    private String username;
+    private String password;
+    private String bio;
+    private BufferedImage image;
+    private String filepath;
+    private String formatName;
+    private static ArrayList<User> allUsers = new ArrayList<>();
+    private static ArrayList<BufferedImage> images = new ArrayList<>();
+    private static ArrayList<String> bios = new ArrayList<>();
+    private static ArrayList<String> passwords = new ArrayList<>();
+    private static ArrayList<String> usernames = new ArrayList<>();
+    private static final Object gatekeeper = new Object();
 
-
-    public String getMessageType() {
-        return messageType;
+    public static void setAllUsers(ArrayList<User> allUsers) {
+        User.allUsers = allUsers;
     }
 
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
+    public static ArrayList<User> getAllUsers() {
+        return allUsers;
     }
 
-    public Messaging(User sender, Friends receiver, String content, String date, Boolean isRead) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
-        this.date = date;
-        this.isRead = isRead;
-        this.messageType = "Single";
+    public static ArrayList<String> getUsernames() {
+        return usernames;
     }
 
-    public Messaging(User sender, String content, ArrayList<User> users, String date, Boolean isRead, String messageType) {
-        this.sender = sender;
-        this.content = content;
-        this.date = date;
-        this.isRead = isRead;
-        this.messageType = messageType;
+    public static ArrayList<String> getPasswords() {
+        return passwords;
     }
 
-
-    public static ArrayList<Messaging> getMessageHistory() {
-        return messageHistory;
+    public void setFormatName(String formatName) {
+        this.formatName = formatName;
     }
 
-
-    public static void setMessageHistory(ArrayList<Messaging> messageHistory) {
-        Messaging.messageHistory = messageHistory;
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 
-    public void loadMessages(User user) {
-        messageHistory.clear();
-        String filename = user.getUsername() + ".txt";
+    public String getFilepath() {
+        return filepath;
+    }
 
-        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length >= 2) {
-                    String senderUsername = parts[0];
-                    String content = parts[1];
+    public String getFormatName() {
+        return formatName;
+    }
 
-                    if (parts.length == 3) {
-                        String receiverUsername = parts[2];
-                        User sender = new User(senderUsername);
-                        Friends receiver = new Friends(new User(receiverUsername));
-                        Messaging message = new Messaging(sender, receiver, content, "datePlaceholder", false);
-                        messageHistory.add(message);
-                    } else {
-                        User sender = new User(senderUsername);
-                        Messaging message = new Messaging(sender, content, new ArrayList<>(), "datePlaceholder", false, "Single");
-                        messageHistory.add(message);
-                    }
-                }
+    public User(String username) {
+        this.username = username;
+
+    }
+
+    public User(String username, String password, String bio) {
+        this.username = username;
+        this.password = password;
+        this.bio = bio;
+
+
+    }
+
+    public User(String username, String password, String bio,
+                BufferedImage image, String filepath, String formatName) {
+        this.username = username;
+        this.password = password;
+        this.bio = bio;
+        this.filepath = filepath;
+        this.formatName = formatName;
+        this.image = imageSave(image, filepath, formatName);
+
+
+    }
+
+    public BufferedImage imageSave(BufferedImage image, String filepath, String formatName) {
+        synchronized (gatekeeper) {
+            try {
+                File pathToImage = new File(filepath);
+                ImageIO.write(image, formatName, pathToImage);
+                return image;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
             }
-        } catch (IOException e) {
-            System.err.println("Error loading messages for user " + user.getUsername() + ": " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void loadAllFriendMessages(User user) {
-        messageHistory.clear();
-        String filename = user.getUsername() + "AllFriends.txt";
-
-        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length >= 2) {
-                    String senderUsername = parts[0];
-                    String content = parts[1];
-
-                    if (parts.length == 3) {
-                        String receiverUsername = parts[2];
-                        User sender = new User(senderUsername);
-                        Friends receiver = new Friends(new User(receiverUsername));
-                        Messaging message = new Messaging(sender, receiver, content, "datePlaceholder", false);
-                        messageHistory.add(message);
-                    } else {
-                        User sender = new User(senderUsername);
-                        Messaging message = new Messaging(sender, content, new ArrayList<>(), "datePlaceholder", false, "Single");
-                        messageHistory.add(message);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading messages for user " + user.getUsername() + ": " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
 
-    public void rewriteMessages() {
-        String senderFile;
-        for (Messaging m : messageHistory) {
-            if (m.getMessageType().equals("Single")) {
-                senderFile = m.getSender().getUsername() + ".txt";
-            } else if (m.getMessageType().equals("AllFriends")) {
-                senderFile = m.getSender().getUsername() + "AllFriends.txt";
-            } else if (m.getMessageType().equals("AllUsers")) {
-                senderFile = m.getSender().getUsername() + "AllUsers.txt";
-            } else {
-                continue;
+    public User createProfile(String username, String password, String bio) {
+        User user = new User(username, password, bio);
+        usernames.add(username);
+        passwords.add(password);
+        bios.add(bio);
+        allUsers.add(user);
+
+        saveToFile(user);
+        return user;
+    }
+
+    public User createProfile(String username, String password, String bio,
+                              BufferedImage image, String filepath, String formatName) {
+
+        User user = new User(username, password, bio, image, filepath, formatName);
+        usernames.add(username);
+        passwords.add(password);
+        bios.add(bio);
+        allUsers.add(user);
+
+        saveToFile(user);
+        return user;
+    }
+
+    public void saveToFile(User user) {
+        synchronized (gatekeeper) {
+            try (BufferedWriter bfw =
+                         new BufferedWriter(new FileWriter("Users.txt", true))) {
+                bfw.write(user.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String toString() {
+        String path = "";
+        if (filepath != null) {
+            path = "," + filepath;
+        }
+        return username + "," + password + "," + bio + path;
+    }
+
+
+    public void removeProfile(String username) {
+        int index = usernames.indexOf(username);
+        if (index != -1) {
+            usernames.remove(index);
+            passwords.remove(index);
+            bios.remove(index);
+
+            ArrayList<User> deleted = new ArrayList<>();
+            for (User user : allUsers) {
+                if (user.toString().contains(this.username)) {
+                    deleted.add(user);
+                }
             }
 
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
-                for (int i = 0; i < messageHistory.size(); i++) {
-                    Messaging message = messageHistory.get(i);
-                    bfw.write(message.toString());
+            allUsers.remove(deleted);
+            rewriteUsers();
+
+
+        } else {
+            System.out.println("User not found!");
+        }
+    }
+
+
+    public void loadUsers() {
+        synchronized (gatekeeper) {
+            usernames.clear();
+            passwords.clear();
+            bios.clear();
+            allUsers.clear();
+
+            try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
+                String line;
+                while ((line = bfr.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 3) {
+                        String username = parts[0];
+                        String password = parts[1];
+                        String bio = parts[2];
+
+                        usernames.add(username);
+                        passwords.add(password);
+                        bios.add(bio);
+
+                        User user;
+                        if (parts.length > 3) {
+                            String filepath = parts[3];
+                            try {
+                                BufferedImage image = ImageIO.read(new File(filepath));
+                                String formatName = filepath.substring(filepath.lastIndexOf('.') + 1);
+                                user = new User(username, password, bio, image, filepath, formatName);
+                            } catch (IOException e) {
+                                user = new User(username, password, bio);
+                                System.err.println("Warning: Could not load image for user " + username);
+                            }
+                        } else {
+                            user = new User(username, password, bio);
+                        }
+                        allUsers.add(user);
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error loading users: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateUsername(String newUsername) {
+        int index = usernames.indexOf(this.username);
+        if (index != -1) {
+            usernames.set(index, newUsername);
+            ArrayList<User> deleted = new ArrayList<>();
+            for (User user : allUsers) {
+                if (user.toString().contains(this.username)) {
+                    deleted.add(user);
+                }
+            }
+
+            allUsers.remove(deleted);
+
+            User updatedUser = new User(newUsername, this.password, this.bio);
+            allUsers.add(updatedUser);
+            this.username = newUsername;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Username Found");
+        }
+    }
+
+    public void updateBio(String newBio) {
+        int index = bios.indexOf(this.bio);
+        if (index != -1) {
+            bios.set(index, newBio);
+            ArrayList<User> deleted = new ArrayList<>();
+            for (User user : allUsers) {
+                if (user.toString().contains(this.bio)) {
+                    deleted.add(user);
+                }
+            }
+
+            allUsers.remove(deleted);
+
+
+            User updatedUser = new User(this.username, this.password, newBio);
+            allUsers.add(updatedUser);
+            this.bio = newBio;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Bio Found");
+        }
+    }
+
+    public void updatePassword(String newPassword) {
+        int index = passwords.indexOf(this.password);
+        if (index != -1) {
+            passwords.set(index, newPassword);
+            ArrayList<User> deleted = new ArrayList<>();
+            for (User user : allUsers) {
+                if (user.toString().contains(this.password)) {
+                    deleted.add(user);
+                }
+            }
+
+            allUsers.remove(deleted);
+
+            User updatedUser = new User(this.username, newPassword, this.bio);
+            allUsers.add(updatedUser);
+            this.password = newPassword;
+            rewriteUsers();
+
+        } else {
+            System.out.println("No Password Found");
+        }
+    }
+
+    // -------------------------------------------------------------
+
+    public String findProfile(String username) { // finds profile and prints username. will have to change string format later.
+        int index = usernames.indexOf(username);
+        if (index != -1) {
+            return "Name: " + usernames.get(index) + "\nBio: " + bios.get(index);
+        } else {
+            return "Profile not found";
+        }
+    }
+
+    public boolean userExists(String username) {
+        return usernames.contains(username);
+    }
+
+    public boolean passwordExists(String password) {
+        return passwords.contains(password);
+    }
+
+    public boolean bioExists(String bio) {
+        return bios.contains(bio);
+    }
+
+    public boolean usernameAvail(String username) {
+        return !usernames.contains(username);
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+
+    }
+
+    // Password Methods
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public boolean validatePassword(String username, String password) {
+        if ((password.equals(this.password) && (username.equals(this.username)))) {
+            return true;
+        } else if ((!password.equals(this.password))) {
+            System.out.println("Wrong Password!");
+            return false;
+        } else if ((!(username.equals(this.username)))) {
+            System.out.println("Wrong Username!");
+            return false;
+        }
+        return false;
+    }
+
+    public void rewriteUsers() {
+
+        synchronized (gatekeeper) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Users.txt", false))) {
+                for (User user : allUsers) {
+                    bfw.write(user.toString());
                     bfw.newLine();
                 }
             } catch (IOException e) {
@@ -142,266 +367,25 @@ public class Messaging implements MessagingInterface {
         }
     }
 
-    public String toString() {
-        if (receiver != null) {
-            return sender.getUsername() + ":" + content + ":" + receiver.getUser().getUsername();
-        } else {
-            return sender.getUsername() + ":" + content;
-        }
-    }
 
-
-    public User getSender() {
-        return sender;
-    }
-
-    public Friends getReceiver() {
-        return receiver;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public boolean isRead() {
-        return false;
-    }
-
-    public Boolean getIsRead() {
-        return isRead;
-    }
-
-
-    public void saveToFile() {
-        String senderFile;
-        for (Messaging m : messageHistory) {
-            if (m.getMessageType().equals("Single")) {
-                senderFile = m.getSender().getUsername() + ".txt";
-            } else if (m.getMessageType().equals("AllFriends")) {
-                senderFile = m.getSender().getUsername() + "AllFriends.txt";
-            } else if (m.getMessageType().equals("AllUsers")) {
-                senderFile = m.getSender().getUsername() + "AllUsers.txt";
-            } else {
-                continue;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(senderFile, true))) {
-                writer.write(m.toString());
-                writer.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (obj == null) {
+                return false;
             }
-        }
-    }
-
-
-    public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
-        if (receiver.isBlocked(sender)) {
-            System.out.println("Cannot send message because account you have been blocked.");
-            return;
-        }
-
-
-        Messaging message = new Messaging(sender, receiver, content, date, isRead);
-        messageHistory.add(message);
-
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + ".txt", true))) {
-            bfw.write(message.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Delivered");
-    }
-
-    public void sendAllFriendsMessage(User sender, String content, String date, Boolean isRead) {
-        ArrayList<User> AllFriends = Friends.getFriendsList();
-        ArrayList<User> friendsToUser = new ArrayList<>();
-
-        for (User user : AllFriends) {
-            String[] histSplit = user.toString().split(":");
-            if (histSplit[0].equals(sender.getUsername())) {
-                friendsToUser.add(user);
-            }
-        }
-
-        Messaging friendsToMessage = new Messaging(sender, content, friendsToUser, date, isRead, "AllFriends");
-        messageHistory.add(friendsToMessage);
-
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllFriends.txt", true))) {
-            bfw.write(friendsToMessage.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Delivered");
-    }
-
-    public void sendAllUsersMessage(User sender, String content, String date, Boolean isRead) {
-        ArrayList<User> AllUsers = User.getAllUsers();
-
-        Messaging usersToMessage = new Messaging(sender, content, AllUsers, date, isRead, "AllUsers");
-        messageHistory.add(usersToMessage);
-
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(sender.getUsername() + "AllUsers.txt", true))) {
-            bfw.write(usersToMessage.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Delivered");
-    }
-
-
-    public void deleteMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
-        ArrayList<Messaging> messagesToDelete = new ArrayList<>();
-        boolean messageDeleted = false;
-
-        for (Messaging message : messageHistory) {
-            if (message.getSender().equals(sender) &&
-                    message.getReceiver().equals(receiver) &&
-                    message.getContent().equals(content)) {
-
-                messagesToDelete.add(message);
-                messageDeleted = true;
-            }
-        }
-
-        if (messageDeleted) {
-            messageHistory.removeAll(messagesToDelete);
-            rewriteMessages();
-            System.out.println("Message deleted.");
-        } else {
-            System.out.println("No matching message found to delete.");
-        }
-    }
-
-
-    public void deleteFriendsMessage(User sender, String content, String date, Boolean isRead) {
-        ArrayList<Messaging> deletedFriendsMessages = new ArrayList<>();
-        boolean messageFound = false;
-
-        for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender) && messages.getContent().equals(content)) {
-                deletedFriendsMessages.add(messages);
-                messageFound = true;
-            }
-        }
-
-        if (messageFound) {
-            messageHistory.removeAll(deletedFriendsMessages);
-            rewriteMessages();
-            System.out.println("Message deleted successfully.");
-        } else {
-            System.out.println("Message not found for deletion.");
-        }
-    }
-
-
-    public void deleteAllMessage(User sender, String content, String date, Boolean isRead) {
-        ArrayList<Messaging> deletedAllMessages = new ArrayList<>();
-        for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender)
-                    && messages.getContent().equals(content) && (messageType.equals("AllUsers"))) {
-                deletedAllMessages.add(messages);
-                break;
-            }
-        }
-        messageHistory.removeAll(deletedAllMessages);
-        rewriteMessages();
-    }
-
-    public void report(User sender, String content) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("Report.txt", true))) {
-            String reportEntry = "Reported User: " + sender.getUsername() + " | Message: \"" + content + "\"";
-            bw.write(reportEntry);
-            bw.newLine();
-            System.out.println("Report has been filed successfully");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void deleteConversation(User userOne, User userTwo) {
-        boolean conversationDeleted = false;
-        ArrayList<Messaging> tempArray = new ArrayList<>();
-        for (int i = 0; i < messageHistory.size(); i++) {
-            Messaging message = messageHistory.get(i);
-
-            User sender = message.getSender();
-            Friends receiver = message.getReceiver();
-            Friends receiverUser = receiver;
-
-            if ((sender.equals(userOne) && receiverUser.equals(userTwo)) ||
-                    sender.equals(userTwo) && receiverUser.equals(userOne)) {
-                tempArray.add(message);
-            }
-        }
-        messageHistory.remove(tempArray);
-        conversationDeleted = true;
-
-        if (conversationDeleted) {
-            System.out.println("Conversation between " + userOne.getUsername() + " and " + userTwo.getUsername() + " has been deleted.");
-            rewriteMessages();
-        } else {
-            System.out.println("No conversation found between " + userOne.getUsername() + " and " + userTwo.getUsername() + ".");
-        }
-    }
-
-    public void deleteAllFriendsConversation(User userOne) {
-        boolean conversationDeleted = false;
-        ArrayList<Messaging> tempArray = new ArrayList<>();
-        for (int i = 0; i < messageHistory.size(); i++) {
-            Messaging message = messageHistory.get(i);
-            User sender = message.getSender();
-
-            if (message.getMessageType().equals("AllFriends") && sender.equals(userOne)) {
-                tempArray.add(message);
+            if (getClass() != obj.getClass()) {
+                return false;
             }
 
-        }
-
-        messageHistory.remove(tempArray);
-        conversationDeleted = true;
-
-        if (conversationDeleted) {
-            System.out.println("Conversations involving " + userOne.getUsername() + " has been deleted.");
-            rewriteMessages();
-        } else {
-            System.out.println("No conversation found between " + userOne.getUsername() + ".");
-        }
-    }
-
-    public void deleteAllUsersConversation(User userOne) {
-        boolean conversationDeleted = false;
-        ArrayList<Messaging> tempArray = new ArrayList<>();
-        for (int i = 0; i < messageHistory.size(); i++) {
-            Messaging message = messageHistory.get(i);
-            User sender = message.getSender();
-
-            if (message.getMessageType().equals("AllUsers") && sender.equals(userOne)) {
-                tempArray.add(message);
+            User otherUser = (User) obj;
+            if (this.username == null) {
+                return otherUser.username == null;
             }
-
+            return this.username.equals(otherUser.username);
         }
+ }
 
-        messageHistory.remove(tempArray);
-        conversationDeleted = true;
-
-        if (conversationDeleted) {
-            System.out.println("Conversations involving " + userOne.getUsername() + " has been deleted.");
-            rewriteMessages();
-        } else {
-            System.out.println("No conversation found between " + userOne.getUsername() + ".");
-        }
-    }
-
-
-}
