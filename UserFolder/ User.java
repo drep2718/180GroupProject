@@ -3,6 +3,14 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Team Project -- User Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 public class User implements UserInterface {
     private String username;
     private String password;
