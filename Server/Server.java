@@ -427,19 +427,21 @@ public class Server implements FlagInterface {
                             boolean isRead = false;
                             String content = operation[1];
 
-                        
+
                             Friends friend1 = new Friends(currentUser);
                             friend1.loadFriends();
                             friend1.loadBlocked();
                             currentUser.loadUsers();
                             allUsers = User.getAllUsers();
                             friendsList = Friends.getFriendsList();
-                            String content = operation[1];
                             messageHistory = Messaging.getMessageHistory();
 
 
-                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                            messages.loadAllFriendMessages(currentUser);
+                            Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
+                            messageTemp.loadMessages(currentUser);
+
+                            System.out.println(messageHistory);
+
 
                             boolean messageDeleted = false;
                             for (Messaging message2 : messageHistory) {
@@ -451,8 +453,11 @@ public class Server implements FlagInterface {
                                 }
                             }
 
-                            boolean sent = messageDeleted;
-                            writer.println(TEXT_ALL_FRIENDS + ";" + sent);
+                            if (messageDeleted) {
+                                writer.println(DELETE_ALL_FRIENDS + ";true");
+                            } else {
+                                writer.println(DELETE_ALL_FRIENDS + ";false");
+                            }
                             writer.flush();
 
 
