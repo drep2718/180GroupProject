@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.Scanner;
 
 
@@ -309,35 +310,75 @@ public class Client extends Thread implements FlagInterface {
                                     writer.println();
                                     writer.flush();
                                 }
-                            } else if (whichMessage.equals("2")) {
-                                System.out.println("1- Send photo message to all friends");
-                                System.out.println("2- Send photo message to all users");
-                                System.out.println("3- send photo message to single friend");
-                                String textType = scan.nextLine();
-                                if (textType.equals("1")) {
-                                    System.out.println("What would you like to message to all your friends");
-                                    String text = scan.nextLine();
-                                    String messageALlFriends = MESSAGE_ALL_FRIENDS + ";" + text;
-                                    writer.write(messageALlFriends);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("2")) {
-                                    System.out.println("What would you like to message to all users");
-                                    String text = scan.nextLine();
-                                    String messageAllUsers = MESSAGE_ALL_USERS + ";" + text;
-                                    writer.write(messageAllUsers);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("3")) {
-                                    System.out.println("Who is the friend you want to message");
-                                    String friend = scan.nextLine();
-                                    System.out.println("What would you like to message to your friend");
-                                    String text = scan.nextLine();
-                                    String textSingleFriend = TEXT_SINGLE_FRIEND + ";" + friend + ";" + text;
-                                    writer.write(textSingleFriend);
-                                    writer.println();
-                                    writer.flush();
+                                                        } else if (whichMessage.equals("2")) {
+                                try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+
+                                    System.out.println("1- Send photo message to all friends");
+                                    System.out.println("2- Send photo message to all users");
+                                    System.out.println("3- Send photo message to a single friend");
+                                    String textType = scan.nextLine();
+
+                                    if (textType.equals("1")) {
+                                        System.out.println("Enter the path to the photo you want to send to all your friends:");
+                                        String photoPath = scan.nextLine();
+
+                                        String messageAllFriends = MESSAGE_ALL_FRIENDS + ";" + photoPath;
+                                        writer.println(messageAllFriends);
+                                        writer.flush();
+                                        try {
+                                            File imageFile = new File(photoPath);
+                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                            dataOutputStream.writeInt(imageBytes.length);
+
+                                            dataOutputStream.write(imageBytes);
+                                            dataOutputStream.flush();
+                                            System.out.println("Photo message sent to all friends.");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else if (textType.equals("2")) {
+                                        System.out.println("Enter the path to the photo you want to send to all users:");
+                                        String photoPath = scan.nextLine();
+
+                                        String messageAllUsers = MESSAGE_ALL_USERS + ";" + photoPath;
+                                        writer.println(messageAllUsers);
+                                        writer.flush();
+                                        try {
+                                            File imageFile = new File(photoPath);
+                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                            dataOutputStream.writeInt(imageBytes.length);
+
+                                            dataOutputStream.write(imageBytes);
+                                            dataOutputStream.flush();
+                                            System.out.println("Photo message sent to all users.");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else if (textType.equals("3")) {
+                                        System.out.println("Enter the friend's username you want to message:");
+                                        String friend = scan.nextLine();
+                                        System.out.println("Enter the path to the photo you want to send:");
+                                        String photoPath = scan.nextLine();
+
+                                        String messageSingleFriend = MESSAGE_SINGLE_FRIEND + ";" + friend + ";" + photoPath;
+                                        writer.println(messageSingleFriend);
+                                        writer.flush();
+                                        try {
+                                            File imageFile = new File(photoPath);
+                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                            dataOutputStream.writeInt(imageBytes.length);
+
+                                            dataOutputStream.write(imageBytes);
+                                            dataOutputStream.flush();
+                                            System.out.println("Photo message sent to " + friend + ".");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
+                            
 
                                 String message2 = reader.readLine();
                                 String[] index = message2.split(";");
