@@ -1,6 +1,14 @@
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * Team Project -- UserInterface Class
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
 public interface UserInterface {
 
     String getUsername();
