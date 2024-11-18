@@ -10,7 +10,7 @@ This program is a social communication platform that allows users to connect wit
 - Photo messaging: Send and receive photos from friends to capture the moment.
 ## How it works
 
-Phase 1: The program is constructed by four main folders, each comprising an interface, an implementing class, and associated test cases.
+## Phase 1: The program is constructed by four main folders, each comprising an interface, an implementing class, and associated test cases.
 
 ### User interface and class: 
 - Create a profile: Create a profile including username and password. Set up a profile picture if needed.
@@ -35,7 +35,7 @@ Phase 1: The program is constructed by four main folders, each comprising an int
 - Contains fields for storing image content utilizing BufferedImage
 - Provides methods to send, delete, and save photo messages, as well as reporting content
 
-Phase 2: The program is now thread safe, with added servers that can work with clients concurrently.
+## Phase 2: The program is now thread safe, with added servers that can work with clients concurrently.
 ### Client class:
 - Allows users to connect with the server class
 - Displays choices for users to choose (logging in/out, creating accounts, exit, etc.)
