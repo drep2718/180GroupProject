@@ -3,12 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * Team Project -- User Class
- *
- * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- * @version November 17, 2024
- */
 public class User implements UserInterface {
     private String username;
     private String password;
@@ -368,24 +362,36 @@ public class User implements UserInterface {
     }
 
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+
+            User otherUser = (User) obj;
+            if (this.username == null) {
+                return otherUser.username == null;
+            }
+            return this.username.equals(otherUser.username);
         }
 
-        if (obj == null) {
-            return false;
+    public boolean isFriend1(Friends friend) {
+        for (User user : Friends.getFriendsList()) {
+            String username = user.getUsername();
+            if (username.equals(friend.getUser().getUsername())) {
+                return true;
+            }
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        User otherUser = (User) obj;
-        if (this.username == null) {
-            return otherUser.username == null;
-        }
-        return this.username.equals(otherUser.username);
+        return false;
     }
 
-}
+ }
+
+
