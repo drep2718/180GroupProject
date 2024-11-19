@@ -12,7 +12,6 @@ import java.util.Scanner;
  *
  */
 
-
 public class Client extends Thread implements FlagInterface {
     private final Server server;
 
@@ -510,7 +509,7 @@ public class Client extends Thread implements FlagInterface {
                                     if (trueOrFalse.equals("true")) {
                                         System.out.println("You successfully deleted a message");
                                     } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot message this friend");
+                                        System.out.println("You cannot delete this message");
                                         continue;
                                     } else {
                                         System.out.println("Failure");
@@ -541,14 +540,5 @@ public class Client extends Thread implements FlagInterface {
         this.server = server;
     }
 
-    public void run() {
-        for (int i = 0; i < 10; i++) {
-            server.serverStart(i);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
 }
