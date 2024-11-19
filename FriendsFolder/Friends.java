@@ -1,13 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * Team Project -- Friends Class
- *
- * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- * @version November 17, 2024
- */
-
 public class Friends implements FriendsInterface {
     private User waypointUser;
     private static ArrayList<User> friendsList = new ArrayList<>();
@@ -41,14 +34,42 @@ public class Friends implements FriendsInterface {
     }
 
 
-    public void removeFriend(User userToRemove) {
+    public void removeFriend(Friends main, User userToRemove) {
+        ArrayList<String> friendsText = new ArrayList<>();
 
-        if (friendsList.contains(userToRemove)) {
-            friendsList.remove(userToRemove);
-            rewriteFriends();
-        } else {
-            System.out.println("Friend not found");
+        try (BufferedReader bfr = new BufferedReader(new FileReader("Friends.txt"))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                    friendsText.add(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading friends: " + e.getMessage());
+            e.printStackTrace();
         }
+
+        ArrayList<String> friendsText1 = new ArrayList<>();
+        for (String name : friendsText) {
+            String [] parts = name.split(":");
+            String mainFriend = main.getUser().getUsername();
+            String toRemove = userToRemove.getUsername();
+
+            if (parts[0].equals(mainFriend) && parts[1].equals(toRemove)) {
+                friendsText1.add(name);
+                friendsList.remove(userToRemove);
+            }
+        }
+        friendsText.removeAll(friendsText1);
+
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Friends.txt", false))) {
+
+            for (String name : friendsText) {
+                bfw.write(name);
+                bfw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void rewriteFriends() {
@@ -94,12 +115,12 @@ public class Friends implements FriendsInterface {
     }
 
 
-    public boolean isFriend(User otherUser) {
-        return friendsList.contains(otherUser);
+    public boolean isFriend(User user) {
+        return friendsList.contains(user);
     }
 
-
     public void blockUser(User userToBlock) {
+        loadBlocked();
         if (!blockedList.contains(userToBlock)) {
             blockedList.add(userToBlock);
             friendsList.remove(userToBlock);
@@ -109,17 +130,47 @@ public class Friends implements FriendsInterface {
         }
     }
 
-    public void unblockUser(User userToUnblock) {
-        if (blockedList.contains(userToUnblock)) {
-            blockedList.remove(userToUnblock);
-            rewriteBlocked();
-        } else {
-            System.out.println("Blocked User not found");
+    public void unblockUser(Friends main, User userToUnblock) {
+        ArrayList<String> blockedText = new ArrayList<>();
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader("Blocked.txt"))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                blockedText.add(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading friends: " + e.getMessage());
+            e.printStackTrace();
         }
+
+        ArrayList<String> blockedText1 = new ArrayList<>();
+        for (String name : blockedText) {
+            String [] parts = name.split(":");
+            String mainFriend = main.getUser().getUsername();
+            String toRemove = userToUnblock.getUsername();
+
+            if (parts[0].equals(mainFriend) && parts[1].equals(toRemove)) {
+                blockedText1.add(name);
+                blockedList.remove(userToUnblock);
+            }
+        }
+        blockedText.removeAll(blockedText1);
+
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", false))) {
+
+            for (String name : blockedText) {
+                bfw.write(name);
+                bfw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Adding friends & viewing
     public void addFriend(User newFriend) {
+        loadFriends();
         if (!friendsList.contains(newFriend)) {
             friendsList.add(newFriend);
             saveFriendsToFile(newFriend);
@@ -193,28 +244,6 @@ public class Friends implements FriendsInterface {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Friends otherFriends = (Friends) obj;
-
-        if (this.waypointUser == null) {
-            return otherFriends.waypointUser == null;
-        }
-
-        return this.waypointUser.equals(otherFriends.waypointUser);
-    }
 
 
 }
