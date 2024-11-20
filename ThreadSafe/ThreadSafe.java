@@ -112,7 +112,6 @@ public class ThreadSafe extends Thread implements FlagInterface {
 
                         for (String existingUsername : User.getUsernames()) {
                             if (existingUsername.equals(username)) {
-                                System.out.println(existingUsername);
                                 validUser = true;
                                 break;
                             }
@@ -331,8 +330,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         }
 
                         Friends friendFriends = new Friends(friendUser);
-                        System.out.println(friendFriends);
-                        System.out.println(friendsList);
+
 
                         Messaging messaging = new Messaging(currentUser, friendFriends, content, date, isRead);
                         messaging.sendMessage(currentUser, friendFriends, content, date, isRead);
@@ -455,43 +453,14 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         }
 
                         Friends friendFriends = new Friends(friendUser);
-                        System.out.println(friendFriends);
-                        System.out.println(friendsList);
 
                         Messaging messageTemp = new Messaging(currentUser, friendFriends, content, date, isRead);
                         messageTemp.loadMessages(currentUser);
 
 
-                        System.out.println(messageHistory);
 
-
-                        friendUser = null;
-                        for (User user : User.getAllUsers()) {
-                            if (user.getUsername().equals(friendUsername)) {
-                                friendUser = user;
-                                break;
-                            }
-                        }
-
-                        if (friendUser == null) {
-                            writer.println(DELETE_SINGLE_FRIEND + ";false");
-                            writer.flush();
-                            return;
-                        }
-
-                        friendFriends = new Friends(friendUser);
-
-
-                        boolean messageDeleted = false;
-                        for (Messaging message1 : messageHistory) {
-                            if (message1.getSender().equals(currentUser) &&
-                                    message1.getReceiver().equals(friendFriends) &&
-                                    message1.getContent().equals(content)) {
-                                message1.deleteMessage(currentUser, friendFriends, content, date, isRead);
-                                messageDeleted = true;
-                                break;
-                            }
-                        }
+                        boolean messageDeleted = true;
+                        messageTemp.deleteMessage(currentUser,friendFriends, content, date, isRead);
 
 
                         if (messageDeleted) {
@@ -519,18 +488,10 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
                         messageTemp.loadAllUsersMessages(currentUser);
 
-                        System.out.println(messageHistory);
 
-                        boolean messageDeleted = false;
+                        boolean messageDeleted = true;
+                        messageTemp.deleteUsersMessage(currentUser, content, date, isRead);
 
-                        for (Messaging message1 : messageHistory) {
-                            if (message1.getSender().equals(currentUser) &&
-                                    message1.getContent().equals(content) &&
-                                    message1.getMessageType().equals("AllUsers")) {
-                                message1.deleteAllMessage(currentUser, content, date, isRead);
-                                messageDeleted = true;
-                            }
-                        }
 
                         if (messageDeleted) {
                             writer.println(DELETE_ALL_USERS + ";true");
@@ -538,6 +499,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             writer.println(DELETE_ALL_USERS + ";false");
                         }
                         writer.flush();
+
 
 
                     } else if (secondMessage.contains(DELETE_ALL_FRIENDS)) {
@@ -557,10 +519,8 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
                         messageTemp.loadAllFriendMessages(currentUser);
 
-                        System.out.println(messageHistory);
-
                         boolean messageDeleted = true;
-                        messageTemp.deleteAllMessage(currentUser, content, date, isRead);
+                        messageTemp.deleteFriendsMessage(currentUser, content, date, isRead);
 
 
                         if (messageDeleted) {
@@ -571,6 +531,8 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         writer.flush();
 
 
+                    } else if (secondMessage.contains(LOGOUT)) {
+                        break;
                     }
 
 
