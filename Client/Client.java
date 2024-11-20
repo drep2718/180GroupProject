@@ -520,7 +520,7 @@ public class Client extends Thread implements FlagInterface {
 
                             }
                         } else if (secondMenuItem.equals("4")) {
-                            writer.println(secondMenuItem);
+                            writer.println("LOOP" + LOGOUT);
                             writer.flush();
                             loggedIn = false;
                             break;
