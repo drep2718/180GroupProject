@@ -142,15 +142,15 @@ class Messaging implements MessagingInterface {
 
     public void rewriteMessages(User user) {
 
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(user.getUsername()+ ".txt", false))) {
-                for (int i = 0; i < messageHistory.size(); i++) {
-                    Messaging message = messageHistory.get(i);
-                    bfw.write(message.toString());
-                    bfw.newLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(user.getUsername()+ ".txt", false))) {
+            for (int i = 0; i < messageHistory.size(); i++) {
+                Messaging message = messageHistory.get(i);
+                bfw.write(message.toString());
+                bfw.newLine();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
     public void rewriteFriendsMessages(User user) {
@@ -301,21 +301,6 @@ class Messaging implements MessagingInterface {
         System.out.println("Delivered");
     }
 
-    @Override
-    public void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
-
-    }
-
-    @Override
-    public void deleteFriendsPhotoMessage(User sender, String content, String date, Boolean isRead) {
-
-    }
-
-    @Override
-    public void deleteAllPhotoMessage(User sender, String content, String date, Boolean isRead) {
-
-    }
-
 
     public void deleteMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
@@ -327,16 +312,17 @@ class Messaging implements MessagingInterface {
         }
 
         for (Messaging message : messageHistory) {
-            if (message.getReceiver().equals(receiver) &&
-                    message.getContent().equals(content)) {
-
+            if (message.getReceiver().toString().equals(receiver.getUser().getUsername()) && message.getContent().equals(content)) {
                 messagesToDelete.add(message);
+                System.out.println("TRUE");
                 messageDeleted = true;
             }
         }
 
         if (messageDeleted) {
+            System.out.println("Histroy" + messageHistory);
             messageHistory.removeAll(messagesToDelete);
+            System.out.println("post" + messageHistory);
             rewriteMessages(sender);
             System.out.println("Message deleted.");
         } else {
@@ -359,8 +345,30 @@ class Messaging implements MessagingInterface {
 
         if (messageFound) {
             messageHistory.removeAll(deletedFriendsMessages);
-            System.out.println(messageHistory);
             rewriteFriendsMessages(sender);
+            System.out.println("Message deleted successfully.");
+        } else {
+            System.out.println("Message not found for deletion.");
+        }
+    }
+
+    public void deleteUsersMessage(User sender, String content, String date, Boolean isRead) {
+        ArrayList<Messaging> deletedUsersMessages = new ArrayList<>();
+        boolean messageFound = false;
+
+
+        for (Messaging messages : messageHistory) {
+            if (messages.getContent().equals(content)) {
+                deletedUsersMessages.add(messages);
+                messageFound = true;
+            }
+        }
+
+        if (messageFound) {
+            System.out.println(messageHistory);
+            messageHistory.removeAll(deletedUsersMessages);
+            System.out.println(messageHistory);
+            rewriteUsersMessages(sender);
             System.out.println("Message deleted successfully.");
         } else {
             System.out.println("Message not found for deletion.");
@@ -466,6 +474,11 @@ class Messaging implements MessagingInterface {
             System.out.println("No conversation found between " + userOne.getUsername() + ".");
         }
     }
+
+
+
+
+
 
 
 }
