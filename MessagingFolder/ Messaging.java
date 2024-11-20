@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.io.*;
 
-public class Messaging implements MessagingInterface {
+class Messaging implements MessagingInterface {
     private User sender;
     private Friends receiver;
     private String content;
@@ -140,20 +140,9 @@ public class Messaging implements MessagingInterface {
     }
 
 
-    public void rewriteMessages() {
-        String senderFile;
-        for (Messaging m : messageHistory) {
-            if (m.getMessageType().equals("Single")) {
-                senderFile = m.getSender().getUsername() + ".txt";
-            } else if (m.getMessageType().equals("AllFriends")) {
-                senderFile = m.getSender().getUsername() + "AllFriends.txt";
-            } else if (m.getMessageType().equals("AllUsers")) {
-                senderFile = m.getSender().getUsername() + "AllUsers.txt";
-            } else {
-                continue;
-            }
+    public void rewriteMessages(User user) {
 
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(user.getUsername()+ ".txt", false))) {
                 for (int i = 0; i < messageHistory.size(); i++) {
                     Messaging message = messageHistory.get(i);
                     bfw.write(message.toString());
@@ -162,7 +151,33 @@ public class Messaging implements MessagingInterface {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+    }
+    public void rewriteFriendsMessages(User user) {
+
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(user.getUsername()+ "AllFriends.txt", false))) {
+            for (int i = 0; i < messageHistory.size(); i++) {
+                Messaging message = messageHistory.get(i);
+                bfw.write(message.toString());
+                bfw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+    }
+    public void rewriteUsersMessages(User user) {
+
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(user.getUsername()+ "AllUsers.txt", false))) {
+            for (int i = 0; i < messageHistory.size(); i++) {
+                Messaging message = messageHistory.get(i);
+                bfw.write(message.toString());
+                bfw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public String toString() {
@@ -220,7 +235,6 @@ public class Messaging implements MessagingInterface {
             }
         }
     }
-
 
 
     public void sendMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
@@ -287,6 +301,21 @@ public class Messaging implements MessagingInterface {
         System.out.println("Delivered");
     }
 
+    @Override
+    public void deleteMessage(Friends sender, User receiver, String content, String date, Boolean isRead) {
+
+    }
+
+    @Override
+    public void deleteFriendsPhotoMessage(User sender, String content, String date, Boolean isRead) {
+
+    }
+
+    @Override
+    public void deleteAllPhotoMessage(User sender, String content, String date, Boolean isRead) {
+
+    }
+
 
     public void deleteMessage(User sender, Friends receiver, String content, String date, Boolean isRead) {
         ArrayList<Messaging> messagesToDelete = new ArrayList<>();
@@ -309,7 +338,7 @@ public class Messaging implements MessagingInterface {
 
         if (messageDeleted) {
             messageHistory.removeAll(messagesToDelete);
-            rewriteMessages();
+            rewriteMessages(sender);
             System.out.println("Message deleted.");
         } else {
             System.out.println("No matching message found to delete.");
@@ -321,8 +350,9 @@ public class Messaging implements MessagingInterface {
         ArrayList<Messaging> deletedFriendsMessages = new ArrayList<>();
         boolean messageFound = false;
 
+
         for (Messaging messages : messageHistory) {
-            if (messages.getSender().equals(sender) && messages.getContent().equals(content)) {
+            if (messages.getContent().equals(content)) {
                 deletedFriendsMessages.add(messages);
                 messageFound = true;
             }
@@ -330,7 +360,8 @@ public class Messaging implements MessagingInterface {
 
         if (messageFound) {
             messageHistory.removeAll(deletedFriendsMessages);
-            rewriteMessages();
+            System.out.println(messageHistory);
+            rewriteFriendsMessages(sender);
             System.out.println("Message deleted successfully.");
         } else {
             System.out.println("Message not found for deletion.");
@@ -348,7 +379,7 @@ public class Messaging implements MessagingInterface {
             }
         }
         messageHistory.removeAll(deletedAllMessages);
-        rewriteMessages();
+        rewriteMessages(sender);
     }
 
     public void report(User sender, String content) {
@@ -383,7 +414,7 @@ public class Messaging implements MessagingInterface {
 
         if (conversationDeleted) {
             System.out.println("Conversation between " + userOne.getUsername() + " and " + userTwo.getUsername() + " has been deleted.");
-            rewriteMessages();
+            rewriteMessages(sender);
         } else {
             System.out.println("No conversation found between " + userOne.getUsername() + " and " + userTwo.getUsername() + ".");
         }
@@ -407,7 +438,7 @@ public class Messaging implements MessagingInterface {
 
         if (conversationDeleted) {
             System.out.println("Conversations involving " + userOne.getUsername() + " has been deleted.");
-            rewriteMessages();
+            rewriteMessages(sender);
         } else {
             System.out.println("No conversation found between " + userOne.getUsername() + ".");
         }
@@ -431,14 +462,11 @@ public class Messaging implements MessagingInterface {
 
         if (conversationDeleted) {
             System.out.println("Conversations involving " + userOne.getUsername() + " has been deleted.");
-            rewriteMessages();
+            rewriteMessages(sender);
         } else {
             System.out.println("No conversation found between " + userOne.getUsername() + ".");
         }
     }
-
-
-
 
 
 }
