@@ -327,8 +327,7 @@ class Messaging implements MessagingInterface {
         }
 
         for (Messaging message : messageHistory) {
-            if (message.getSender().equals(sender) &&
-                    message.getReceiver().equals(receiver) &&
+            if (message.getReceiver().equals(receiver) &&
                     message.getContent().equals(content)) {
 
                 messagesToDelete.add(message);
