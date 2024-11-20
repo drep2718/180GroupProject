@@ -108,6 +108,37 @@ public class Messaging implements MessagingInterface {
         }
     }
 
+    public void loadAllUsersMessages(User user) {
+        messageHistory.clear();
+        String filename = user.getUsername() + "AllUsers.txt";
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length >= 2) {
+                    String senderUsername = parts[0];
+                    String content = parts[1];
+
+                    if (parts.length == 3) {
+                        String receiverUsername = parts[2];
+                        User sender = new User(senderUsername);
+                        Friends receiver = new Friends(new User(receiverUsername));
+                        Messaging message = new Messaging(sender, receiver, content, "datePlaceholder", false);
+                        messageHistory.add(message);
+                    } else {
+                        User sender = new User(senderUsername);
+                        Messaging message = new Messaging(sender, content, new ArrayList<>(), "datePlaceholder", false, "Single");
+                        messageHistory.add(message);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading messages for user " + user.getUsername() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     public void rewriteMessages() {
         String senderFile;
