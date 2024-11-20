@@ -517,7 +517,45 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         messageHistory = Messaging.getMessageHistory();
 
                         Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
-                        messageTemp.loadMessages(currentUser);
+                        messageTemp.loadAllUsersMessages(currentUser);
+
+                        System.out.println(messageHistory);
+
+                        boolean messageDeleted = false;
+
+                        for (Messaging message1 : messageHistory) {
+                            if (message1.getSender().equals(currentUser) &&
+                                    message1.getContent().equals(content) &&
+                                    message1.getMessageType().equals("AllUsers")) {
+                                message1.deleteAllMessage(currentUser, content, date, isRead);
+                                messageDeleted = true;
+                            }
+                        }
+
+                        if (messageDeleted) {
+                            writer.println(DELETE_ALL_USERS + ";true");
+                        } else {
+                            writer.println(DELETE_ALL_USERS + ";false");
+                        }
+                        writer.flush();
+
+
+                    } else if (secondMessage.contains(DELETE_ALL_FRIENDS)) {
+
+                        String[] operation = secondMessage.split(";");
+                        String date = "TODAY";
+                        boolean isRead = false;
+                        String content = operation[1];
+
+                        Friends currentUserFriends = new Friends(currentUser);
+                        currentUserFriends.loadFriends();
+                        currentUserFriends.loadBlocked();
+                        allUsers = User.getAllUsers();
+                        friendsList = Friends.getFriendsList();
+                        messageHistory = Messaging.getMessageHistory();
+
+                        Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
+                        messageTemp.loadAllFriendMessages(currentUser);
 
                         System.out.println(messageHistory);
 
