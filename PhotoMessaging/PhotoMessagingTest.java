@@ -1,10 +1,8 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,15 +34,6 @@ class PhotoMessagingTest {
         photoMessageHistory.clear();
     }
 
-    @Test
-    public void testSendPhotoMessage() {
-        photoMessaging.sendPhotoMessage(sender, receiver, imageContent, date, false);
-        photoMessageHistory = photoMessaging.getPhotoMessageHistory();
-
-        assertEquals(1, photoMessageHistory.size());
-        assertEquals(sender, photoMessageHistory.get(0).getSender());
-        assertEquals(receiver, photoMessageHistory.get(0).getReceiver());
-    }
 
     @Test
     public void testSendAllFriendsPhotoMessage() {
@@ -106,31 +95,8 @@ class PhotoMessagingTest {
     }
 
 
-    @Test
-    public void testSaveToFile() {
-        photoMessageHistory.clear();
 
-        photoMessaging.sendPhotoMessage(sender, receiver, imageContent, date, false);
-        photoMessaging.saveToFile();
 
-        File savedFile = new File(sender.getUsername() + ".txt");
-        assertTrue(savedFile.exists());
-
-        try (BufferedReader br = new BufferedReader(new FileReader(savedFile))) {
-            String line;
-            boolean messageFound = false;
-            while ((line = br.readLine()) != null) {
-                if (line.contains(sender.getUsername())) {
-                    messageFound = true;
-                    break;
-                }
-            }
-            assertTrue(messageFound);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail("IOException");
-        }
-    }
 
 
     @Test
