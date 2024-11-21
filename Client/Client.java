@@ -146,7 +146,6 @@ public class Client extends Thread implements FlagInterface {
                         System.out.println("1- Add or remove friends");
                         System.out.println("2- block or unblock users");
                         System.out.println("3- Message");
-                        System.out.println("4- Logout");
 
                         String secondMenuItem = scan.nextLine();
 
@@ -190,7 +189,7 @@ public class Client extends Thread implements FlagInterface {
                                 if (trueOrFalse.equals("true")) {
                                     System.out.println("Friend added Successfully");
                                 } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("Cannot add friend, try again");
+                                    System.out.println("You, are already friends");
                                     writer.println("LOOP");
                                     writer.flush();
                                     String response = reader.readLine();
@@ -210,7 +209,7 @@ public class Client extends Thread implements FlagInterface {
                                 if (trueOrFalse.equals("true")) {
                                     System.out.println("Friend removed Successfully");
                                 } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("Cannot remove friend, try again");
+                                    System.out.println("Cannot remove friend because he is not your friend");
                                     writer.println("LOOP");
                                     writer.flush();
                                     String response = reader.readLine();
@@ -258,7 +257,7 @@ public class Client extends Thread implements FlagInterface {
                                 if (trueOrFalse.equals("true")) {
                                     System.out.println("Friend blocked Successfully");
                                 } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("Cannot block friend, try again");
+                                    System.out.println("User is Already Blocked");
                                     writer.println("LOOP");
                                     writer.flush();
                                     continue;
@@ -423,6 +422,7 @@ public class Client extends Thread implements FlagInterface {
                                 }
 
                                 String message2 = reader.readLine();
+                                System.out.println(message2);
                                 String[] index = message2.split(";");
                                 String trueOrFalse = index[1];
                                 if (message2.contains(TEXT_ALL_FRIENDS)) {
@@ -487,7 +487,7 @@ public class Client extends Thread implements FlagInterface {
                                     }
                                 } else if (message2.contains(DELETE_ALL_FRIENDS)) {
                                     if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted all friend");
+                                        System.out.println("You successfully deleted all friends message");
                                     } else if (trueOrFalse.equals("false")) {
                                         System.out.println("You cannot message this friend");
                                         continue;
@@ -497,7 +497,7 @@ public class Client extends Thread implements FlagInterface {
                                     }
                                 } else if (message2.contains(DELETE_ALL_USERS)) {
                                     if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted all users");
+                                        System.out.println("You successfully deleted all users message" );
                                     } else if (trueOrFalse.equals("false")) {
                                         System.out.println("You cannot message this friend");
                                         continue;
@@ -519,11 +519,6 @@ public class Client extends Thread implements FlagInterface {
 
 
                             }
-                        } else if (secondMenuItem.equals("4")) {
-                            writer.println("LOOP" + LOGOUT);
-                            writer.flush();
-                            loggedIn = false;
-                            break;
                         }
 
                     }
