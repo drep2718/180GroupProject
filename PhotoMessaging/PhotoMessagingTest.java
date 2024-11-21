@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version November 17, 2024
  */
 
-class PhotoMessagingTest {
+class PhotoMessagingTest implements PhotoMessagingTestInterface{
     private User sender;
     private User receiverUser;
     private Friends receiver;
