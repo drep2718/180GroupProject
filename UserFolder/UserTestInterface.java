@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * @version November 17, 2024
  *
  */
+
 public interface UserTestInterface {
 
     void createBasicProfile();
