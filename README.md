@@ -39,6 +39,11 @@ This program is a social communication platform that allows users to connect wit
 ### Client class:
 - Allows users to connect with the server class
 - Displays choices for users to choose (logging in/out, creating accounts, exiting, etc.)
+- Displays messages for users to ensure that their commands have been successfully processed.
+- Logging in/out: Successfully logging an user in after checking for the correct username and password. If the process fails, the password or username is incorrect or user does not exist and need to create an account.
+- Creating accounts: Create an account and the account will be added to the database.
+- Sending messages: Sending messages/photo messages to all existing users, all friends, or a single friend. Users can also delete desired sent messages/photo messages from the conversation or database.
+- Adding friends: Users can add other existing users as friends. If an user wants to add a friend but the wished user does not exist, the future GUI in phase 3 will handle this and display an error message that the said user does not exist instead of crashing in phase 2.
 ### Server class:
 Processes every command that the user wishes to make, including logging in/out, creating accounts, adding/blocking/removing friends, and sending/deleting messages.
 ### ThreadSafe class:
