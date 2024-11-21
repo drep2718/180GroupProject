@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 /**
- * Team Project -- Client Class
+ * Team Project -- Friends Class
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
  *
