@@ -5,9 +5,7 @@ import java.util.ArrayList;
  * Team Project -- Photomessaging Interface
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
 
 public interface PhotoMessagingInterface {
