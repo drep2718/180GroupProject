@@ -44,9 +44,9 @@ This program is a social communication platform that allows users to connect wit
 - Creating accounts: Create an account and the account will be added to the database.
 - Sending messages: Sending messages/photo messages to all existing users, all friends, or a single friend. Users can also delete desired sent messages/photo messages from the conversation or database.
 - Adding friends: Users can add other existing users as friends. If an user wants to add a friend but the wished user does not exist, the future GUI in phase 3 will handle this and display an error message that the said user does not exist instead of crashing in phase 2.
-### Server class:
-Processes every command that the user wishes to make, including logging in/out, creating accounts, adding/blocking/removing friends, and sending/deleting messages.
 ### ThreadSafe class:
+Processes every command that the user wishes to make, including logging in/out, creating accounts, adding/blocking/removing friends, and sending/deleting messages.
+### Server class:
 Allows multiple clients to be online in the same server without running into errors/conflicts.
 
 NOTE: There is no test cases as we do not have anything that does not relate to the client and server classes, along with concurrency.
