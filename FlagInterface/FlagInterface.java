@@ -1,19 +1,12 @@
 public interface FlagInterface {
 
-    /**
- * Team Project -- Flag Interface
- *
- * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
- * @version November 17, 2024
- *
- */
-
     // Login;username;password
     String LOGIN = "Login";
 
     // create;username;password
     String CREATE = "Create";
+
+    String LOGOUT = "Login";
 
     //FriendsAdd; friendName
     String FRIENDS_ADD = "friendsAdd";
@@ -44,10 +37,10 @@ public interface FlagInterface {
 
     // MessageSingleFriend; friend username; text to send
     String MESSAGE_SINGLE_FRIEND = "MessageSingleFriend";
-    
+
     // friend username:content
     String DELETE_ALL_FRIENDS = "DeleteMessageToAllFriends";
-    
+
     // friend username: content
     String DELETE_ALL_USERS = "DeleteMessageToAllUsers";
 
