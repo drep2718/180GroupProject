@@ -20,6 +20,8 @@ public class PhotoMessaging implements PhotoMessagingInterface {
     private Boolean isRead;
     private String messageType;
     private static ArrayList<PhotoMessaging> photoMessageHistory = new ArrayList<>();
+    private static final Object gatekeeper = new Object();
+
 
     public PhotoMessaging(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         this.sender = sender;
@@ -85,25 +87,27 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
 
     public void rewritePhotoMessages() {
-        String senderFile;
-        for (PhotoMessaging m : photoMessageHistory) {
-            if (m.getMessageType().equals("Single")) {
-                senderFile = m.getSender().getUsername() + ".txt";
-            } else if (m.getMessageType().equals("AllFriends")) {
-                senderFile = m.getSender().getUsername() + "AllFriends.txt";
-            } else if (m.getMessageType().equals("AllUsers")) {
-                senderFile = m.getSender().getUsername() + "AllUsers.txt";
-            } else {
-                continue;
-            }
-
-            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
-                for (PhotoMessaging photoMessage : photoMessageHistory) {
-                    bfw.write(photoMessage.toString());
-                    bfw.newLine();
+        synchronized (gatekeeper) {
+            String senderFile;
+            for (PhotoMessaging m : photoMessageHistory) {
+                if (m.getMessageType().equals("Single")) {
+                    senderFile = m.getSender().getUsername() + ".txt";
+                } else if (m.getMessageType().equals("AllFriends")) {
+                    senderFile = m.getSender().getUsername() + "AllFriends.txt";
+                } else if (m.getMessageType().equals("AllUsers")) {
+                    senderFile = m.getSender().getUsername() + "AllUsers.txt";
+                } else {
+                    continue;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, false))) {
+                    for (PhotoMessaging photoMessage : photoMessageHistory) {
+                        bfw.write(photoMessage.toString());
+                        bfw.newLine();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -119,22 +123,24 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
 
     public void saveToFile() {
-        String senderFile;
-        for (PhotoMessaging m : photoMessageHistory) {
-            if (m.getMessageType().equals("Single")) {
-                senderFile = m.getSender().getUsername() + ".txt";
-            } else if (m.getMessageType().equals("AllFriends")) {
-                senderFile = m.getSender().getUsername() + "AllFriends.txt";
-            } else if (m.getMessageType().equals("AllUsers")) {
-                senderFile = m.getSender().getUsername() + "AllUsers.txt";
-            } else {
-                continue;
-            }
+        synchronized (gatekeeper) {
+            String senderFile;
+            for (PhotoMessaging m : photoMessageHistory) {
+                if (m.getMessageType().equals("Single")) {
+                    senderFile = m.getSender().getUsername() + ".txt";
+                } else if (m.getMessageType().equals("AllFriends")) {
+                    senderFile = m.getSender().getUsername() + "AllFriends.txt";
+                } else if (m.getMessageType().equals("AllUsers")) {
+                    senderFile = m.getSender().getUsername() + "AllUsers.txt";
+                } else {
+                    continue;
+                }
 
-            try {
-                ImageIO.write(m.getImageContent(), "png", new File(senderFile));
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    ImageIO.write(m.getImageContent(), "png", new File(senderFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -153,15 +159,20 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
         if (receiver.isFriend(sender)) {
             PhotoMessaging photoMessage = new PhotoMessaging(sender, receiver, imageContent, date, isRead);
-            photoMessageHistory.add(photoMessage);
-            saveToFile();
+            synchronized (gatekeeper) {
+                photoMessageHistory.add(photoMessage);
+                saveToFile();
+            }
             System.out.println("Photo message delivered.");
         }
     }
 
 
     public void sendAllFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
-        ArrayList<User> friendsList = Friends.getFriendsList();
+        ArrayList<User> friendsList;
+        synchronized (gatekeeper) {
+            friendsList = Friends.getFriendsList();
+        }
         ArrayList<User> friendsToUser = new ArrayList<>();
 
         for (User user : friendsList) {
@@ -175,14 +186,17 @@ public class PhotoMessaging implements PhotoMessagingInterface {
         }
 
         PhotoMessaging allFriendsPhotoMessage = new PhotoMessaging(sender, imageContent, friendsList, date, isRead, "AllFriends");
-        photoMessageHistory.add(allFriendsPhotoMessage);
+        synchronized (gatekeeper) {
 
-        String senderFile = sender.getUsername() + "AllFriends.txt";
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
-            bfw.write(allFriendsPhotoMessage.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+            photoMessageHistory.add(allFriendsPhotoMessage);
+
+            String senderFile = sender.getUsername() + "AllFriends.txt";
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
+                bfw.write(allFriendsPhotoMessage.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println("Delivered");
@@ -190,16 +204,24 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
 
     public void sendAllUsersPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
-        ArrayList<User> allUsers = User.getAllUsers();
-        PhotoMessaging allUsersPhotoMessage = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
-        photoMessageHistory.add(allUsersPhotoMessage);
+        ArrayList<User> allUsers;
+        synchronized (gatekeeper) {
 
-        String senderFile = sender.getUsername() + "AllUsers.txt";
-        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
-            bfw.write(allUsersPhotoMessage.toString());
-            bfw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+            allUsers = User.getAllUsers();
+        }
+
+        PhotoMessaging allUsersPhotoMessage = new PhotoMessaging(sender, imageContent, allUsers, date, isRead, "AllUsers");
+        synchronized (gatekeeper) {
+
+            photoMessageHistory.add(allUsersPhotoMessage);
+
+            String senderFile = sender.getUsername() + "AllUsers.txt";
+            try (BufferedWriter bfw = new BufferedWriter(new FileWriter(senderFile, true))) {
+                bfw.write(allUsersPhotoMessage.toString());
+                bfw.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println("Delivered");
@@ -208,73 +230,89 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
     public void deletePhotoMessage(User sender, Friends receiver, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> messagesToDelete = new ArrayList<>();
-        for (PhotoMessaging message : photoMessageHistory) {
-            if (message.getSender().equals(sender) && message.getReceiver().equals(receiver) &&
-                    message.getImageContent().equals(imageContent)) {
-                messagesToDelete.add(message);
-                break;
-            } else {
-                System.out.println("You are not the sender of the message");
+        synchronized (gatekeeper) {
+
+            for (PhotoMessaging message : photoMessageHistory) {
+                if (message.getSender().equals(sender) && message.getReceiver().equals(receiver) &&
+                        message.getImageContent().equals(imageContent)) {
+                    messagesToDelete.add(message);
+                    break;
+                } else {
+                    System.out.println("You are not the sender of the message");
+                }
             }
+
+            photoMessageHistory.removeAll(messagesToDelete);
+            rewritePhotoMessages();
         }
-        photoMessageHistory.removeAll(messagesToDelete);
-        rewritePhotoMessages();
     }
 
 
     public void deleteFriendsPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedMessages = new ArrayList<>();
-        for (PhotoMessaging message : photoMessageHistory) {
-            if (message.getSender().equals(sender) && message.getImageContent().equals(imageContent) &&
-                    message.getMessageType().equals("AllFriends")) {
-                deletedMessages.add(message);
-                break;
-            } else {
-                System.out.println("You are not the sender of the message or no matching message found.");
+        synchronized (gatekeeper) {
+
+            for (PhotoMessaging message : photoMessageHistory) {
+                if (message.getSender().equals(sender) && message.getImageContent().equals(imageContent) &&
+                        message.getMessageType().equals("AllFriends")) {
+                    deletedMessages.add(message);
+                    break;
+                } else {
+                    System.out.println("You are not the sender of the message or no matching message found.");
+                }
             }
+            photoMessageHistory.removeAll(deletedMessages);
+            rewritePhotoMessages();
         }
-        photoMessageHistory.removeAll(deletedMessages);
-        rewritePhotoMessages();
     }
 
 
     public void deleteAllPhotoMessage(User sender, BufferedImage imageContent, String date, Boolean isRead) {
         ArrayList<PhotoMessaging> deletedMessages = new ArrayList<>();
-        for (PhotoMessaging message : photoMessageHistory) {
-            if (message.getSender().equals(sender) && message.getImageContent().equals(imageContent) &&
-                    message.getMessageType().equals("AllUsers")) {
-                deletedMessages.add(message);
-                break;
-            } else {
-                System.out.println("You are not the sender of the message or no matching message found.");
+        synchronized (gatekeeper) {
+
+            for (PhotoMessaging message : photoMessageHistory) {
+                if (message.getSender().equals(sender) && message.getImageContent().equals(imageContent) &&
+                        message.getMessageType().equals("AllUsers")) {
+                    deletedMessages.add(message);
+                    break;
+                } else {
+                    System.out.println("You are not the sender of the message or no matching message found.");
+                }
             }
+            photoMessageHistory.removeAll(deletedMessages);
+            rewritePhotoMessages();
         }
-        photoMessageHistory.removeAll(deletedMessages);
-        rewritePhotoMessages();
     }
 
 
     public void report(User sender, BufferedImage imageContent) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PhotoReport.txt", true))) {
-            String reportEntry = "Reported User: " + sender.getUsername();
-            bw.write(reportEntry);
-            bw.newLine();
-            System.out.println("Photo report has been filed successfully.");
-        } catch (IOException e) {
-            e.printStackTrace();
+        synchronized (gatekeeper) {
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("PhotoReport.txt", true))) {
+                String reportEntry = "Reported User: " + sender.getUsername();
+                bw.write(reportEntry);
+                bw.newLine();
+                System.out.println("Photo report has been filed successfully.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 
     public void deleteConversation(User userOne, User userTwo) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
-        for (PhotoMessaging message : photoMessageHistory) {
-            if ((message.getSender().equals(userOne) && message.getReceiver().getUser().equals(userTwo)) ||
-                    (message.getSender().equals(userTwo) && message.getReceiver().getUser().equals(userOne))) {
-                tempArray.add(message);
+        synchronized (gatekeeper) {
+
+            for (PhotoMessaging message : photoMessageHistory) {
+                if ((message.getSender().equals(userOne) && message.getReceiver().getUser().equals(userTwo)) ||
+                        (message.getSender().equals(userTwo) && message.getReceiver().getUser().equals(userOne))) {
+                    tempArray.add(message);
+                }
             }
+            photoMessageHistory.removeAll(tempArray);
         }
-        photoMessageHistory.removeAll(tempArray);
 
         if (!tempArray.isEmpty()) {
             System.out.println("Conversation between " + userOne.getUsername() + " and " + userTwo.getUsername() + " has been deleted.");
@@ -287,13 +325,15 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
     public void deleteAllFriendsConversation(User userOne) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
+        synchronized (gatekeeper) {
 
-        for (PhotoMessaging message : photoMessageHistory) {
-            if (message.getMessageType().equals("AllFriends") && message.getSender().equals(userOne)) {
-                tempArray.add(message);
+            for (PhotoMessaging message : photoMessageHistory) {
+                if (message.getMessageType().equals("AllFriends") && message.getSender().equals(userOne)) {
+                    tempArray.add(message);
+                }
             }
+            photoMessageHistory.removeAll(tempArray);
         }
-        photoMessageHistory.removeAll(tempArray);
 
         if (!tempArray.isEmpty()) {
             System.out.println("Conversations involving " + userOne.getUsername() + " have been deleted.");
@@ -306,12 +346,15 @@ public class PhotoMessaging implements PhotoMessagingInterface {
 
     public void deleteAllUsersConversation(User userOne) {
         ArrayList<PhotoMessaging> tempArray = new ArrayList<>();
-        for (PhotoMessaging message : photoMessageHistory) {
-            if (message.getMessageType().equals("AllUsers") && message.getSender().equals(userOne)) {
-                tempArray.add(message);
+        synchronized (gatekeeper) {
+
+            for (PhotoMessaging message : photoMessageHistory) {
+                if (message.getMessageType().equals("AllUsers") && message.getSender().equals(userOne)) {
+                    tempArray.add(message);
+                }
             }
+            photoMessageHistory.removeAll(tempArray);
         }
-        photoMessageHistory.removeAll(tempArray);
 
         if (!tempArray.isEmpty()) {
             System.out.println("Conversations involving " + userOne.getUsername() + " have been deleted.");
