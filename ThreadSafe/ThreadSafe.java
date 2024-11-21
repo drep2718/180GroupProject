@@ -27,7 +27,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
     private static ArrayList<User> friendsList = new ArrayList<>();
     private static ArrayList<User> friends = new ArrayList<>();
     private static ArrayList<Messaging> messageHistory = new ArrayList<>();
-    private static final Object SERVER_LOCK = new Object();
+    private static final Object gatekeeper = new Object();
     private int serverNum;
     private Socket socket;
 
@@ -45,6 +45,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
 
             try {
 
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter writer = new PrintWriter(socket.getOutputStream());
                 User currentUser = null;
@@ -61,64 +62,68 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         continue;
                     }
                     if (message.contains(LOGIN)) {
-                        String[] index = message.split(";");
-                        if (index.length > 2) {
-                            String username = index[1];
-                            String password = index[2];
-                            boolean validUser = false;
+                        synchronized (gatekeeper) {
+                            String[] index = message.split(";");
+                            if (index.length > 2) {
+                                String username = index[1];
+                                String password = index[2];
+                                boolean validUser = false;
+                                currentUser = new User(username);
+                                currentUser.loadUsers();
+                                usernames = User.getUsernames();
+
+
+                                for (String existingUsername : usernames) {
+                                    if (existingUsername.equals(username)) {
+                                        validUser = true;
+                                        break;
+                                    }
+                                }
+
+
+                                boolean validPassword = false;
+                                for (String existingPassword : User.getPasswords()) {
+                                    if (existingPassword.equals(password)) {
+                                        validPassword = true;
+                                        break;
+                                    }
+                                }
+
+                                if (validPassword && validUser) {
+                                    writer.println(LOGIN + ";" + "Login Successful");
+                                } else {
+                                    writer.println(LOGIN + ";" + "Login Failed");
+                                }
+                            } else {
+                                writer.println(LOGIN + ";" + "Missing credentials");
+                            }
+                            writer.flush();
+                            continue;
+                        }
+                    }
+
+
+                    if (message.contains(CREATE)) {
+                        synchronized (gatekeeper) {
+                            String username = message.split(";")[1];
+                            String password = message.split(";")[2];
+                            String bio = message.split(";")[3];
                             currentUser = new User(username);
-                            currentUser.loadUsers();
                             usernames = User.getUsernames();
+                            boolean validUser = false;
+                            User newUser = currentUser.createProfile(username, password, bio);
 
 
-                            for (String existingUsername : usernames) {
+                            for (String existingUsername : User.getUsernames()) {
                                 if (existingUsername.equals(username)) {
                                     validUser = true;
                                     break;
                                 }
                             }
-
-
-                            boolean validPassword = false;
-                            for (String existingPassword : User.getPasswords()) {
-                                if (existingPassword.equals(password)) {
-                                    validPassword = true;
-                                    break;
-                                }
-                            }
-
-                            if (validPassword && validUser) {
-                                writer.println(LOGIN + ";" + "Login Successful");
-                            } else {
-                                writer.println(LOGIN + ";" + "Login Failed");
-                            }
-                        } else {
-                            writer.println(LOGIN + ";" + "Missing credentials");
+                            writer.println(CREATE + ";" + validUser);
+                            writer.flush();
+                            continue;
                         }
-                        writer.flush();
-                        continue;
-                    }
-
-
-                    if (message.contains(CREATE)) {
-                        String username = message.split(";")[1];
-                        String password = message.split(";")[2];
-                        String bio = message.split(";")[3];
-                        currentUser = new User(username);
-                        usernames = User.getUsernames();
-                        boolean validUser = false;
-                        User newUser = currentUser.createProfile(username, password, bio);
-
-
-                        for (String existingUsername : User.getUsernames()) {
-                            if (existingUsername.equals(username)) {
-                                validUser = true;
-                                break;
-                            }
-                        }
-                        writer.println(CREATE + ";" + validUser);
-                        writer.flush();
-                        continue;
                     }
 
                     String secondMessage = reader.readLine();
@@ -128,271 +133,201 @@ public class ThreadSafe extends Thread implements FlagInterface {
                         continue;
                     }
                     if (secondMessage.contains(FRIENDS_ADD)) {
+                        synchronized (gatekeeper) {
 
-                        String[] operation = secondMessage.split(";");
-                        String target = operation[1];
-                        User friend = null;
+                            String[] operation = secondMessage.split(";");
+                            String target = operation[1];
+                            User friend = null;
 
-                        Friends friend1 = new Friends(currentUser);
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friend1.loadFriends();
-                        for (User current : allUsers) {
-                            if (current.getUsername().equals(target)) {
-                                friend = new User(current.getUsername());
-                                break;
+                            Friends friend1 = new Friends(currentUser);
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friend1.loadFriends();
+                            for (User current : allUsers) {
+                                if (current.getUsername().equals(target)) {
+                                    friend = new User(current.getUsername());
+                                    break;
+                                }
                             }
-                        }
 
 
-                        if (currentUser == null) {
-                            writer.write(FRIENDS_ADD + ";" + "false");
-                            writer.println();
+                            if (currentUser == null || Friends.getFriendsList().contains(friend)) {
+                                writer.write(FRIENDS_ADD + ";" + "false");
+                                writer.println();
+                                writer.flush();
+                            }
+
+                            friend1.addFriend(friend);
+                            boolean added = friend1.isFriend(friend);
+                            writer.println(FRIENDS_ADD + ";" + added);
                             writer.flush();
+
                         }
-
-                        friend1.addFriend(friend);
-                        boolean added = friend1.isFriend(friend);
-                        writer.println(FRIENDS_ADD + ";" + added);
-                        writer.flush();
-
-
                     } else if (secondMessage.contains(FRIENDS_REMOVE)) {
+                        synchronized (gatekeeper) {
 
-                        String[] operation = secondMessage.split(";");
-                        String target = operation[1];
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser);
-                        friend1.loadFriends();
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
+                            String[] operation = secondMessage.split(";");
+                            String target = operation[1];
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
 
 
-                        for (User current : allUsers) {
-                            if (current.getUsername().equals(target)) {
-                                friend = new User(current.getUsername());
-                                break;
+                            for (User current : allUsers) {
+                                if (current.getUsername().equals(target)) {
+                                    friend = new User(current.getUsername());
+                                    break;
+                                }
                             }
-                        }
 
 
-                        if (currentUser == null) {
-                            writer.write(FRIENDS_ADD + ";" + "false");
-                            writer.println();
+                            if (currentUser == null || !Friends.getFriendsList().contains(friend)) {
+                                writer.write(FRIENDS_REMOVE + ";" + "false");
+                                writer.println();
+                                writer.flush();
+                            }
+
+
+                            friend1.removeFriend(friend1, friend);
+                            boolean added = !friend1.isFriend(friend);
+                            writer.println(FRIENDS_REMOVE + ";" + added);
                             writer.flush();
                         }
-
-
-                        friend1.removeFriend(friend1, friend);
-                        boolean added = !friend1.isFriend(friend);
-                        writer.println(FRIENDS_REMOVE + ";" + added);
-                        writer.flush();
 
 
                     } else if (secondMessage.contains(FRIENDS_BLOCK)) {
 
-
-                        String[] operation = secondMessage.split(";");
-                        String target = operation[1];
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser);
-                        friend1.loadFriends();
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
+                        synchronized (gatekeeper) {
 
 
-                        for (User current : allUsers) {
-                            if (current.getUsername().equals(target)) {
-                                friend = new User(current.getUsername());
-                                break;
+                            String[] operation = secondMessage.split(";");
+                            String target = operation[1];
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+
+
+                            for (User current : allUsers) {
+                                if (current.getUsername().equals(target)) {
+                                    friend = new User(current.getUsername());
+                                    break;
+                                }
                             }
-                        }
 
 
-                        if (currentUser == null) {
-                            writer.write(FRIENDS_ADD + ";" + "false");
-                            writer.println();
+                            friend1.loadBlocked();
+                            if (currentUser == null || Friends.getBlockedList().contains(friend)) {
+                                writer.write(FRIENDS_BLOCK + ";" + "false" );
+                                writer.println();
+                                writer.flush();
+                            }
+
+
+                            friend1.removeFriend(friend1, friend);
+                            friend1.blockUser(friend);
+                            boolean blocked = friend1.isBlocked(friend);
+                            writer.println(FRIENDS_BLOCK + ";" + blocked);
                             writer.flush();
                         }
-
-
-                        friend1.removeFriend(friend1,friend);
-                        friend1.blockUser(friend);
-                        boolean blocked = friend1.isBlocked(friend);
-                        writer.println(FRIENDS_BLOCK + ";" + blocked);
-                        writer.flush();
 
                     } else if (secondMessage.contains(FRIENDS_UNBLOCK)) {
 
-                        String[] operation = secondMessage.split(";");
-                        String target = operation[1];
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser);
-                        friend1.loadFriends();
-                        friend1.loadBlocked();
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
+                        synchronized (gatekeeper) {
+                            String[] operation = secondMessage.split(";");
+                            String target = operation[1];
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            friend1.loadBlocked();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
 
 
-                        for (User current : allUsers) {
-                            if (current.getUsername().equals(target)) {
-                                friend = new User(current.getUsername());
-                                break;
+                            for (User current : allUsers) {
+                                if (current.getUsername().equals(target)) {
+                                    friend = new User(current.getUsername());
+                                    break;
+                                }
                             }
-                        }
 
 
-                        if (currentUser == null) {
-                            writer.write(FRIENDS_ADD + ";" + "false");
-                            writer.println();
+                            friend1.loadBlocked();
+                            if (currentUser == null || !Friends.getBlockedList().contains(friend)) {
+                                writer.write(FRIENDS_UNBLOCK + ";" + "false");
+                                writer.println();
+                                writer.flush();
+                            }
+
+
+                            friend1.addFriend(friend);
+                            friend1.unblockUser(friend1, friend);
+                            boolean unblocked = !friend1.isBlocked(friend);
+                            writer.println(FRIENDS_UNBLOCK + ";" + "true");
                             writer.flush();
                         }
 
-
-                        friend1.addFriend(friend);
-                        friend1.unblockUser(friend1,friend);
-                        boolean unblocked = !friend1.isBlocked(friend);
-                        writer.println(FRIENDS_UNBLOCK + ";" + unblocked);
-                        writer.flush();
-
-
                     } else if (secondMessage.contains(TEXT_ALL_FRIENDS)) {
 
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser);
-                        friend1.loadFriends();
-                        friend1.loadBlocked();
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-                        String content = operation[1];
+                        synchronized (gatekeeper) {
+                            System.out.println("ALL FRIENDS");
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            friend1.loadBlocked();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            String content = operation[1];
 
 
-                        Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                        messages.sendAllFriendsMessage(currentUser, content, date, isRead);
-                        boolean sent = true;
-                        writer.println(TEXT_ALL_FRIENDS + ";" + sent);
-                        writer.flush();
+                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
+                            messages.sendAllFriendsMessage(currentUser, content, date, isRead);
+                            writer.println(TEXT_ALL_FRIENDS + ";" + "true");
+                            writer.flush();
+                        }
 
 
                     } else if (secondMessage.contains(TEXT_ALL_USERS)) {
 
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        User friend = null;
-                        Friends friend1 = new Friends(currentUser);
-                        friend1.loadFriends();
-                        friend1.loadBlocked();
-                        currentUser.loadUsers();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-                        String content = operation[1];
+                        synchronized (gatekeeper) {
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            User friend = null;
+                            Friends friend1 = new Friends(currentUser);
+                            friend1.loadFriends();
+                            friend1.loadBlocked();
+                            currentUser.loadUsers();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            String content = operation[1];
 
 
-                        Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
-                        messages.sendAllUsersMessage(currentUser, content, date, isRead);
-                        boolean sent = true;
-                        writer.println(TEXT_ALL_FRIENDS + ";" + sent);
-                        writer.flush();
+                            Messaging messages = new Messaging(currentUser, content, friends, date, isRead, "AllFriends");
+                            messages.sendAllUsersMessage(currentUser, content, date, isRead);
+                            boolean sent = true;
+                            writer.println(TEXT_ALL_USERS + ";" + sent);
+                            writer.flush();
+                        }
 
 
                     } else if (secondMessage.contains(TEXT_SINGLE_FRIEND)) {
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        String friendUsername = operation[1];
-                        String content = operation[2];
-                        Friends currentUserFriends = new Friends(currentUser);
-                        currentUserFriends.loadFriends();
-                        currentUserFriends.loadBlocked();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-
-                        User friendUser = null;
-                        for (User user : User.getAllUsers()) {
-                            if (user.getUsername().equals(friendUsername)) {
-                                friendUser = user;
-                                break;
-                            }
-                        }
-
-                        if (friendUser == null) {
-                            writer.println(TEXT_SINGLE_FRIEND + ";false");
-                            writer.flush();
-                            return;
-                        }
-
-                        Friends friendFriends = new Friends(friendUser);
-
-
-                        Messaging messaging = new Messaging(currentUser, friendFriends, content, date, isRead);
-                        messaging.sendMessage(currentUser, friendFriends, content, date, isRead);
-                        writer.println(TEXT_SINGLE_FRIEND + ";true");
-                        writer.flush();
-
-
-                    } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
-                        try {
-                            InputStream inputStream = socket.getInputStream();
-                            BufferedImage imageContent = ImageIO.read(inputStream);
-
-                            String date = "TODAY";
-                            boolean isRead = false;
-
-                            Friends currentUserFriends = new Friends(currentUser);
-                            currentUserFriends.loadFriends();
-                            currentUserFriends.loadBlocked();
-                            allUsers = User.getAllUsers();
-                            friendsList = Friends.getFriendsList();
-
-                            PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
-                            photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
-
-                            boolean sent = true;
-                            writer.println(MESSAGE_ALL_FRIENDS + ";" + sent);
-                            writer.flush();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
-                        try {
-                            InputStream inputStream = socket.getInputStream();
-                            BufferedImage imageContent = ImageIO.read(inputStream);
-
-                            String date = "TODAY";
-                            boolean isRead = false;
-
-                            Friends currentUserFriends = new Friends(currentUser);
-                            currentUserFriends.loadFriends();
-                            currentUserFriends.loadBlocked();
-                            allUsers = User.getAllUsers();
-
-                            PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, allUsers, date, isRead, "AllUsers");
-                            photoMessage.sendAllUsersPhotoMessage(currentUser, imageContent, date, isRead);
-
-                            boolean sent = true;
-                            writer.println(MESSAGE_ALL_USERS + ";" + sent);
-                            writer.flush();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
-                        try {
+                        synchronized (gatekeeper) {
                             String[] operation = secondMessage.split(";");
                             String date = "TODAY";
                             boolean isRead = false;
                             String friendUsername = operation[1];
-
-                            InputStream inputStream = socket.getInputStream();
-                            BufferedImage imageContent = ImageIO.read(inputStream);
-
+                            String content = operation[2];
                             Friends currentUserFriends = new Friends(currentUser);
                             currentUserFriends.loadFriends();
                             currentUserFriends.loadBlocked();
@@ -400,7 +335,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             friendsList = Friends.getFriendsList();
 
                             User friendUser = null;
-                            for (User user : allUsers) {
+                            for (User user : User.getAllUsers()) {
                                 if (user.getUsername().equals(friendUsername)) {
                                     friendUser = user;
                                     break;
@@ -408,131 +343,220 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             }
 
                             if (friendUser == null) {
-                                writer.println(MESSAGE_SINGLE_FRIEND + ";false");
+                                writer.println(TEXT_SINGLE_FRIEND + ";false");
                                 writer.flush();
                                 return;
                             }
 
                             Friends friendFriends = new Friends(friendUser);
 
-                            PhotoMessaging photoMessage = new PhotoMessaging(currentUser, friendFriends, imageContent, date, isRead);
-                            photoMessage.sendPhotoMessage(currentUser, friendFriends, imageContent, date, isRead);
 
-                            writer.println(MESSAGE_SINGLE_FRIEND + ";true");
+                            Messaging messaging = new Messaging(currentUser, friendFriends, content, date, isRead);
+                            messaging.sendMessage(currentUser, friendFriends, content, date, isRead);
+                            writer.println(TEXT_SINGLE_FRIEND + ";" + "true");
                             writer.flush();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        }
+
+                    } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+                        synchronized (gatekeeper) {
+                            try {
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
+
+                                String date = "TODAY";
+                                boolean isRead = false;
+
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
+                                friendsList = Friends.getFriendsList();
+
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
+                                photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
+
+                                writer.println(MESSAGE_ALL_FRIENDS + ";" + "sent");
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+                        synchronized (gatekeeper) {
+                            try {
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
+
+                                String date = "TODAY";
+                                boolean isRead = false;
+
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
+
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, allUsers, date, isRead, "AllUsers");
+                                photoMessage.sendAllUsersPhotoMessage(currentUser, imageContent, date, isRead);
+
+                                boolean sent = true;
+                                writer.println(MESSAGE_ALL_USERS + ";" + sent);
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+                        synchronized (gatekeeper) {
+                            try {
+                                String[] operation = secondMessage.split(";");
+                                String date = "TODAY";
+                                boolean isRead = false;
+                                String friendUsername = operation[1];
+
+                                InputStream inputStream = socket.getInputStream();
+                                BufferedImage imageContent = ImageIO.read(inputStream);
+
+                                Friends currentUserFriends = new Friends(currentUser);
+                                currentUserFriends.loadFriends();
+                                currentUserFriends.loadBlocked();
+                                allUsers = User.getAllUsers();
+                                friendsList = Friends.getFriendsList();
+
+                                User friendUser = null;
+                                for (User user : allUsers) {
+                                    if (user.getUsername().equals(friendUsername)) {
+                                        friendUser = user;
+                                        break;
+                                    }
+                                }
+
+                                if (friendUser == null) {
+                                    writer.println(MESSAGE_SINGLE_FRIEND + ";false");
+                                    writer.flush();
+                                    return;
+                                }
+
+                                Friends friendFriends = new Friends(friendUser);
+
+                                PhotoMessaging photoMessage = new PhotoMessaging(currentUser, friendFriends, imageContent, date, isRead);
+                                photoMessage.sendPhotoMessage(currentUser, friendFriends, imageContent, date, isRead);
+
+                                writer.println(MESSAGE_SINGLE_FRIEND + ";true");
+                                writer.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else if (secondMessage.contains(DELETE_SINGLE_FRIEND)) {
 
+                        synchronized (gatekeeper) {
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            String friendUsername = operation[1];
+                            String content = operation[2];
+                            Friends currentUserFriends = new Friends(currentUser);
+                            currentUserFriends.loadFriends();
+                            currentUserFriends.loadBlocked();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            messageHistory = Messaging.getMessageHistory();
 
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        String friendUsername = operation[1];
-                        String content = operation[2];
-                        Friends currentUserFriends = new Friends(currentUser);
-                        currentUserFriends.loadFriends();
-                        currentUserFriends.loadBlocked();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-                        messageHistory = Messaging.getMessageHistory();
-
-                        User friendUser = null;
-                        for (User user : User.getAllUsers()) {
-                            if (user.getUsername().equals(friendUsername)) {
-                                friendUser = user;
-                                break;
+                            User friendUser = null;
+                            for (User user : User.getAllUsers()) {
+                                if (user.getUsername().equals(friendUsername)) {
+                                    friendUser = user;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (friendUser == null) {
-                            writer.println(TEXT_SINGLE_FRIEND + ";false");
+                            if (friendUser == null) {
+                                writer.println(DELETE_SINGLE_FRIEND + ";false");
+                                writer.flush();
+                                return;
+                            }
+
+                            Friends friendFriends = new Friends(friendUser);
+
+                            Messaging messageTemp = new Messaging(currentUser, friendFriends, content, date, isRead);
+                            messageTemp.loadMessages(currentUser);
+
+
+                            boolean messageDeleted = true;
+                            messageTemp.deleteMessage(currentUser, friendFriends, content, date, isRead);
+
+
+                            if (messageDeleted) {
+                                writer.println(DELETE_SINGLE_FRIEND + ";true");
+                            } else {
+                                writer.println(DELETE_SINGLE_FRIEND + ";false");
+                            }
                             writer.flush();
-                            return;
                         }
-
-                        Friends friendFriends = new Friends(friendUser);
-
-                        Messaging messageTemp = new Messaging(currentUser, friendFriends, content, date, isRead);
-                        messageTemp.loadMessages(currentUser);
-
-
-
-                        boolean messageDeleted = true;
-                        messageTemp.deleteMessage(currentUser,friendFriends, content, date, isRead);
-
-
-                        if (messageDeleted) {
-                            writer.println(DELETE_SINGLE_FRIEND + ";true");
-                        } else {
-                            writer.println(DELETE_SINGLE_FRIEND + ";false");
-                        }
-                        writer.flush();
 
 
                     } else if (secondMessage.contains(DELETE_ALL_USERS)) {
 
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        String content = operation[1];
+                        synchronized (gatekeeper) {
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            String content = operation[1];
 
-                        Friends currentUserFriends = new Friends(currentUser);
-                        currentUserFriends.loadFriends();
-                        currentUserFriends.loadBlocked();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-                        messageHistory = Messaging.getMessageHistory();
+                            Friends currentUserFriends = new Friends(currentUser);
+                            currentUserFriends.loadFriends();
+                            currentUserFriends.loadBlocked();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            messageHistory = Messaging.getMessageHistory();
 
-                        Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
-                        messageTemp.loadAllUsersMessages(currentUser);
-
-
-                        boolean messageDeleted = true;
-                        messageTemp.deleteUsersMessage(currentUser, content, date, isRead);
+                            Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
+                            messageTemp.loadAllUsersMessages(currentUser);
 
 
-                        if (messageDeleted) {
-                            writer.println(DELETE_ALL_USERS + ";true");
-                        } else {
-                            writer.println(DELETE_ALL_USERS + ";false");
+                            boolean messageDeleted = true;
+                            messageTemp.deleteUsersMessage(currentUser, content, date, isRead);
+
+
+                            if (messageDeleted) {
+                                writer.println(DELETE_ALL_USERS + ";true");
+                            } else {
+                                writer.println(DELETE_ALL_USERS + ";false");
+                            }
+                            writer.flush();
+
                         }
-                        writer.flush();
-
-
 
                     } else if (secondMessage.contains(DELETE_ALL_FRIENDS)) {
 
-                        String[] operation = secondMessage.split(";");
-                        String date = "TODAY";
-                        boolean isRead = false;
-                        String content = operation[1];
+                        synchronized (gatekeeper) {
+                            String[] operation = secondMessage.split(";");
+                            String date = "TODAY";
+                            boolean isRead = false;
+                            String content = operation[1];
 
-                        Friends currentUserFriends = new Friends(currentUser);
-                        currentUserFriends.loadFriends();
-                        currentUserFriends.loadBlocked();
-                        allUsers = User.getAllUsers();
-                        friendsList = Friends.getFriendsList();
-                        messageHistory = Messaging.getMessageHistory();
+                            Friends currentUserFriends = new Friends(currentUser);
+                            currentUserFriends.loadFriends();
+                            currentUserFriends.loadBlocked();
+                            allUsers = User.getAllUsers();
+                            friendsList = Friends.getFriendsList();
+                            messageHistory = Messaging.getMessageHistory();
 
-                        Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
-                        messageTemp.loadAllFriendMessages(currentUser);
+                            Messaging messageTemp = new Messaging(currentUser, null, content, date, isRead);
+                            messageTemp.loadAllFriendMessages(currentUser);
 
-                        boolean messageDeleted = true;
-                        messageTemp.deleteFriendsMessage(currentUser, content, date, isRead);
+                            boolean messageDeleted = true;
+                            messageTemp.deleteFriendsMessage(currentUser, content, date, isRead);
 
 
-                        if (messageDeleted) {
-                            writer.println(DELETE_ALL_USERS + ";true");
-                        } else {
-                            writer.println(DELETE_ALL_USERS + ";false");
+                            if (messageDeleted) {
+                                writer.println(DELETE_ALL_FRIENDS + ";true");
+                            } else {
+                                writer.println(DELETE_ALL_FRIENDS + ";false");
+                            }
+                            writer.flush();
                         }
-                        writer.flush();
 
-
-                    } else if (secondMessage.contains(LOGOUT)) {
-                        break;
                     }
 
 
