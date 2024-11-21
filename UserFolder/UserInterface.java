@@ -43,8 +43,7 @@ public interface UserInterface {
 
     User createProfile(String username, String password, String bio);
 
-    User createProfile(String username, String password,
-                       String bio, BufferedImage image, String filepath, String formatName);
+    User createProfile(String username, String password, String bio, BufferedImage image, String filepath, String formatName);
 
     void updateUsername(String newUsername);
 
@@ -70,5 +69,8 @@ public interface UserInterface {
 
     boolean bioExists(String bio);
 
+    boolean equals(Object obj);
+
 
 }
+
