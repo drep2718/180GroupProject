@@ -1,5 +1,14 @@
 import java.util.ArrayList;
 
+/**
+ * Team Project -- Friends interface
+ *
+ * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
+ *
+ * @version November 17, 2024
+ *
+ */
+
 public interface FriendsInterface {
     void addFriend(User newFriend);
 
