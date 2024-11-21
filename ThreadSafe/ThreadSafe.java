@@ -10,9 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Team Project -- ThreadSafe Class
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
 
 public class ThreadSafe extends Thread implements FlagInterface {
@@ -223,7 +221,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
 
                             friend1.loadBlocked();
                             if (currentUser == null || Friends.getBlockedList().contains(friend)) {
-                                writer.write(FRIENDS_BLOCK + ";" + "false" );
+                                writer.write(FRIENDS_BLOCK + ";" + "false");
                                 writer.println();
                                 writer.flush();
                             }
