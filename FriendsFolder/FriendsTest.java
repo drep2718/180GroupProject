@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version November 17, 2024
  */
 
-class FriendsTest {
+class FriendsTest implements FriendsTestInterface {
 
     @Test
-    void removeFriend() {
+    public void removeFriend() {
         User user = new User("Username");
         Friends friend = new Friends(user);
         User newUser = new User("UsernameNew");
@@ -23,14 +23,14 @@ class FriendsTest {
 
         assertTrue(friend.isFriend(newUser));
 
-        friend.removeFriend(newUser);
+        friend.removeFriend(friend, newUser);
 
         assertFalse(friend.isFriend(newUser));
 
     }
 
     @Test
-    void rewriteFriends() {
+    public void rewriteFriends() {
         Friends.setFriendsList(new ArrayList<>());
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Friends.txt", false))) {
             bfw.write("");
@@ -66,7 +66,7 @@ class FriendsTest {
     }
 
     @Test
-    void rewriteBlocked() {
+    public void rewriteBlocked() {
         Friends.setBlockedList(new ArrayList<>());
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter("Blocked.txt", false))) {
             bfw.write("");
@@ -101,7 +101,7 @@ class FriendsTest {
     }
 
     @Test
-    void saveFriendsToFile() {
+    public void saveFriendsToFile() {
 
         User user = new User("Aiden");
         Friends friend = new Friends(user);
@@ -123,7 +123,7 @@ class FriendsTest {
     }
 
     @Test
-    void saveBlockedToFile() {
+    public void saveBlockedToFile() {
 
         User user = new User("Aiden");
         Friends blocked = new Friends(user);
@@ -145,7 +145,7 @@ class FriendsTest {
     }
 
     @Test
-    void isFriend() {
+    public void isFriend() {
         User user = new User("Username");
         Friends friend = new Friends(user);
         User newUser = new User("UsernameNew");
@@ -156,7 +156,7 @@ class FriendsTest {
     }
 
     @Test
-    void blockUser() {
+    public void blockUser() {
 
         User user = new User("Username");
         Friends blocked = new Friends(user);
@@ -168,19 +168,19 @@ class FriendsTest {
     }
 
     @Test
-    void unblockUser() {
+    public void unblockUser() {
         User user = new User("Username");
         Friends blocked = new Friends(user);
         User newUserToBlock = new User("UsernameBlocked");
         blocked.blockUser(newUserToBlock);
         assertTrue(blocked.isBlocked(newUserToBlock));
-        blocked.unblockUser(newUserToBlock);
+        blocked.unblockUser(blocked, newUserToBlock);
         assertFalse(blocked.isBlocked(newUserToBlock));
 
     }
 
     @Test
-    void addFriend() {
+    public void addFriend() {
         User user = new User("Username");
         Friends friend = new Friends(user);
         User newUser = new User("UsernameNew");
@@ -190,7 +190,7 @@ class FriendsTest {
 
 
     @Test
-    void isBlocked() {
+    public void isBlocked() {
         User user = new User("Username");
         Friends blocked = new Friends(user);
         User newUserToBlock = new User("UsernameBlocked");
@@ -200,11 +200,8 @@ class FriendsTest {
 
     }
 
-    @Test
-    void sentMessage() {
+    public void addFriend(User user) {
     }
 
-    @Test
-    void removeSentMessage() {
-    }
+
 }
