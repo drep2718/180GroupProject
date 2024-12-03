@@ -18,8 +18,7 @@ public class Client extends Thread implements FlagInterface {
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
-        // HI THERE
-        // Hello Fellow Friend
+       
 
 
         int portNumber = 2727;
