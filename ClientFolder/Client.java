@@ -19,6 +19,7 @@ public class Client extends Thread implements FlagInterface {
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
         // HI THERE
+        // Hello Fellow Friend
 
 
         int portNumber = 2727;
