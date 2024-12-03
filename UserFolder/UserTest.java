@@ -5,25 +5,22 @@ import java.io.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Team Project -- UserTest Class
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
-class UserTest implements UserTestInterface{
+class UserTest implements UserTestInterface {
     User user = new User("UsernameQ", "PasswordQ", "BioQ");
     BufferedImage image;
 
 
-
-
     @Test
     public void createBasicProfile() {
-        User newUser = new User("UsernameP","PasswordP","BioP");
-        User newerUser = newUser.createProfile("UsernameP","PasswordP","BioP");
+        User newUser = new User("UsernameP", "PasswordP", "BioP");
+        User newerUser = newUser.createProfile("UsernameP", "PasswordP", "BioP");
         assertEquals("UsernameP", newerUser.getUsername());
         assertEquals("PasswordP", newerUser.getPassword());
         assertEquals("BioP", newerUser.getBio());
@@ -61,19 +58,17 @@ class UserTest implements UserTestInterface{
     }
 
 
-
-
     @Test
     public void testToStringBasicUser() {
 
-        User newUser = new User("UsernamePP","PasswordPP","BioPP");
-        User newerUser = newUser.createProfile("UsernamePP","PasswordPP","BioPP");
+        User newUser = new User("UsernamePP", "PasswordPP", "BioPP");
+        User newerUser = newUser.createProfile("UsernamePP", "PasswordPP", "BioPP");
         String test = newUser.toString();
         assertEquals("UsernamePP,PasswordPP,BioPP", test);
     }
 
     @Test
-    public void testToStringPfpUser () {  // fix buffered Image
+    public void testToStringPfpUser() {  // fix buffered Image
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         User newUser = user.createProfile("Username", "Password", "Bio", image, "FilePath", "FormatName");
         String test = newUser.toString();
@@ -107,7 +102,7 @@ class UserTest implements UserTestInterface{
 
         User newUser = user.createProfile("Username11", "Password11", "Bio11");
         User newUser2 = user.createProfile("Username33", "Password33", "Bio33");
-       newUser2.rewriteUsers();
+        newUser2.rewriteUsers();
 
         ArrayList<String> lines = new ArrayList<>();
         try (BufferedReader bfr = new BufferedReader(new FileReader("Users.txt"))) {
@@ -187,7 +182,7 @@ class UserTest implements UserTestInterface{
     @Test
     public void usernameNotAvail() {
         User newUser = user.createProfile("Aiden", "Password", "Bio");
-        User user = new User ("John");
+        User user = new User("John");
         boolean b = user.usernameAvail("Aiden");
         assertEquals(false, b);
 
@@ -196,7 +191,7 @@ class UserTest implements UserTestInterface{
     @Test
     public void usernameAvail() {
         User newUser = user.createProfile("Aiden", "Password", "Bio");
-        User user = new User ("John");
+        User user = new User("John");
         boolean b = user.usernameAvail("Matt");
         assertEquals(true, b);
 
@@ -204,7 +199,7 @@ class UserTest implements UserTestInterface{
 
     @Test
     public void setImage() {
-        User user = new User ("Aiden");
+        User user = new User("Aiden");
         BufferedImage image1 = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         user.setImage(image1);
         assertEquals(image1, user.getImage());
@@ -212,7 +207,7 @@ class UserTest implements UserTestInterface{
 
     @Test
     public void getImage() {
-        User user = new User ("Aiden");
+        User user = new User("Aiden");
         BufferedImage image1 = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         user.setImage(image1);
         BufferedImage getImage = user.getImage();
@@ -221,14 +216,14 @@ class UserTest implements UserTestInterface{
 
     @Test
     public void getBio() {
-        User user = new User ("Aiden","Password","Bio");
+        User user = new User("Aiden", "Password", "Bio");
         String bio = "Bio";
         assertEquals(bio, user.getBio());
     }
 
     @Test
     public void setBio() {
-        User user = new User ("Aiden","Password","Bio");
+        User user = new User("Aiden", "Password", "Bio");
         String newBio = "Bio";
         user.setBio(newBio);
         String bioFromGet = user.getBio();
@@ -244,7 +239,7 @@ class UserTest implements UserTestInterface{
 
     @Test
     public void setUsername() {
-        User user = new User ("Aiden");
+        User user = new User("Aiden");
         String newUsername = "username";
         user.setUsername(newUsername);
         String usernameFromGet = user.getUsername();
@@ -253,14 +248,14 @@ class UserTest implements UserTestInterface{
 
     @Test
     public void getPassword() {
-        User user = new User ("Aiden","Password","Bio");
+        User user = new User("Aiden", "Password", "Bio");
         String password = "Password";
         assertEquals(password, user.getPassword());
     }
 
     @Test
-   public void setPassword() {
-        User user = new User ("Aiden","Password","Bio");
+    public void setPassword() {
+        User user = new User("Aiden", "Password", "Bio");
         String newPassword = "Password";
         user.setPassword(newPassword);
         String passwordAfterSet = user.getPassword();
@@ -270,17 +265,17 @@ class UserTest implements UserTestInterface{
     @Test
     public void validatePassword() {
 
-    User newUser = new User ("Aiden", "Password", "Bio");
-    boolean b = newUser.validatePassword("Aiden","Password");
-    assertEquals(true, b);
+        User newUser = new User("Aiden", "Password", "Bio");
+        boolean b = newUser.validatePassword("Aiden", "Password");
+        assertEquals(true, b);
 
     }
 
     @Test
     public void validatePasswordWrongUsername() {
 
-        User newUser = new User ("John", "Password", "Bio");
-        boolean b = newUser.validatePassword("Aiden","Password");
+        User newUser = new User("John", "Password", "Bio");
+        boolean b = newUser.validatePassword("Aiden", "Password");
         assertEquals(false, b);
 
     }
@@ -288,10 +283,10 @@ class UserTest implements UserTestInterface{
     @Test
     public void validatePasswordWrongPassword() {
 
-        User newUser = new User ("Aiden", "password", "Bio");
-        boolean b = newUser.validatePassword("Aiden","Password");
+        User newUser = new User("Aiden", "password", "Bio");
+        boolean b = newUser.validatePassword("Aiden", "Password");
         assertEquals(false, b);
 
     }
 
-    }
+}
