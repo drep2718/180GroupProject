@@ -580,38 +580,117 @@ class DeleteMessageScreen extends JFrame {
     }
 }
 
+          class DeleteMessageScreen extends JFrame {
+    public DeleteMessageScreen() {
+        setTitle("Delete Message Options");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(4, 1));
+
+        JLabel instructionLabel = new JLabel("Select a delete message option:");
+        add(instructionLabel);
+
+        JButton deleteAllFriendsButton = new JButton("Delete Message to All Friends");
+        deleteAllFriendsButton.addActionListener(e -> {
+             
+            new DeleteMessageToAllFriendsScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteAllFriendsButton);
+
+        JButton deleteAllUsersButton = new JButton("Delete Message to All Users");
+        deleteAllUsersButton.addActionListener(e -> {
+             
+            new DeleteMessageToAllUsersScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteAllUsersButton);
+
+        JButton deleteSingleFriendButton = new JButton("Delete Message to Single Friend");
+        deleteSingleFriendButton.addActionListener(e -> {
+            
+             new DeleteMessageToSingleFriendScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteSingleFriendButton);
+    }
+
+          }
             class DeleteMessageToAllFriendsScreen extends JFrame {
     public DeleteMessageToAllFriendsScreen() {
         setTitle("Delete Message to All Friends");
-        setSize(600, 400);
+        setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel instructionLabel = new JLabel("Enter the message you want to delete for all friends:", SwingConstants.CENTER);
-        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel, BorderLayout.NORTH);
-
-        JTextField messageField = new JTextField();
-        add(messageField, BorderLayout.CENTER);
+        JLabel messageLabel = new JLabel("Enter the message to delete for all friends:");
+        JTextField messageField = new JTextField(20);
 
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
-            String messageToDelete = messageField.getText();
-            System.out.println("Deleting message for all friends: " + messageToDelete);
-            
-            new PhotoMessageScreen().setVisible(true);
+            String message = messageField.getText();
+            //have to put communication here
+            JOptionPane.showMessageDialog(this, "Message to all friends deletion submitted!");
             dispose();
         });
+
+        add(messageLabel, BorderLayout.NORTH);
+        add(messageField, BorderLayout.CENTER);
         add(submitButton, BorderLayout.SOUTH);
     }
 }
+  class DeleteMessageToAllUsersScreen extends JFrame {
+    public DeleteMessageToAllUsersScreen() {
+        setTitle("Delete Message to All Users");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
+        JLabel messageLabel = new JLabel("Enter the message to delete for all users:");
+        JTextField messageField = new JTextField(20);
 
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            String message = messageField.getText();
+            //have to put communication here
+            JOptionPane.showMessageDialog(this, "Message to all users deletion submitted!");
+            dispose();
+        });
 
+        add(messageLabel, BorderLayout.NORTH);
+        add(messageField, BorderLayout.CENTER);
+        add(submitButton, BorderLayout.SOUTH);
+    }
+}
+             class DeleteMessageToSingleFriendScreen extends JFrame {
+    public DeleteMessageToSingleFriendScreen() {
+        setTitle("Delete Message to Single Friend");
+        setSize(400, 250);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(3, 2));
 
-            
+        JLabel friendLabel = new JLabel("Enter friend's name:");
+        JTextField friendField = new JTextField(20);
 
+        JLabel messageLabel = new JLabel("Enter the message to delete:");
+        JTextField messageField = new JTextField(20);
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            String friend = friendField.getText();
+            String message = messageField.getText();
+            //have to put communication here
+            JOptionPane.showMessageDialog(this, "Single friend's message deletion submitted!");
+            dispose();
+        });
+
+        add(friendLabel);
+        add(friendField);
+        add(messageLabel);
+        add(messageField);
+        add(submitButton);
+    }
+}
 
             class MainGUI extends JFrame {
 
