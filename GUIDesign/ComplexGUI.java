@@ -184,34 +184,135 @@ class WelcomeScreen extends JFrame {
 
         public PhotoMessageScreen() {
 
-            setTitle("Photo Messaging");
-            setSize(1000, 700);
+        setTitle("Photo Message Options");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(4, 1));
+
+        JLabel titleLabel = new JLabel("Send Photo Message", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        add(titleLabel);
+
+        JButton allFriendsButton = new JButton("Send Photo to All Friends");
+        allFriendsButton.addActionListener(e -> {
+            new SendPhotoToAllFriendsScreen().setVisible(true); 
+            dispose(); 
+        });
+        add(allFriendsButton);
+
+        JButton allUsersButton = new JButton("Send Photo to All Users");
+        allUsersButton.addActionListener(e -> {
+            new SendPhotoToAllUsersScreen().setVisible(true);
+            dispose();
+        });
+        add(allUsersButton);
+
+        JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
+        singleFriendButton.addActionListener(e -> {
+            new SendPhotoToSingleFriendScreen().setVisible(true);
+            dispose();
+        });
+        add(singleFriendButton);
+
+           
+        }
+
+
+    }
+
+    class SendPhotoToAllFriendsScreen extends JFrame {
+        public SendPhotoToAllFriendsScreen() {
+            setTitle("Send Photo to All Friends");
+            setSize(600, 400);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLocationRelativeTo(null);
             setLayout(new BorderLayout());
 
-            JLabel titleLabel = new JLabel("Photo Messaging Options", SwingConstants.CENTER);
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-            add(titleLabel, BorderLayout.NORTH);
+            JLabel instructionLabel = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
+            instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+            add(instructionLabel, BorderLayout.NORTH);
 
-            JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-            JButton allFriendsButton = new JButton("Send Photo to All Friends");
-            JButton allUsersButton = new JButton("Send Photo to All Users");
-            JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
+            JTextField photoPathField = new JTextField();
+            add(photoPathField, BorderLayout.CENTER);
 
-            allFriendsButton.addActionListener(e -> sendPhotoToAllFriends());
-            allUsersButton.addActionListener(e -> sendPhotoToAllUsers());
-            singleFriendButton.addActionListener(e -> sendPhotoToSingleFriend());
-
-            optionsPanel.add(allFriendsButton);
-            optionsPanel.add(allUsersButton);
-            optionsPanel.add(singleFriendButton);
-
-            add(optionsPanel, BorderLayout.CENTER);
-
-        }
-
+            JButton submitButton = new JButton("Submit");
+            submitButton.addActionListener(e -> {
+                String photoPath = photoPathField.getText();
+                System.out.println("Photo path entered: " + photoPath); 
+                
+            new PhotoMessageScreen().setVisible(true); 
+            dispose();
+        });
+            add(submitButton, BorderLayout.SOUTH);
     }
+}
+
+       class SendPhotoToAllUsersScreen extends JFrame {
+    public SendPhotoToAllUsersScreen() {
+        setTitle("Send Photo to All Users");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel instructionLabel = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
+        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        add(instructionLabel, BorderLayout.NORTH);
+
+        JTextField photoPathField = new JTextField();
+        add(photoPathField, BorderLayout.CENTER);
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            String photoPath = photoPathField.getText();
+            System.out.println("Photo path entered for all users: " + photoPath); 
+           
+            new PhotoMessageScreen().setVisible(true);
+            dispose();
+        });
+        add(submitButton, BorderLayout.SOUTH);
+    }
+}
+
+       class SendPhotoToSingleFriendScreen extends JFrame {
+    public SendPhotoToSingleFriendScreen() {
+        setTitle("Send Photo to a Single Friend");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(3, 1));
+
+        JLabel instructionLabel1 = new JLabel("Enter the friend's username:", SwingConstants.CENTER);
+        instructionLabel1.setFont(new Font("Arial", Font.PLAIN, 18));
+        add(instructionLabel1);
+
+        JTextField friendNameField = new JTextField();
+        add(friendNameField);
+
+        JLabel instructionLabel2 = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
+        instructionLabel2.setFont(new Font("Arial", Font.PLAIN, 18));
+        add(instructionLabel2);
+
+        JTextField photoPathField = new JTextField();
+        add(photoPathField);
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            String friendName = friendNameField.getText();
+            String photoPath = photoPathField.getText();
+            System.out.println("Message sent to: " + friendName + ", Photo path: " + photoPath);
+           
+            new PhotoMessageScreen().setVisible(true);
+            dispose();
+        });
+        add(submitButton);
+    }
+}
+
+
+
+
 
         class createMenu extends JFrame {
             public createMenu() {
