@@ -188,6 +188,57 @@ class loginMenu extends JFrame {
     class MainGUI extends JFrame {
 
     }
+
+     class PhotoMessageScreen extends JFrame {
+
+        public PhotoMessageScreen() {
+
+        setTitle("Photo Messaging");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Photo Messaging Options", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        add(titleLabel, BorderLayout.NORTH);
+
+        JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JButton allFriendsButton = new JButton("Send Photo to All Friends");
+        JButton allUsersButton = new JButton("Send Photo to All Users");
+        JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
+
+        allFriendsButton.addActionListener(e -> sendPhotoToAllFriends());
+        allUsersButton.addActionListener(e -> sendPhotoToAllUsers());
+        singleFriendButton.addActionListener(e -> sendPhotoToSingleFriend());
+
+        optionsPanel.add(allFriendsButton);
+        optionsPanel.add(allUsersButton);
+        optionsPanel.add(singleFriendButton);
+
+        add(optionsPanel, BorderLayout.CENTER);
+
+    }
+    private void sendPhotoToAllFriends() {
+    
+
+    private void sendPhotoToAllUsers() {
+       
+    }
+
+    private void sendPhotoToSingleFriend() {
+      
+    }
+
+
+
+    
+}
+
+
+
+
+    
 }
 
 class createMenu extends JFrame {
