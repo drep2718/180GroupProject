@@ -398,7 +398,7 @@ class WelcomeScreen extends JFrame {
             JButton submitButton = new JButton("Submit");
             submitButton.addActionListener(e -> {
                 String photoPath = photoPathField.getText();
-                System.out.println("Photo path entered: " + photoPath); 
+              //We need to add the comunication here
                 
             new PhotoMessageScreen().setVisible(true); 
             dispose();
@@ -425,7 +425,7 @@ class WelcomeScreen extends JFrame {
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
             String photoPath = photoPathField.getText();
-            System.out.println("Photo path entered for all users: " + photoPath); 
+             //We need to add the comunication here
            
             new PhotoMessageScreen().setVisible(true);
             dispose();
@@ -460,7 +460,7 @@ class WelcomeScreen extends JFrame {
         submitButton.addActionListener(e -> {
             String friendName = friendNameField.getText();
             String photoPath = photoPathField.getText();
-            System.out.println("Message sent to: " + friendName + ", Photo path: " + photoPath);
+            //We need to add the comunication here
            
             new PhotoMessageScreen().setVisible(true);
             dispose();
@@ -544,6 +544,73 @@ class WelcomeScreen extends JFrame {
                 bottomBar.add(enterButton, BorderLayout.CENTER);
                 add(bottomBar, BorderLayout.SOUTH);
             }
+
+class DeleteMessageScreen extends JFrame {
+    public DeleteMessageScreen() {
+        setTitle("Delete Message Menu");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(4, 1, 10, 10));
+
+        JLabel titleLabel = new JLabel("Select an Option to Delete a Message:", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(titleLabel);
+
+        JButton deleteAllFriendsButton = new JButton("Delete Message to All Friends");
+        deleteAllFriendsButton.addActionListener(e -> {
+            new DeleteMessageToAllFriendsScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteAllFriendsButton);
+
+        JButton deleteAllUsersButton = new JButton("Delete Message to All Users");
+        deleteAllUsersButton.addActionListener(e -> {
+            new DeleteMessageToAllUsersScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteAllUsersButton);
+
+        JButton deleteSingleFriendButton = new JButton("Delete Message to Single Friend");
+        deleteSingleFriendButton.addActionListener(e -> {
+            new DeleteMessageToSingleFriendScreen().setVisible(true);
+            dispose();
+        });
+        add(deleteSingleFriendButton);
+    }
+}
+
+            class DeleteMessageToAllFriendsScreen extends JFrame {
+    public DeleteMessageToAllFriendsScreen() {
+        setTitle("Delete Message to All Friends");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel instructionLabel = new JLabel("Enter the message you want to delete for all friends:", SwingConstants.CENTER);
+        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        add(instructionLabel, BorderLayout.NORTH);
+
+        JTextField messageField = new JTextField();
+        add(messageField, BorderLayout.CENTER);
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            String messageToDelete = messageField.getText();
+            System.out.println("Deleting message for all friends: " + messageToDelete);
+            
+            new PhotoMessageScreen().setVisible(true);
+            dispose();
+        });
+        add(submitButton, BorderLayout.SOUTH);
+    }
+}
+
+
+
+
+            
 
 
             class MainGUI extends JFrame {
