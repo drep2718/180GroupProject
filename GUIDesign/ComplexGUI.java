@@ -179,6 +179,155 @@ class WelcomeScreen extends JFrame {
         }
     }
 
+    class friendsScreen extends JFrame {
+        public friendsScreen() {
+            setTitle("Friends Screen");
+            setSize(1000, 700);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
+
+            JLabel titleLabel = new JLabel("CHOOSE AN OPTION", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+            add(titleLabel, BorderLayout.CENTER);
+
+            JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+            JButton addFriendsButton = new JButton("ADD FRIENDS");
+            addFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+            JButton removeFriendsButton = new JButton("REMOVE FRIENDS");
+            removeFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+            JButton messageButton = new JButton("SEND MESSAGES");
+            messageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
+            optionsPanel.add(addFriendsButton);
+            optionsPanel.add(removeFriendsButton);
+            optionsPanel.add(messageButton);
+            add(optionsPanel, BorderLayout.CENTER);
+
+            addFriendsButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String friendsName = JOptionPane.showInputDialog(friendsScreen.this,
+                            "Who do you want to add?");
+                    if (friendsName != null) {
+                        JOptionPane.showMessageDialog(friendsScreen.this,
+                                "Please enter a name.");
+                        return;
+                    }
+
+//                    String doubleCheckFriend = FRIENDS_ADD + ";" + friendName;
+//                    System.out.println(doubleCheckFriend);
+
+                    boolean friendExists = true;
+                    boolean alreadyFriends = false;
+
+                    if (friendExists) {
+                        if (alreadyFriends) {
+                            JOptionPane.showMessageDialog(friendsScreen.this,
+                                    "You are already friends");
+                        } else {
+                            JOptionPane.showMessageDialog(friendsScreen.this,
+                                    "Friend added successfully.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(friendsScreen.this,
+                                "User does not exist.");
+                    }
+
+                    dispose();
+                }
+            });
+
+            removeFriendsButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String friendsName = JOptionPane.showInputDialog(friendsScreen.this,
+                            "Who do you want to remove?");
+                    if (friendsName != null) {
+                        JOptionPane.showMessageDialog(friendsScreen.this,
+                                "Please enter a name.");
+                        return;
+                    }
+
+                    boolean isFriend = true;
+                    boolean friendExists = true;
+
+                    if (friendExists) {
+                        if (isFriend) {
+                            JOptionPane.showMessageDialog(friendsScreen.this,
+                                    "Friend removed successfully.");
+                        } else {
+                            JOptionPane.showMessageDialog(friendsScreen.this,
+                                    "This person is not your friend");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(friendsScreen.this,
+                                "User does not exist.");
+                    }
+
+                    dispose();
+
+                }
+            });
+
+            messageButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(() -> new messageMenu().setVisible(true));
+                    dispose();
+                }
+
+            });
+        }
+
+        class messageMenu extends JFrame {
+            public messageMenu() {
+                setTitle("Message Menu");
+                setSize(1000, 700);
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                setLocationRelativeTo(null);
+                setLayout(new BorderLayout());
+
+                JLabel titleLabel = new JLabel("CHOOSE AN OPTION", SwingConstants.CENTER);
+                titleLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+                add(titleLabel, BorderLayout.CENTER);
+
+                JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+                JButton sendTextMessagesButton = new JButton("SEND TEXT MESSAGES");
+                sendTextMessagesButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                JButton messagePhotoButton = new JButton("SEND PHOTO MESSAGES");
+                messagePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                JButton removeMessageButton = new JButton("DELETE MESSAGES");
+                removeMessageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
+                optionsPanel.add(sendTextMessagesButton);
+                optionsPanel.add(messagePhotoButton);
+                optionsPanel.add(removeMessageButton);
+
+                add(optionsPanel, BorderLayout.CENTER);
+
+                sendTextMessagesButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JLabel titleLabel = new JLabel("CHOOSE AN OPTION", SwingConstants.CENTER);
+                        titleLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+                        add(titleLabel, BorderLayout.CENTER);
+
+                        JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+                        JButton textAllFriends = new JButton("TEXT ALL FRIENDS");
+                        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                        JButton textAllUsers = new JButton("TEXT ALL USERS");
+                        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                        JButton textAFriend = new JButton("TEXT A FRIEND");
+                        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
+                        
+
+                    }
+                });
+            }
+        }
 
     class PhotoMessageScreen extends JFrame {
 
