@@ -45,276 +45,248 @@ class WelcomeScreen extends JFrame {
         JButton continueButton = new JButton("Continue");
         continueButton.setFont(new Font("Arial", Font.PLAIN, 16));
         continueButton.addActionListener(e -> {
-            new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
             dispose();
         });
         bottomBar.add(continueButton, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
     }
-
-
-    class MainGUI extends JFrame {
-
-    }
 }
 
 
-class mainMenu extends JFrame {
-    public mainMenu() {
-        setTitle("Main Menu");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+    class mainMenu extends JFrame {
+        public mainMenu() {
+            setTitle("Main Menu");
+            setSize(1000, 700);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+            JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
+            welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-        add(centerPanel, BorderLayout.CENTER);
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+            add(centerPanel, BorderLayout.CENTER);
 
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
+            JPanel topBar = new JPanel();
+            topBar.setBackground(Color.BLACK);
+            topBar.setPreferredSize(new Dimension(getWidth(), 100));
+            add(topBar, BorderLayout.NORTH);
 
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
-
-
-        JButton loginButton = new JButton("Login");
-        loginButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        loginButton.addActionListener(e -> {
-            new MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
-            dispose();
-        });
-
-        JButton createButton = new JButton("Create User");
-        createButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        createButton.addActionListener(e -> {
-            new MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
-            dispose();
-        });
-
-        JButton exitButton = new JButton("Exit");
-        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        exitButton.addActionListener(e -> {
-            new MainGUI().setVisible(true);
-            dispose();
-        });
+            JPanel bottomBar = new JPanel();
+            bottomBar.setBackground(new Color(229, 194, 31));
+            bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+            bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
 
 
-        bottomBar.add(loginButton);
-        bottomBar.add(createButton);
-        bottomBar.add(exitButton);
-        add(bottomBar, BorderLayout.SOUTH);
-    }
-
-
-    class MainGUI extends JFrame {
-
-    }
-}
-
-class loginMenu extends JFrame {
-    public loginMenu() {
-        setTitle("Login Menu");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
-        JLabel welcomeLabel = new JLabel("Welcome to The Login Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
-
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
-
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
-        bottomBar.setLayout(new BorderLayout());
-
-        JPanel central = new JPanel(new GridLayout(2, 2));
-        central.setBackground(new Color(229, 194, 31));
-
-        JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        central.add(usernameLabel);
-
-        JTextField username = new JTextField();
-        username.setFont(new Font("Arial", Font.PLAIN, 30));
-        central.add(username);
-
-        JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        central.add(passwordLabel);
-
-        JTextField password = new JTextField();
-        password.setFont(new Font("Arial", Font.PLAIN, 30));
-        central.add(password);
-
-        centerPanel.add(central, BorderLayout.SOUTH);
-        add(centerPanel, BorderLayout.CENTER);
-
-        JButton enterButton = new JButton("Enter");
-        enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        enterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String usernameText = username.getText();
-                String passwordText = password.getText();
-                System.out.println(usernameText);
-                System.out.println(passwordText);
+            JButton loginButton = new JButton("Login");
+            loginButton.setFont(new Font("Arial", Font.PLAIN, 30));
+            loginButton.addActionListener(e -> {
+                new MainGUI().setVisible(true);
+                SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
                 dispose();
-            }
-        });
+            });
 
-        bottomBar.add(enterButton, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
+            JButton createButton = new JButton("Create User");
+            createButton.setFont(new Font("Arial", Font.PLAIN, 30));
+            createButton.addActionListener(e -> {
+                new MainGUI().setVisible(true);
+                SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
+                dispose();
+            });
+
+            JButton exitButton = new JButton("Exit");
+            exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
+            exitButton.addActionListener(e -> {
+                new MainGUI().setVisible(true);
+                dispose();
+            });
+
+
+            bottomBar.add(loginButton);
+            bottomBar.add(createButton);
+            bottomBar.add(exitButton);
+            add(bottomBar, BorderLayout.SOUTH);
+        }
+
+
+        class MainGUI extends JFrame {
+
+        }
+    }
+
+    class loginMenu extends JFrame {
+        public loginMenu() {
+            setTitle("Login Menu");
+            setSize(1000, 700);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
+
+            JLabel welcomeLabel = new JLabel("Welcome to The Login Menu", SwingConstants.CENTER);
+            welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+            JPanel topBar = new JPanel();
+            topBar.setBackground(Color.BLACK);
+            topBar.setPreferredSize(new Dimension(getWidth(), 100));
+            add(topBar, BorderLayout.NORTH);
+
+            JPanel bottomBar = new JPanel();
+            bottomBar.setBackground(new Color(229, 194, 31));
+            bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+            bottomBar.setLayout(new BorderLayout());
+
+            JPanel central = new JPanel(new GridLayout(2, 2));
+            central.setBackground(new Color(229, 194, 31));
+
+            JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
+            usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
+            central.add(usernameLabel);
+
+            JTextField username = new JTextField();
+            username.setFont(new Font("Arial", Font.PLAIN, 30));
+            central.add(username);
+
+            JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
+            passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
+            central.add(passwordLabel);
+
+            JTextField password = new JTextField();
+            password.setFont(new Font("Arial", Font.PLAIN, 30));
+            central.add(password);
+
+            centerPanel.add(central, BorderLayout.SOUTH);
+            add(centerPanel, BorderLayout.CENTER);
+
+            JButton enterButton = new JButton("Enter");
+            enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
+            enterButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String usernameText = username.getText();
+                    String passwordText = password.getText();
+                    System.out.println(usernameText);
+                    System.out.println(passwordText);
+                    dispose();
+                }
+            });
+
+            bottomBar.add(enterButton, BorderLayout.CENTER);
+            add(bottomBar, BorderLayout.SOUTH);
+        }
     }
 
 
-    class MainGUI extends JFrame {
-
-    }
-
-     class PhotoMessageScreen extends JFrame {
+    class PhotoMessageScreen extends JFrame {
 
         public PhotoMessageScreen() {
 
-        setTitle("Photo Messaging");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+            setTitle("Photo Messaging");
+            setSize(1000, 700);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Photo Messaging Options", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        add(titleLabel, BorderLayout.NORTH);
+            JLabel titleLabel = new JLabel("Photo Messaging Options", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+            add(titleLabel, BorderLayout.NORTH);
 
-        JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-        JButton allFriendsButton = new JButton("Send Photo to All Friends");
-        JButton allUsersButton = new JButton("Send Photo to All Users");
-        JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
+            JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+            JButton allFriendsButton = new JButton("Send Photo to All Friends");
+            JButton allUsersButton = new JButton("Send Photo to All Users");
+            JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
 
-        allFriendsButton.addActionListener(e -> sendPhotoToAllFriends());
-        allUsersButton.addActionListener(e -> sendPhotoToAllUsers());
-        singleFriendButton.addActionListener(e -> sendPhotoToSingleFriend());
+            allFriendsButton.addActionListener(e -> sendPhotoToAllFriends());
+            allUsersButton.addActionListener(e -> sendPhotoToAllUsers());
+            singleFriendButton.addActionListener(e -> sendPhotoToSingleFriend());
 
-        optionsPanel.add(allFriendsButton);
-        optionsPanel.add(allUsersButton);
-        optionsPanel.add(singleFriendButton);
+            optionsPanel.add(allFriendsButton);
+            optionsPanel.add(allUsersButton);
+            optionsPanel.add(singleFriendButton);
 
-        add(optionsPanel, BorderLayout.CENTER);
+            add(optionsPanel, BorderLayout.CENTER);
+
+        }
 
     }
-    private void sendPhotoToAllFriends() {
-    
 
-    private void sendPhotoToAllUsers() {
-       
-    }
+        class createMenu extends JFrame {
+            public createMenu() {
+                setTitle("Login Menu");
+                setSize(1000, 700);
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                setLocationRelativeTo(null);
+                setLayout(new BorderLayout());
 
-    private void sendPhotoToSingleFriend() {
-      
-    }
+                JLabel welcomeLabel = new JLabel("Welcome to The Create User Menu", SwingConstants.CENTER);
+                welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
 
+                JPanel centerPanel = new JPanel(new BorderLayout());
+                centerPanel.add(welcomeLabel, BorderLayout.CENTER);
 
+                JPanel topBar = new JPanel();
+                topBar.setBackground(Color.BLACK);
+                topBar.setPreferredSize(new Dimension(getWidth(), 100));
+                add(topBar, BorderLayout.NORTH);
 
-    
-}
+                JPanel bottomBar = new JPanel();
+                bottomBar.setBackground(new Color(229, 194, 31));
+                bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+                bottomBar.setLayout(new BorderLayout());
 
+                JPanel central = new JPanel(new GridLayout(3, 2));
+                central.setBackground(new Color(229, 194, 31));
 
+                JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
+                usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
+                central.add(usernameLabel);
 
+                JTextField username = new JTextField();
+                username.setFont(new Font("Arial", Font.PLAIN, 30));
+                central.add(username);
 
-    
-}
+                JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
+                passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
+                central.add(passwordLabel);
 
-class createMenu extends JFrame {
-    public createMenu() {
-        setTitle("Login Menu");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+                JTextField password = new JTextField();
+                password.setFont(new Font("Arial", Font.PLAIN, 30));
+                central.add(password);
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Create User Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+                JLabel bioLabel = new JLabel("Bio:", SwingConstants.CENTER);
+                bioLabel.setFont(new Font("Arial", Font.BOLD, 30));
+                central.add(bioLabel);
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+                JTextField bio = new JTextField();
+                bio.setFont(new Font("Arial", Font.PLAIN, 30));
+                central.add(bio);
 
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
+                centerPanel.add(central, BorderLayout.SOUTH);
+                add(centerPanel, BorderLayout.CENTER);
 
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
-        bottomBar.setLayout(new BorderLayout());
+                JButton enterButton = new JButton("Enter");
+                enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
+                enterButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String usernameText = username.getText();
+                        String passwordText = password.getText();
+                        String bioText = bio.getText();
+                        System.out.println(usernameText);
+                        System.out.println(passwordText);
+                        System.out.println(bioText);
+                        dispose();
+                    }
+                });
 
-        JPanel central = new JPanel(new GridLayout(3, 2));
-        central.setBackground(new Color(229, 194, 31));
-
-        JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        central.add(usernameLabel);
-
-        JTextField username = new JTextField();
-        username.setFont(new Font("Arial", Font.PLAIN, 30));
-        central.add(username);
-
-        JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        central.add(passwordLabel);
-
-        JTextField password = new JTextField();
-        password.setFont(new Font("Arial", Font.PLAIN, 30));
-        central.add(password);
-
-        JLabel bioLabel = new JLabel("Bio:", SwingConstants.CENTER);
-        bioLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        central.add(bioLabel);
-
-        JTextField bio = new JTextField();
-        bio.setFont(new Font("Arial", Font.PLAIN, 30));
-        central.add(bio);
-
-        centerPanel.add(central, BorderLayout.SOUTH);
-        add(centerPanel, BorderLayout.CENTER);
-
-        JButton enterButton = new JButton("Enter");
-        enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        enterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String usernameText = username.getText();
-                String passwordText = password.getText();
-                String bioText = bio.getText();
-                System.out.println(usernameText);
-                System.out.println(passwordText);
-                System.out.println(bioText);
-                dispose();
+                bottomBar.add(enterButton, BorderLayout.CENTER);
+                add(bottomBar, BorderLayout.SOUTH);
             }
-        });
-
-        bottomBar.add(enterButton, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
-    }
 
 
-    class MainGUI extends JFrame {
+            class MainGUI extends JFrame {
 
-    }
-}
+            }
+        }
