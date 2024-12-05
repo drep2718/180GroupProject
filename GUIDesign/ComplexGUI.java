@@ -310,19 +310,29 @@ class WelcomeScreen extends JFrame {
                 sendTextMessagesButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JLabel titleLabel = new JLabel("CHOOSE AN OPTION", SwingConstants.CENTER);
-                        titleLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
-                        add(titleLabel, BorderLayout.CENTER);
+                        SwingUtilities.invokeLater(() -> new textMessageMenu().setVisible(true));
+                    }
+                });
+            }
+        }
 
-                        JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-                        JButton textAllFriends = new JButton("TEXT ALL FRIENDS");
-                        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-                        JButton textAllUsers = new JButton("TEXT ALL USERS");
-                        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-                        JButton textAFriend = new JButton("TEXT A FRIEND");
-                        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        class textMessageMenu extends JFrame {
+            public textMessageMenu() {
+                JLabel titleLabel = new JLabel("CHOOSE AN OPTION", SwingConstants.CENTER);
+                titleLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+                add(titleLabel, BorderLayout.CENTER);
 
-                        
+                JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+                JButton textAllFriends = new JButton("TEXT ALL FRIENDS");
+                textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                JButton textAllUsers = new JButton("TEXT ALL USERS");
+                textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+                JButton textAFriend = new JButton("TEXT A FRIEND");
+                textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
+                textAllFriends.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
 
                     }
                 });
