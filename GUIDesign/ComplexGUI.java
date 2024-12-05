@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 public class ComplexGUI {
 
     public static void main(String[] args) {
-      SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
+        SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
     }
 }
 
@@ -90,7 +90,7 @@ class mainMenu extends JFrame {
         loginButton.setFont(new Font("Arial", Font.PLAIN, 30));
         loginButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new LoginMenu().setVisible(true));
+            SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
             dispose();
         });
 
@@ -98,6 +98,7 @@ class mainMenu extends JFrame {
         createButton.setFont(new Font("Arial", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
             dispose();
         });
 
@@ -121,8 +122,8 @@ class mainMenu extends JFrame {
     }
 }
 
-class LoginMenu extends JFrame {
-    public LoginMenu() {
+class loginMenu extends JFrame {
+    public loginMenu() {
         setTitle("Login Menu");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -134,7 +135,6 @@ class LoginMenu extends JFrame {
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-//        add(centerPanel, BorderLayout.CENTER);
 
         JPanel topBar = new JPanel();
         topBar.setBackground(Color.BLACK);
@@ -146,7 +146,7 @@ class LoginMenu extends JFrame {
         bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
         bottomBar.setLayout(new BorderLayout());
 
-        JPanel central = new JPanel(new GridLayout(2,2));
+        JPanel central = new JPanel(new GridLayout(2, 2));
         central.setBackground(new Color(229, 194, 31));
 
         JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
@@ -176,6 +176,84 @@ class LoginMenu extends JFrame {
                 String passwordText = password.getText();
                 System.out.println(usernameText);
                 System.out.println(passwordText);
+                dispose();
+            }
+        });
+
+        bottomBar.add(enterButton, BorderLayout.CENTER);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+class createMenu extends JFrame {
+    public createMenu() {
+        setTitle("Login Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Create User Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+        bottomBar.setLayout(new BorderLayout());
+
+        JPanel central = new JPanel(new GridLayout(3, 2));
+        central.setBackground(new Color(229, 194, 31));
+
+        JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        central.add(usernameLabel);
+
+        JTextField username = new JTextField();
+        username.setFont(new Font("Arial", Font.PLAIN, 30));
+        central.add(username);
+
+        JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        central.add(passwordLabel);
+
+        JTextField password = new JTextField();
+        password.setFont(new Font("Arial", Font.PLAIN, 30));
+        central.add(password);
+
+        JLabel bioLabel = new JLabel("Bio:", SwingConstants.CENTER);
+        bioLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        central.add(bioLabel);
+
+        JTextField bio = new JTextField();
+        bio.setFont(new Font("Arial", Font.PLAIN, 30));
+        central.add(bio);
+
+        centerPanel.add(central, BorderLayout.SOUTH);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JButton enterButton = new JButton("Enter");
+        enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        enterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String usernameText = username.getText();
+                String passwordText = password.getText();
+                String bioText = bio.getText();
+                System.out.println(usernameText);
+                System.out.println(passwordText);
+                System.out.println(bioText);
                 dispose();
             }
         });
