@@ -25,7 +25,7 @@ class WelcomeScreen extends JFrame {
 
 
         JLabel welcomeLabel = new JLabel("Welcome to Boiler Chat!", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(logoLabel, BorderLayout.NORTH);
@@ -43,7 +43,7 @@ class WelcomeScreen extends JFrame {
         bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
 
         JButton continueButton = new JButton("Continue");
-        continueButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        continueButton.setFont(new Font("Bernard MT", Font.PLAIN, 16));
         continueButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
             dispose();
@@ -63,7 +63,7 @@ class mainMenu extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Home Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -81,7 +81,7 @@ class mainMenu extends JFrame {
 
 
         JButton loginButton = new JButton("Login");
-        loginButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        loginButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         loginButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
@@ -89,7 +89,7 @@ class mainMenu extends JFrame {
         });
 
         JButton createButton = new JButton("Create User");
-        createButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
@@ -97,7 +97,7 @@ class mainMenu extends JFrame {
         });
 
         JButton exitButton = new JButton("Exit");
-        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        exitButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         exitButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             dispose();
@@ -126,7 +126,7 @@ class loginMenu extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Login Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -145,26 +145,26 @@ class loginMenu extends JFrame {
         central.setBackground(new Color(229, 194, 31));
 
         JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        usernameLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
         central.add(usernameLabel);
 
         JTextField username = new JTextField();
-        username.setFont(new Font("Arial", Font.PLAIN, 30));
+        username.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         central.add(username);
 
         JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        passwordLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
         central.add(passwordLabel);
 
         JTextField password = new JTextField();
-        password.setFont(new Font("Arial", Font.PLAIN, 30));
+        password.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         central.add(password);
 
         centerPanel.add(central, BorderLayout.SOUTH);
         add(centerPanel, BorderLayout.CENTER);
 
         JButton enterButton = new JButton("Enter");
-        enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String usernameText = username.getText();
@@ -189,7 +189,7 @@ class createMenu extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Create User Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -208,34 +208,34 @@ class createMenu extends JFrame {
         central.setBackground(new Color(229, 194, 31));
 
         JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        usernameLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
         central.add(usernameLabel);
 
         JTextField username = new JTextField();
-        username.setFont(new Font("Arial", Font.PLAIN, 30));
+        username.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         central.add(username);
 
         JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        passwordLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
         central.add(passwordLabel);
 
         JTextField password = new JTextField();
-        password.setFont(new Font("Arial", Font.PLAIN, 30));
+        password.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         central.add(password);
 
         JLabel bioLabel = new JLabel("Bio:", SwingConstants.CENTER);
-        bioLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        bioLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
         central.add(bioLabel);
 
         JTextField bio = new JTextField();
-        bio.setFont(new Font("Arial", Font.PLAIN, 30));
+        bio.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         central.add(bio);
 
         centerPanel.add(central, BorderLayout.SOUTH);
         add(centerPanel, BorderLayout.CENTER);
 
         JButton enterButton = new JButton("Enter");
-        enterButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String usernameText = username.getText();
@@ -262,7 +262,7 @@ class mainMenu1 extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -280,7 +280,7 @@ class mainMenu1 extends JFrame {
 
 
         JButton friendButton = new JButton("Add or Remove Friends");
-        friendButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        friendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         friendButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new friendsScreen1().setVisible(true));
@@ -288,7 +288,7 @@ class mainMenu1 extends JFrame {
         });
 
         JButton blockButton = new JButton("Block or Unblock Users");
-        blockButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        blockButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         blockButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new blockedScreen().setVisible(true));
@@ -296,7 +296,7 @@ class mainMenu1 extends JFrame {
         });
 
         JButton messageButton = new JButton("Message");
-        messageButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        messageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         messageButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new messageMenu1().setVisible(true));
@@ -326,7 +326,7 @@ class friendsScreen1 extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Friends Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -435,7 +435,7 @@ class blockedScreen extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Blocked Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -545,7 +545,7 @@ class messageMenu1 extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Message Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -573,7 +573,7 @@ class messageMenu1 extends JFrame {
         messagePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         messagePhotoButton.addActionListener(e -> {
             new messageMenu1.MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new PhotoMessageScreen().setVisible(true));
+            SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
             dispose();
         });
 
@@ -581,7 +581,7 @@ class messageMenu1 extends JFrame {
         removeMessageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         removeMessageButton.addActionListener(e -> {
             new messageMenu1.MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new textMenu().setVisible(true));
+            SwingUtilities.invokeLater(() -> new deleteMenu().setVisible(true));
             dispose();
         });
 
@@ -608,7 +608,7 @@ class textMenu extends JFrame {
         setLayout(new BorderLayout());
 
         JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
@@ -672,199 +672,152 @@ class textMenu extends JFrame {
 }
 
 
-
-class PhotoMessageScreen extends JFrame {
-
-    public PhotoMessageScreen() {
-
-        setTitle("Photo Message Options");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 1));
-
-        JLabel titleLabel = new JLabel("Send Photo Message", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        add(titleLabel);
-
-        JButton allFriendsButton = new JButton("Send Photo to All Friends");
-        allFriendsButton.addActionListener(e -> {
-            new SendPhotoToAllFriendsScreen().setVisible(true);
-            dispose();
-        });
-        add(allFriendsButton);
-
-        JButton allUsersButton = new JButton("Send Photo to All Users");
-        allUsersButton.addActionListener(e -> {
-            new SendPhotoToAllUsersScreen().setVisible(true);
-            dispose();
-        });
-        add(allUsersButton);
-
-        JButton singleFriendButton = new JButton("Send Photo to a Single Friend");
-        singleFriendButton.addActionListener(e -> {
-            new SendPhotoToSingleFriendScreen().setVisible(true);
-            dispose();
-        });
-        add(singleFriendButton);
-
-
-    }
-
-
-}
-
-class SendPhotoToAllFriendsScreen extends JFrame {
-    public SendPhotoToAllFriendsScreen() {
-        setTitle("Send Photo to All Friends");
-        setSize(600, 400);
+class photoMenu extends JFrame {
+    public photoMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel instructionLabel = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
-        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel, BorderLayout.NORTH);
+        JLabel welcomeLabel = new JLabel("Welcome to The Photo Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
-        JTextField photoPathField = new JTextField();
-        add(photoPathField, BorderLayout.CENTER);
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
-        JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(e -> {
-            String photoPath = photoPathField.getText();
-            //We need to add the comunication here
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
 
-            new PhotoMessageScreen().setVisible(true);
-            dispose();
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton textAllFriends = new JButton("PHOTO MESSAGE ALL FRIENDS");
+        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends.");
+            }
         });
-        add(submitButton, BorderLayout.SOUTH);
+
+        JButton textAllUsers = new JButton("PHOTO MESSAGE ALL USERS");
+        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends.");
+            }
+        });
+
+        JButton textAFriend = new JButton("PHOTO MESSAGE A FRIEND");
+        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String person = JOptionPane.showInputDialog(photoMenu.this,
+                        "Who would you like to text");
+
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends?");
+            }
+        });
+
+
+        bottomBar.add(textAllFriends);
+        bottomBar.add(textAllUsers);
+        bottomBar.add(textAFriend);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
     }
 }
 
-class SendPhotoToAllUsersScreen extends JFrame {
-    public SendPhotoToAllUsersScreen() {
-        setTitle("Send Photo to All Users");
-        setSize(600, 400);
+class deleteMenu extends JFrame {
+    public deleteMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel instructionLabel = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
-        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel, BorderLayout.NORTH);
+        JLabel welcomeLabel = new JLabel("Welcome to The Delete Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
-        JTextField photoPathField = new JTextField();
-        add(photoPathField, BorderLayout.CENTER);
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
-        JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(e -> {
-            String photoPath = photoPathField.getText();
-            //We need to add the comunication here
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
 
-            new PhotoMessageScreen().setVisible(true);
-            dispose();
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton textAllFriends = new JButton("DELETE MESSAGE TO ALL FRIENDS");
+        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What message to all your friends would you like to delete");
+            }
         });
-        add(submitButton, BorderLayout.SOUTH);
+
+        JButton textAllUsers = new JButton("DELETE MESSAGE TO ALL USERS");
+        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What message to all your users would you like to delete");
+            }
+        });
+
+        JButton textAFriend = new JButton("DELETE MESSAGE TO A SINGLE FRIEND");
+        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String person = JOptionPane.showInputDialog(deleteMenu.this,
+                        "Who would you like to delete the message from");
+
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What did the message say");
+            }
+        });
+
+
+        bottomBar.add(textAllFriends);
+        bottomBar.add(textAllUsers);
+        bottomBar.add(textAFriend);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
     }
 }
 
-class SendPhotoToSingleFriendScreen extends JFrame {
-    public SendPhotoToSingleFriendScreen() {
-        setTitle("Send Photo to a Single Friend");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 1));
+// Fixed Version
 
-        JLabel instructionLabel1 = new JLabel("Enter the friend's username:", SwingConstants.CENTER);
-        instructionLabel1.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel1);
-
-        JTextField friendNameField = new JTextField();
-        add(friendNameField);
-
-        JLabel instructionLabel2 = new JLabel("Enter the path to the photo:", SwingConstants.CENTER);
-        instructionLabel2.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel2);
-
-        JTextField photoPathField = new JTextField();
-        add(photoPathField);
-
-        JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(e -> {
-            String friendName = friendNameField.getText();
-            String photoPath = photoPathField.getText();
-            //We need to add the comunication here
-
-            new PhotoMessageScreen().setVisible(true);
-            dispose();
-        });
-        add(submitButton);
-    }
-}
-
-
-class DeleteMessageScreen extends JFrame {
-    public DeleteMessageScreen() {
-        setTitle("Delete Message Menu");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 1, 10, 10));
-
-        JLabel titleLabel = new JLabel("Select an Option to Delete a Message:", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(titleLabel);
-
-        JButton deleteAllFriendsButton = new JButton("Delete Message to All Friends");
-        deleteAllFriendsButton.addActionListener(e -> {
-            new DeleteMessageToAllFriendsScreen().setVisible(true);
-            dispose();
-        });
-        add(deleteAllFriendsButton);
-
-        JButton deleteAllUsersButton = new JButton("Delete Message to All Users");
-        deleteAllUsersButton.addActionListener(e -> {
-//                        new DeleteMessageToAllUsersScreen().setVisible(true);
-            dispose();
-        });
-        add(deleteAllUsersButton);
-
-        JButton deleteSingleFriendButton = new JButton("Delete Message to Single Friend");
-        deleteSingleFriendButton.addActionListener(e -> {
-//                        new DeleteMessageToSingleFriendScreen().setVisible(true);
-            dispose();
-        });
-        add(deleteSingleFriendButton);
-    }
-}
-
-class DeleteMessageToAllFriendsScreen extends JFrame {
-    public DeleteMessageToAllFriendsScreen() {
-        setTitle("Delete Message to All Friends");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
-        JLabel instructionLabel = new JLabel("Enter the message you want to delete for all friends:", SwingConstants.CENTER);
-        instructionLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        add(instructionLabel, BorderLayout.NORTH);
-
-        JTextField messageField = new JTextField();
-        add(messageField, BorderLayout.CENTER);
-
-        JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(e -> {
-            String messageToDelete = messageField.getText();
-            System.out.println("Deleting message for all friends: " + messageToDelete);
-
-            new PhotoMessageScreen().setVisible(true);
-            dispose();
-        });
-        add(submitButton, BorderLayout.SOUTH);
-    }
-}
 
 
 
