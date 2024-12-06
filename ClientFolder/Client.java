@@ -1,540 +1,823 @@
-import java.io.*;
-import java.net.*;
-import java.nio.file.Files;
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-/**
- * Team Project -- Client Class
- *
- * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
- * @version November 17, 2024
- *
- */
+public class ComplexGUI {
 
-public class Client extends Thread implements FlagInterface {
-    private final Server server;
-
-    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
-        Scanner scan = new Scanner(System.in);
-        boolean loggedIn = false;
-       
-
-
-        int portNumber = 2727;
-        Socket socket;
-        String host = "localhost";
-
-        try {
-            socket = new Socket(host, portNumber);
-        } catch (IOException e) {
-            return;
-        }
-
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter writer = new PrintWriter(socket.getOutputStream());
-
-        try {
-
-            while (true) {
-
-                while (!loggedIn) {
-                    System.out.println("1- Login to account");
-                    System.out.println("2- Create account");
-                    System.out.println("3- Exit");
-
-                    String firstMenuItem = scan.nextLine();
-
-                    if (!firstMenuItem.equals("1") && !firstMenuItem.equals("2") && !firstMenuItem.equals("3")) {
-                        System.out.println("Not a valid choice");
-                        writer.println("LOOP");
-                        writer.flush();
-                        String response = reader.readLine();
-                        if (response.equals("CONTINUE")) {
-                            continue;
-                        }
-                    } else if (firstMenuItem.equals("1")) {
-                        System.out.println("Enter your username");
-                        String username = scan.nextLine();
-                        System.out.println("Enter your password");
-                        String password = scan.nextLine();
-                        String login = LOGIN + ";" + username + ";" + password;
-                        writer.write(login);
-                        writer.println();
-                        writer.flush();
-                        String message = reader.readLine();
-
-                        if (message.contains(LOGIN)) {
-                            String[] index = message.split(";");
-                            String passwordMessage = index[1];
-                            if (passwordMessage.equals("Login Successful")) {
-                                System.out.println("Login Successful");
-                            } else if (passwordMessage.equals("Login Failed")) {
-                                System.out.println("Login Failed Try Again");
-                                writer.println("LOOP");
-                                writer.flush();
-                                String response = reader.readLine();
-                                if (response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                            } else if (passwordMessage.equals("Missing credentials")) {
-                                System.out.println("Missing credentials");
-                                writer.println("LOOP");
-                                writer.flush();
-                                String response = reader.readLine();
-                                if (response == null || response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                            } else {
-                                System.out.println("Failure try again");
-                                writer.println("LOOP");
-                                writer.flush();
-                                String response = reader.readLine();
-                                if (response == null || response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                            }
-
-                        }
-                        loggedIn = true;
-
-
-                    } else if (firstMenuItem.equals("2")) {
-                        System.out.println("Enter you new username");
-                        String newUsername = scan.nextLine();
-                        System.out.println("Enter your new password");
-                        String newPassword = scan.nextLine();
-                        System.out.println("Enter your bio");
-                        String newBio = scan.nextLine();
-                        String create = CREATE + ";" + newUsername + ";" + newPassword + ";" + newBio;
-                        writer.write(create);
-                        writer.println();
-                        writer.flush();
-
-                        String message = reader.readLine();
-
-                        if (message.contains(CREATE)) {
-                            String[] index = message.split(";");
-                            String successMessage = index[1];
-                            if (successMessage.equals("true")) {
-                                System.out.println("User Successfully Created");
-                            } else if (successMessage.equals("false")) {
-                                System.out.println("User does not exist. You may create User");
-                                writer.println("LOOP");
-                                writer.flush();
-                                String response = reader.readLine();
-                                if (response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                            } else {
-                                System.out.println("Failure try again");
-                                writer.println("LOOP");
-                                writer.flush();
-                                String response = reader.readLine();
-                                if (response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                            }
-
-                            loggedIn = true;
-                        }
-                    } else if (firstMenuItem.equals("3")) {
-                        return;
-                    }
-
-                    while (loggedIn) {
-                        System.out.println("1- Add or remove friends");
-                        System.out.println("2- block or unblock users");
-                        System.out.println("3- Message");
-
-                        String secondMenuItem = scan.nextLine();
-
-                        if (!secondMenuItem.equals("1") && !secondMenuItem.equals("2") && !secondMenuItem.equals("3") && !secondMenuItem.equals("4")) {
-                            System.out.println("Not a valid choice");
-                            writer.println("LOOP");
-                            writer.flush();
-                            String response = reader.readLine();
-                            if (response.equals("CONTINUE")) {
-                                continue;
-                            }
-                        } else if (secondMenuItem.equals("1")) {
-                            writer.println(secondMenuItem);
-                            writer.flush();
-                            System.out.println("1- Add Friend");
-                            System.out.println("2- Remove Friend");
-                            String addOrRemove = scan.nextLine();
-                            if (addOrRemove.equals("1")) {
-                                System.out.println("What is the name of the user you want to add as a friend");
-                                String friendName = scan.nextLine();
-                                String friendToAdd = FRIENDS_ADD + ";" + friendName;
-                                writer.println(friendToAdd);
-                                writer.flush();
-                            } else if (addOrRemove.equals("2")) {
-                                System.out.println("What is the name of the user you want to remove as a friend");
-                                String friendName = scan.nextLine();
-                                String friendToBlock = FRIENDS_REMOVE + ";" + friendName;
-                                writer.write(friendToBlock);
-                                writer.println();
-                                writer.flush();
-                            }
-
-                            String message = reader.readLine();
-                            if (message == null || message.isEmpty()) {
-                                System.out.println("No response from server. Please try again.");
-                                continue;
-                            }
-                            String[] index = message.split(";");
-                            String trueOrFalse = index[1];
-                            if (message.contains(FRIENDS_ADD)) {
-                                if (trueOrFalse.equals("true")) {
-                                    System.out.println("Friend added Successfully");
-                                } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("You, are already friends");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    String response = reader.readLine();
-                                    if (response.equals("CONTINUE")) {
-                                        continue;
-                                    }
-                                } else {
-                                    System.out.println("Friend does not exist, try again");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    String response = reader.readLine();
-                                    if (response.equals("CONTINUE")) {
-                                        continue;
-                                    }
-                                }
-                            } else if (message.contains(FRIENDS_REMOVE)) {
-                                if (trueOrFalse.equals("true")) {
-                                    System.out.println("Friend removed Successfully");
-                                } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("Cannot remove friend because he is not your friend");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    String response = reader.readLine();
-                                    if (response.equals("CONTINUE")) {
-                                        continue;
-                                    }
-                                } else {
-                                    System.out.println("Friend does not exist, try again");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    String response = reader.readLine();
-                                    if (response.equals("CONTINUE")) {
-                                        continue;
-                                    }
-                                }
-                            }
-
-
-                        } else if (secondMenuItem.equals("2")) {
-                            writer.println(secondMenuItem);
-                            writer.flush();
-                            System.out.println("1- Block User");
-                            System.out.println("2- Unblock User");
-                            String blockOrUnblock = scan.nextLine();
-                            if (blockOrUnblock.equals("1")) {
-                                System.out.println("What is the username of the user you want to block");
-                                String whoToBlock = scan.nextLine();
-                                String blocked = FRIENDS_BLOCK + ";" + whoToBlock;
-                                writer.write(blocked);
-                                writer.println();
-                                writer.flush();
-                            } else if (blockOrUnblock.equals("2")) {
-                                System.out.println("What is the username of the user you want to unblock");
-                                String whoToUnblock = scan.nextLine();
-                                String unblock = FRIENDS_UNBLOCK + ";" + whoToUnblock;
-                                writer.write(unblock);
-                                writer.println();
-                                writer.flush();
-                            }
-
-                            String message1 = reader.readLine();
-                            String[] index = message1.split(";");
-                            String trueOrFalse = index[1];
-                            if (message1.contains(FRIENDS_BLOCK)) {
-                                if (trueOrFalse.equals("true")) {
-                                    System.out.println("Friend blocked Successfully");
-                                } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("User is Already Blocked");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    continue;
-                                } else {
-                                    System.out.println("Friend does not exist, try again");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    continue;
-                                }
-                            } else if (message1.contains(FRIENDS_UNBLOCK)) {
-                                if (trueOrFalse.equals("true")) {
-                                    System.out.println("Friend unblocked Successfully");
-                                } else if (trueOrFalse.equals("false")) {
-                                    System.out.println("Cannot unblock friend, try again");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    continue;
-                                } else {
-                                    System.out.println("Friend does not exist, try again");
-                                    writer.println("LOOP");
-                                    writer.flush();
-                                    continue;
-                                }
-                            }
-
-                        } else if (secondMenuItem.equals("3")) {
-                            writer.println(secondMenuItem);
-                            writer.flush();
-                            System.out.println("1- Send a text message");
-                            System.out.println("2- Send a photo message");
-                            System.out.println("3- Delete text message");
-                            String whichMessage = scan.nextLine();
-                            if (whichMessage.equals("1")) {
-                                System.out.println("1- Send text message to all friends");
-                                System.out.println("2- Send text message to all users");
-                                System.out.println("3- send text message to single friend");
-                                String textType = scan.nextLine();
-                                if (textType.equals("1")) {
-                                    System.out.println("What would you like to text to all your friends");
-                                    String text = scan.nextLine();
-                                    String textALlFriends = TEXT_ALL_FRIENDS + ";" + text;
-                                    writer.write(textALlFriends);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("2")) {
-                                    System.out.println("What would you like to text to all your users");
-                                    String text = scan.nextLine();
-                                    String textAllUsers = TEXT_ALL_USERS + ";" + text;
-                                    writer.write(textAllUsers);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("3")) {
-                                    System.out.println("Who is the friend you want to text");
-                                    String friend = scan.nextLine();
-                                    System.out.println("What would you like to text " + friend);
-                                    String text = scan.nextLine();
-                                    String textSingleFriend = TEXT_SINGLE_FRIEND + ";" + friend + ";" + text;
-                                    writer.write(textSingleFriend);
-                                    writer.println();
-                                    writer.flush();
-                                }
-
-
-                            } else if (whichMessage.equals("2")) {
-                                try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-
-                                    System.out.println("1- Send photo message to all friends");
-                                    System.out.println("2- Send photo message to all users");
-                                    System.out.println("3- Send photo message to a single friend");
-                                    String textType = scan.nextLine();
-
-                                    if (textType.equals("1")) {
-                                        System.out.println("Enter the path to the photo you want to send to all your friends:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageAllFriends = MESSAGE_ALL_FRIENDS + ";" + photoPath;
-                                        writer.println(messageAllFriends);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to all friends.");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else if (textType.equals("2")) {
-                                        System.out.println("Enter the path to the photo you want to send to all users:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageAllUsers = MESSAGE_ALL_USERS + ";" + photoPath;
-                                        writer.println(messageAllUsers);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to all users.");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else if (textType.equals("3")) {
-                                        System.out.println("Enter the friend's username you want to message:");
-                                        String friend = scan.nextLine();
-                                        System.out.println("Enter the path to the photo you want to send:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageSingleFriend = MESSAGE_SINGLE_FRIEND + ";" + friend + ";" + photoPath;
-                                        writer.println(messageSingleFriend);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to " + friend + ".");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            } else if (whichMessage.equals("3")) {
-                                System.out.println("1- Delete message to all friends");
-                                System.out.println("2- Delete message to all users");
-                                System.out.println("3- Delete message to single friend");
-                                String textType = scan.nextLine();
-
-                                if (textType.equals("1")) {
-                                    System.out.println("What message to all your friends would you like to delete");
-                                    String text = scan.nextLine();
-                                    String messageALlFriends = DELETE_ALL_FRIENDS + ";" + text;
-                                    writer.write(messageALlFriends);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("2")) {
-                                    System.out.println("What message to all your users would you like to delete");
-                                    String text = scan.nextLine();
-                                    String messageAllUsers = DELETE_ALL_USERS + ";" + text;
-                                    writer.write(messageAllUsers);
-                                    writer.println();
-                                    writer.flush();
-                                } else if (textType.equals("3")) {
-                                    System.out.println("Who would you like to delete the message from");
-                                    String friend = scan.nextLine();
-                                    System.out.println("What did the message say");
-                                    String text = scan.nextLine();
-                                    String textSingleFriend = DELETE_SINGLE_FRIEND + ";" + friend + ";" + text;
-                                    writer.write(textSingleFriend);
-                                    writer.println();
-                                    writer.flush();
-                                }
-
-                                String message2 = reader.readLine();
-                                System.out.println(message2);
-                                String[] index = message2.split(";");
-                                String trueOrFalse = index[1];
-                                if (message2.contains(TEXT_ALL_FRIENDS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully texted all friends");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot send a message to all friends, try again");
-                                        continue;
-                                    } else {
-                                        System.out.println("No friends exist");
-                                        continue;
-                                    }
-                                } else if (message2.contains(TEXT_ALL_USERS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully texted all users");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot send a message to all users, try again");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                } else if (message2.contains(TEXT_SINGLE_FRIEND)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully texted a friend");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot send a message to this friend, try again");
-                                        continue;
-                                    } else {
-                                        System.out.println("Not your friend");
-                                        continue;
-                                    }
-                                } else if (message2.contains(MESSAGE_ALL_FRIENDS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully messaged all friends");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot send a messages to all friends");
-                                        continue;
-                                    } else {
-                                        System.out.println("No friends");
-                                        continue;
-                                    }
-                                } else if (message2.contains(MESSAGE_ALL_USERS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully messaged all users");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot send a messages to all users");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                } else if (message2.contains(MESSAGE_SINGLE_FRIEND)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully messaged a friend");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot message this friend");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                } else if (message2.contains(DELETE_ALL_FRIENDS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted all friends message");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot message this friend");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                } else if (message2.contains(DELETE_ALL_USERS)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted all users message" );
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot message this friend");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                } else if (message2.contains(DELETE_SINGLE_FRIEND)) {
-                                    if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted a message");
-                                    } else if (trueOrFalse.equals("false")) {
-                                        System.out.println("You cannot delete this message");
-                                        continue;
-                                    } else {
-                                        System.out.println("Failure");
-                                        continue;
-                                    }
-                                }
-
-
-                            }
-                        }
-
-                    }
-                }
-            }
-        } finally {
-            writer.close();
-            reader.close();
-            socket.close();
-        }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
     }
-
-    public Client(Server server) {
-        this.server = server;
-    }
-
-
 }
+
+class WelcomeScreen extends JFrame {
+    public WelcomeScreen() {
+        setTitle("Welcome");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        ImageIcon logo = new ImageIcon("/Users/aidendrep/Downloads/PurduePete1.png");
+        Image scaledImage = logo.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
+        ImageIcon scaledLogo = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(scaledLogo, SwingConstants.CENTER);
+
+
+        JLabel welcomeLabel = new JLabel("Welcome to Boiler Chat!", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(logoLabel, BorderLayout.NORTH);
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setLayout(new BorderLayout());
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+
+        JButton continueButton = new JButton("Continue");
+        continueButton.setFont(new Font("Bernard MT", Font.PLAIN, 16));
+        continueButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
+            dispose();
+        });
+        bottomBar.add(continueButton, BorderLayout.CENTER);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+}
+
+
+class mainMenu extends JFrame {
+    public mainMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Home Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton loginButton = new JButton("Login");
+        loginButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        loginButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
+            dispose();
+        });
+
+        JButton createButton = new JButton("Create User");
+        createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        createButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
+            dispose();
+        });
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        exitButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            dispose();
+            return;
+        });
+
+
+        bottomBar.add(loginButton);
+        bottomBar.add(createButton);
+        bottomBar.add(exitButton);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+class loginMenu extends JFrame {
+    public loginMenu() {
+        setTitle("Login Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Login Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+        bottomBar.setLayout(new BorderLayout());
+
+        JPanel central = new JPanel(new GridLayout(2, 2));
+        central.setBackground(new Color(229, 194, 31));
+
+        JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
+        usernameLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        central.add(usernameLabel);
+
+        JTextField username = new JTextField();
+        username.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        central.add(username);
+
+        JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
+        passwordLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        central.add(passwordLabel);
+
+        JTextField password = new JTextField();
+        password.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        central.add(password);
+
+        centerPanel.add(central, BorderLayout.SOUTH);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JButton enterButton = new JButton("Enter");
+        enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        enterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String usernameText = username.getText();
+                String passwordText = password.getText();
+                System.out.println(usernameText);
+                System.out.println(passwordText);
+                SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
+            }
+        });
+
+        bottomBar.add(enterButton, BorderLayout.CENTER);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+}
+
+class createMenu extends JFrame {
+    public createMenu() {
+        setTitle("Login Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Create User Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+        bottomBar.setLayout(new BorderLayout());
+
+        JPanel central = new JPanel(new GridLayout(3, 2));
+        central.setBackground(new Color(229, 194, 31));
+
+        JLabel usernameLabel = new JLabel("Username:", SwingConstants.CENTER);
+        usernameLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        central.add(usernameLabel);
+
+        JTextField username = new JTextField();
+        username.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        central.add(username);
+
+        JLabel passwordLabel = new JLabel("Password:", SwingConstants.CENTER);
+        passwordLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        central.add(passwordLabel);
+
+        JTextField password = new JTextField();
+        password.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        central.add(password);
+
+        JLabel bioLabel = new JLabel("Bio:", SwingConstants.CENTER);
+        bioLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        central.add(bioLabel);
+
+        JTextField bio = new JTextField();
+        bio.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        central.add(bio);
+
+        centerPanel.add(central, BorderLayout.SOUTH);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JButton enterButton = new JButton("Enter");
+        enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        enterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String usernameText = username.getText();
+                String passwordText = password.getText();
+                String bioText = bio.getText();
+                System.out.println(usernameText);
+                System.out.println(passwordText);
+                System.out.println(bioText);
+                SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
+            }
+        });
+
+        bottomBar.add(enterButton, BorderLayout.CENTER);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+}
+
+class mainMenu1 extends JFrame {
+    public mainMenu1() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton friendButton = new JButton("Add or Remove Friends");
+        friendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new friendsScreen1().setVisible(true));
+            dispose();
+        });
+
+        JButton blockButton = new JButton("Block or Unblock Users");
+        blockButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        blockButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new blockedScreen().setVisible(true));
+            dispose();
+        });
+
+        JButton messageButton = new JButton("Message");
+        messageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        messageButton.addActionListener(e -> {
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new messageMenu1().setVisible(true));
+            dispose();
+            return;
+        });
+
+
+        bottomBar.add(friendButton);
+        bottomBar.add(blockButton);
+        bottomBar.add(messageButton);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+class friendsScreen1 extends JFrame {
+    public friendsScreen1() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Friends Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 300));
+        bottomBar.setLayout(new GridLayout(2, 1, 10, 10));
+
+
+        JButton addFriendsButton = new JButton("ADD FRIENDS");
+        addFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
+        addFriendsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String friendsName = JOptionPane.showInputDialog(friendsScreen1.this,
+                        "Who do you want to add?");
+                if (friendsName != null) {
+                    JOptionPane.showMessageDialog(friendsScreen1.this,
+                            "Please enter a name.");
+                    return;
+                }
+
+//                    String doubleCheckFriend = FRIENDS_ADD + ";" + friendName;
+//                    System.out.println(doubleCheckFriend);
+
+                boolean friendExists = true;
+                boolean alreadyFriends = false;
+
+                if (friendExists) {
+                    if (alreadyFriends) {
+                        JOptionPane.showMessageDialog(friendsScreen1.this,
+                                "You are already friends");
+                    } else {
+                        JOptionPane.showMessageDialog(friendsScreen1.this,
+                                "Friend added successfully.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(friendsScreen1.this,
+                            "User does not exist.");
+                }
+
+                dispose();
+            }
+        });
+
+
+        JButton removeFriendsButton = new JButton("REMOVE FRIENDS");
+        removeFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
+        removeFriendsButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String friendsName = JOptionPane.showInputDialog(friendsScreen1.this,
+                        "Who do you want to remove?");
+                if (friendsName != null) {
+                    JOptionPane.showMessageDialog(friendsScreen1.this,
+                            "Please enter a name.");
+                    return;
+                }
+
+                boolean isFriend = true;
+                boolean friendExists = true;
+
+                if (friendExists) {
+                    if (isFriend) {
+                        JOptionPane.showMessageDialog(friendsScreen1.this,
+                                "Friend removed successfully.");
+                    } else {
+                        JOptionPane.showMessageDialog(friendsScreen1.this,
+                                "This person is not your friend");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(friendsScreen1.this,
+                            "User does not exist.");
+                }
+
+                dispose();
+
+            }
+        });
+
+
+        bottomBar.add(addFriendsButton);
+        bottomBar.add(removeFriendsButton);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+class blockedScreen extends JFrame {
+    public blockedScreen() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Blocked Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 300));
+        bottomBar.setLayout(new GridLayout(2, 1, 10, 10));
+
+
+        JButton addFriendsButton = new JButton("Block User");
+        addFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
+        addFriendsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String friendsName = JOptionPane.showInputDialog(blockedScreen.this,
+                        "Who do you want to add?");
+                if (friendsName != null) {
+                    JOptionPane.showMessageDialog(blockedScreen.this,
+                            "Please enter a name.");
+                    return;
+                }
+
+//                    String doubleCheckFriend = FRIENDS_ADD + ";" + friendName;
+//                    System.out.println(doubleCheckFriend);
+
+                boolean friendExists = true;
+                boolean alreadyFriends = false;
+
+                if (friendExists) {
+                    if (alreadyFriends) {
+                        JOptionPane.showMessageDialog(blockedScreen.this,
+                                "You are already friends");
+                    } else {
+                        JOptionPane.showMessageDialog(blockedScreen.this,
+                                "Friend added successfully.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(blockedScreen.this,
+                            "User does not exist.");
+                }
+
+                dispose();
+            }
+        });
+
+
+        JButton removeFriendsButton = new JButton("Unblock User");
+        removeFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
+        removeFriendsButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String friendsName = JOptionPane.showInputDialog(blockedScreen.this,
+                        "Who do you want to remove?");
+                if (friendsName != null) {
+                    JOptionPane.showMessageDialog(blockedScreen.this,
+                            "Please enter a name.");
+                    return;
+                }
+
+                boolean isFriend = true;
+                boolean friendExists = true;
+
+                if (friendExists) {
+                    if (isFriend) {
+                        JOptionPane.showMessageDialog(blockedScreen.this,
+                                "Friend removed successfully.");
+                    } else {
+                        JOptionPane.showMessageDialog(blockedScreen.this,
+                                "This person is not your friend");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(blockedScreen.this,
+                            "User does not exist.");
+                }
+
+                dispose();
+
+            }
+        });
+
+
+        bottomBar.add(addFriendsButton);
+        bottomBar.add(removeFriendsButton);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+
+class messageMenu1 extends JFrame {
+    public messageMenu1() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Message Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton sendTextMessagesButton = new JButton("SEND TEXT MESSAGES");
+        sendTextMessagesButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        sendTextMessagesButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new textMenu().setVisible(true));
+            dispose();
+        });
+
+        JButton messagePhotoButton = new JButton("SEND PHOTO MESSAGES");
+        messagePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        messagePhotoButton.addActionListener(e -> {
+            new messageMenu1.MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
+            dispose();
+        });
+
+        JButton removeMessageButton = new JButton("DELETE MESSAGES");
+        removeMessageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        removeMessageButton.addActionListener(e -> {
+            new messageMenu1.MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new deleteMenu().setVisible(true));
+            dispose();
+        });
+
+
+        bottomBar.add(sendTextMessagesButton);
+        bottomBar.add(messagePhotoButton);
+        bottomBar.add(removeMessageButton);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+
+class textMenu extends JFrame {
+    public textMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton textAllFriends = new JButton("TEXT ALL FRIENDS");
+        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String message = JOptionPane.showInputDialog(textMenu.this,
+                        "What would you like to text all friends?");
+            }
+        });
+
+        JButton textAllUsers = new JButton("TEXT ALL USERS");
+        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String message = JOptionPane.showInputDialog(textMenu.this,
+                        "What would you like to text all users??");
+            }
+        });
+
+        JButton textAFriend = new JButton("TEXT A FRIEND");
+        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String person = JOptionPane.showInputDialog(textMenu.this,
+                        "Who would you like to text");
+
+                String message = JOptionPane.showInputDialog(textMenu.this,
+                        "What would you like to text this person??");
+            }
+        });
+
+
+        bottomBar.add(textAllFriends);
+        bottomBar.add(textAllUsers);
+        bottomBar.add(textAFriend);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+
+class photoMenu extends JFrame {
+    public photoMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Photo Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton textAllFriends = new JButton("PHOTO MESSAGE ALL FRIENDS");
+        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends.");
+            }
+        });
+
+        JButton textAllUsers = new JButton("PHOTO MESSAGE ALL USERS");
+        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends.");
+            }
+        });
+
+        JButton textAFriend = new JButton("PHOTO MESSAGE A FRIEND");
+        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String person = JOptionPane.showInputDialog(photoMenu.this,
+                        "Who would you like to text");
+
+                String filepath = JOptionPane.showInputDialog(photoMenu.this,
+                        "Enter the Filepath to the Image you want to send to all friends?");
+            }
+        });
+
+
+        bottomBar.add(textAllFriends);
+        bottomBar.add(textAllUsers);
+        bottomBar.add(textAFriend);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+class deleteMenu extends JFrame {
+    public deleteMenu() {
+        setTitle("Main Menu");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome to The Delete Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+
+
+        JButton textAllFriends = new JButton("DELETE MESSAGE TO ALL FRIENDS");
+        textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What message to all your friends would you like to delete");
+            }
+        });
+
+        JButton textAllUsers = new JButton("DELETE MESSAGE TO ALL USERS");
+        textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What message to all your users would you like to delete");
+            }
+        });
+
+        JButton textAFriend = new JButton("DELETE MESSAGE TO A SINGLE FRIEND");
+        textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        textAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String person = JOptionPane.showInputDialog(deleteMenu.this,
+                        "Who would you like to delete the message from");
+
+                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
+                        "What did the message say");
+            }
+        });
+
+
+        bottomBar.add(textAllFriends);
+        bottomBar.add(textAllUsers);
+        bottomBar.add(textAFriend);
+        add(bottomBar, BorderLayout.SOUTH);
+    }
+
+
+    class MainGUI extends JFrame {
+
+    }
+}
+
+
+
+
+
+
