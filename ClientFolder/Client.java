@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
@@ -16,9 +18,10 @@ public class Client extends Thread implements FlagInterface {
     private final Server server;
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
+        SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
-       
+
 
 
         int portNumber = 2727;
@@ -38,6 +41,7 @@ public class Client extends Thread implements FlagInterface {
         try {
 
             while (true) {
+
 
                 while (!loggedIn) {
                     System.out.println("1- Login to account");
