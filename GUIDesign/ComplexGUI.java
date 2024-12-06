@@ -796,7 +796,7 @@ class deleteMenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String person = JOptionPane.showInputDialog(deleteMenu.this,
-                        "Who would you like to delete the message from");
+                        "Who would you like to delete the message from.");
 
                 String filepath = JOptionPane.showInputDialog(deleteMenu.this,
                         "What did the message say");
@@ -816,8 +816,6 @@ class deleteMenu extends JFrame {
     }
 }
 
-// Fixed Version
-
-
+// Final
 
 
