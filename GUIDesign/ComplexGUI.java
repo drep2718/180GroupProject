@@ -333,7 +333,24 @@ class WelcomeScreen extends JFrame {
                 textAllFriends.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        String message = JOptionPane.showInputDialog(textMessageMenu.this,
+                                "What would you like to text all friends?");
+                    }
+                });
 
+                textAllUsers.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String message = JOptionPane.showInputDialog(textMessageMenu.this,
+                                "What would you like to text all users??");
+                    }
+                });
+
+                textAllFriends.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String message = JOptionPane.showInputDialog(textMessageMenu.this,
+                                "What would you like to text this person??");
                     }
                 });
             }
