@@ -18,7 +18,7 @@ import java.awt.event.ActionListener;
 
 public class Client extends Thread implements FlagInterface {
     private final Server server;
-    public static boolean loop;
+    public static String loop;
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -94,16 +94,16 @@ public class Client extends Thread implements FlagInterface {
                         String message = reader.readLine();
 
                         if (message.contains(LOGIN)) {
+                            SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
                             String[] index = message.split(";");
                             String passwordMessage = index[1];
                             if (passwordMessage.equals("Login Successful")) {
                                 System.out.println("Login Successful");
                             } else if (passwordMessage.equals("Login Failed")) {
-                                loop = true;
+                                loop = "no";
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Login Failed Try Again");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
-                                loop = true;
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -111,7 +111,7 @@ public class Client extends Thread implements FlagInterface {
                                     continue;
                                 }
                             } else if (passwordMessage.equals("Missing credentials")) {
-                                loop = true;
+                                loop = "no";
                                 JOptionPane.showMessageDialog(null, "Error: Missing credentials", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Missing credentials");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
@@ -122,7 +122,7 @@ public class Client extends Thread implements FlagInterface {
                                     continue;
                                 }
                             } else {
-                                loop = true;
+                                loop = "no";
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Failure try again");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
