@@ -11,9 +11,7 @@ import java.awt.event.ActionListener;
  * Team Project -- Client Class
  *
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
- *
  * @version November 17, 2024
- *
  */
 
 public class Client extends Thread implements FlagInterface {
@@ -24,7 +22,6 @@ public class Client extends Thread implements FlagInterface {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
         Scanner scan = new Scanner(System.in);
         boolean loggedIn = false;
-
 
 
         int portNumber = 2727;
@@ -179,14 +176,16 @@ public class Client extends Thread implements FlagInterface {
                         if (message.contains(CREATE)) {
                             String[] index = message.split(";");
                             String successMessage = index[1];
+                            System.out.println("message" + successMessage);
                             if (successMessage.equals("true")) {
                                 System.out.println("User Successfully Created");
-                            } else if (successMessage.equals("taken")) {
-                                JOptionPane.showMessageDialog(null, "Error: Username Already Taken", null, JOptionPane.ERROR_MESSAGE);
+                            } else if (successMessage.equals("Taken")) {
+                                JOptionPane.showMessageDialog(null, "Username, Already Taken", null, JOptionPane.ERROR_MESSAGE);
+                                SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
                                 ComplexGUI.usernameGUI = null;
                                 ComplexGUI.passwordGUI = null;
                                 ComplexGUI.bioGUI = null;
-                                System.out.println("Username already taken");
+                                System.out.println("User does not exist. You may create User");
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -195,6 +194,7 @@ public class Client extends Thread implements FlagInterface {
                                 }
                             }else if (successMessage.equals("false")) {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
+                                SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
                                 ComplexGUI.usernameGUI = null;
                                 ComplexGUI.passwordGUI = null;
                                 ComplexGUI.bioGUI = null;
@@ -207,6 +207,8 @@ public class Client extends Thread implements FlagInterface {
                                 }
                             } else {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
+                                SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
+                                firstMenuItem = "2";
                                 ComplexGUI.usernameGUI = null;
                                 ComplexGUI.passwordGUI = null;
                                 ComplexGUI.bioGUI = null;
@@ -214,7 +216,7 @@ public class Client extends Thread implements FlagInterface {
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
-                                if (response.equals("CONTINUE")) {
+                                if (response == null || response.equals("CONTINUE")) {
                                     continue;
                                 }
                             }
@@ -227,7 +229,7 @@ public class Client extends Thread implements FlagInterface {
                     } else if (firstMenuItem.equals("3")) {
                         return;
                     }
- // Aiden ^^^
+                    // Aiden ^^^
                     while (loggedIn) {
                         System.out.println("1- Add or remove friends");
                         System.out.println("2- block or unblock users");
@@ -583,7 +585,7 @@ public class Client extends Thread implements FlagInterface {
                                     }
                                 } else if (message2.contains(DELETE_ALL_USERS)) {
                                     if (trueOrFalse.equals("true")) {
-                                        System.out.println("You successfully deleted all users message" );
+                                        System.out.println("You successfully deleted all users message");
                                     } else if (trueOrFalse.equals("false")) {
                                         System.out.println("You cannot message this friend");
                                         continue;
