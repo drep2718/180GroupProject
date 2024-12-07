@@ -119,14 +119,13 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 }
                             }
 
-                            allUsers = User.getAllUsers();
-                            for (User user : allUsers) {
-                                if (user.getUsername().equals(username)) {
-                                    writer.println(CREATE +";" + "taken");
-                                    System.out.println("taken");
-                                    continue;
-                                }
+                            if (User.usernameTaken) {
+                                System.out.println("Taken");
+                                writer.println(CREATE + ";" + "Taken");
+                                writer.flush();
+                                continue;
                             }
+
 
                             writer.println(CREATE + ";" + validUser);
                             writer.flush();
