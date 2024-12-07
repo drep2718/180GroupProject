@@ -10,6 +10,7 @@ public class ComplexGUI {
     public static String firstMenuItemGUI = "0";
     public static String usernameGUI;
     public static String passwordGUI;
+    public static String bioGUI;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -99,7 +100,7 @@ class mainMenu extends JFrame {
         createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
-            ComplexGUI.firstMenuItemGUI = "1";
+            ComplexGUI.firstMenuItemGUI = "2";
             SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
             dispose();
         });
@@ -179,9 +180,7 @@ class loginMenu extends JFrame {
 
                 ComplexGUI.usernameGUI = username.getText();
                 ComplexGUI.passwordGUI = password.getText();
-               if (Client.loop.equals("no")){
-                    dispose();
-                }
+                dispose();
             }
         });
 
@@ -192,7 +191,7 @@ class loginMenu extends JFrame {
 
 class createMenu extends JFrame {
     public createMenu() {
-        setTitle("Login Menu");
+        setTitle("Create Menu");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -248,13 +247,10 @@ class createMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String usernameText = username.getText();
-                String passwordText = password.getText();
-                String bioText = bio.getText();
-                System.out.println(usernameText);
-                System.out.println(passwordText);
-                System.out.println(bioText);
-                SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
+                ComplexGUI.usernameGUI = username.getText();
+                ComplexGUI.passwordGUI = password.getText();
+                ComplexGUI.bioGUI = bio.getText();
+                dispose();
             }
         });
 
@@ -827,5 +823,4 @@ class deleteMenu extends JFrame {
 }
 
 // Final
-
 
