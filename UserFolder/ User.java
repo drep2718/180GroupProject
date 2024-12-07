@@ -24,6 +24,7 @@ public class User implements UserInterface {
     private static ArrayList<String> passwords = new ArrayList<>();
     private static ArrayList<String> usernames = new ArrayList<>();
     private static final Object gatekeeper = new Object();
+    public static boolean usernameTaken = false;
 
     public static void setAllUsers(ArrayList<User> allUsers) {
         User.allUsers = allUsers;
@@ -102,6 +103,7 @@ public class User implements UserInterface {
             for (User user : allUsers) {
                 if (user.getUsername().equals(username)) {
                     System.out.println("Username already taken");
+                    usernameTaken = true;
                     return null;
                 }
             }
