@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.util.Scanner;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Team Project -- Client Class
@@ -16,6 +18,7 @@ import java.util.Scanner;
 
 public class Client extends Thread implements FlagInterface {
     private final Server server;
+    public static boolean loop;
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -48,10 +51,16 @@ public class Client extends Thread implements FlagInterface {
                     System.out.println("2- Create account");
                     System.out.println("3- Exit");
 
-                    String firstMenuItem = scan.nextLine();
+                    try {
+                        Thread.sleep(800);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+
+                    String firstMenuItem = ComplexGUI.firstMenuItemGUI;
 
                     if (!firstMenuItem.equals("1") && !firstMenuItem.equals("2") && !firstMenuItem.equals("3")) {
-                        System.out.println("Not a valid choice");
                         writer.println("LOOP");
                         writer.flush();
                         String response = reader.readLine();
@@ -59,10 +68,25 @@ public class Client extends Thread implements FlagInterface {
                             continue;
                         }
                     } else if (firstMenuItem.equals("1")) {
+
+                        while ((ComplexGUI.usernameGUI == null || ComplexGUI.usernameGUI.isEmpty()) ||
+                                (ComplexGUI.passwordGUI == null || ComplexGUI.passwordGUI.isEmpty())) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                JOptionPane.showMessageDialog(null, "An error occurred while waiting for input.", "Error", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                                return;
+                            }
+                        }
+
                         System.out.println("Enter your username");
-                        String username = scan.nextLine();
+                        String username = ComplexGUI.usernameGUI;
+
+
                         System.out.println("Enter your password");
-                        String password = scan.nextLine();
+                        String password = ComplexGUI.passwordGUI;
+
                         String login = LOGIN + ";" + username + ";" + password;
                         writer.write(login);
                         writer.println();
@@ -75,7 +99,11 @@ public class Client extends Thread implements FlagInterface {
                             if (passwordMessage.equals("Login Successful")) {
                                 System.out.println("Login Successful");
                             } else if (passwordMessage.equals("Login Failed")) {
+                                loop = true;
+                                JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Login Failed Try Again");
+                                SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
+                                loop = true;
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -83,7 +111,10 @@ public class Client extends Thread implements FlagInterface {
                                     continue;
                                 }
                             } else if (passwordMessage.equals("Missing credentials")) {
+                                loop = true;
+                                JOptionPane.showMessageDialog(null, "Error: Missing credentials", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Missing credentials");
+                                SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -91,7 +122,10 @@ public class Client extends Thread implements FlagInterface {
                                     continue;
                                 }
                             } else {
+                                loop = true;
+                                JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Failure try again");
+                                SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
