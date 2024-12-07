@@ -3,7 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class ComplexGUI {
+
+
+    public static String firstMenuItemGUI = "0";
+    public static String usernameGUI;
+    public static String passwordGUI;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -84,6 +90,7 @@ class mainMenu extends JFrame {
         loginButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         loginButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
+            ComplexGUI.firstMenuItemGUI = "1";
             SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
             dispose();
         });
@@ -92,6 +99,7 @@ class mainMenu extends JFrame {
         createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
+            ComplexGUI.firstMenuItemGUI = "1";
             SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
             dispose();
         });
@@ -100,6 +108,7 @@ class mainMenu extends JFrame {
         exitButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         exitButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
+            ComplexGUI.firstMenuItemGUI = "3";
             dispose();
             return;
         });
@@ -167,11 +176,12 @@ class loginMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String usernameText = username.getText();
-                String passwordText = password.getText();
-                System.out.println(usernameText);
-                System.out.println(passwordText);
-                SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
+
+                ComplexGUI.usernameGUI = username.getText();
+                ComplexGUI.passwordGUI = password.getText();
+               if (Client.loop.equals("no")){
+                    dispose();
+                }
             }
         });
 
