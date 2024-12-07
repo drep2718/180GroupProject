@@ -94,7 +94,6 @@ public class Client extends Thread implements FlagInterface {
                         String message = reader.readLine();
 
                         if (message.contains(LOGIN)) {
-                            SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
                             String[] index = message.split(";");
                             String passwordMessage = index[1];
                             if (passwordMessage.equals("Login Successful")) {
@@ -104,6 +103,8 @@ public class Client extends Thread implements FlagInterface {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Login Failed Try Again");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -115,6 +116,8 @@ public class Client extends Thread implements FlagInterface {
                                 JOptionPane.showMessageDialog(null, "Error: Missing credentials", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Missing credentials");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -126,6 +129,8 @@ public class Client extends Thread implements FlagInterface {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 System.out.println("Failure try again");
                                 SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
                                 writer.println("LOOP");
                                 writer.flush();
                                 String response = reader.readLine();
@@ -136,15 +141,34 @@ public class Client extends Thread implements FlagInterface {
 
                         }
                         loggedIn = true;
+                        JOptionPane.showMessageDialog(null, "Successful Login", null, JOptionPane.INFORMATION_MESSAGE);
+                        SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
 
 
                     } else if (firstMenuItem.equals("2")) {
+                        while ((ComplexGUI.usernameGUI == null || ComplexGUI.usernameGUI.isEmpty()) ||
+                                (ComplexGUI.passwordGUI == null || ComplexGUI.passwordGUI.isEmpty()) ||
+                                (ComplexGUI.bioGUI == null || ComplexGUI.bioGUI.isEmpty())) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                JOptionPane.showMessageDialog(null, "An error occurred while waiting for input.", "Error", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                                return;
+                            }
+                        }
                         System.out.println("Enter you new username");
-                        String newUsername = scan.nextLine();
+                        String newUsername = ComplexGUI.usernameGUI;
+
+
                         System.out.println("Enter your new password");
-                        String newPassword = scan.nextLine();
+                        String newPassword = ComplexGUI.passwordGUI;
+
+
                         System.out.println("Enter your bio");
-                        String newBio = scan.nextLine();
+                        String newBio = ComplexGUI.bioGUI;
+
+
                         String create = CREATE + ";" + newUsername + ";" + newPassword + ";" + newBio;
                         writer.write(create);
                         writer.println();
@@ -157,7 +181,23 @@ public class Client extends Thread implements FlagInterface {
                             String successMessage = index[1];
                             if (successMessage.equals("true")) {
                                 System.out.println("User Successfully Created");
-                            } else if (successMessage.equals("false")) {
+                            } else if (successMessage.equals("taken")) {
+                                JOptionPane.showMessageDialog(null, "Error: Username Already Taken", null, JOptionPane.ERROR_MESSAGE);
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
+                                ComplexGUI.bioGUI = null;
+                                System.out.println("Username already taken");
+                                writer.println("LOOP");
+                                writer.flush();
+                                String response = reader.readLine();
+                                if (response.equals("CONTINUE")) {
+                                    continue;
+                                }
+                            }else if (successMessage.equals("false")) {
+                                JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
+                                ComplexGUI.bioGUI = null;
                                 System.out.println("User does not exist. You may create User");
                                 writer.println("LOOP");
                                 writer.flush();
@@ -166,6 +206,10 @@ public class Client extends Thread implements FlagInterface {
                                     continue;
                                 }
                             } else {
+                                JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
+                                ComplexGUI.bioGUI = null;
                                 System.out.println("Failure try again");
                                 writer.println("LOOP");
                                 writer.flush();
@@ -175,12 +219,15 @@ public class Client extends Thread implements FlagInterface {
                                 }
                             }
 
-                            loggedIn = true;
                         }
+                        loggedIn = true;
+                        JOptionPane.showMessageDialog(null, "You successfully created an account", null, JOptionPane.INFORMATION_MESSAGE);
+                        SwingUtilities.invokeLater(() -> new mainMenu1().setVisible(true));
+
                     } else if (firstMenuItem.equals("3")) {
                         return;
                     }
-
+ // Aiden ^^^
                     while (loggedIn) {
                         System.out.println("1- Add or remove friends");
                         System.out.println("2- block or unblock users");
