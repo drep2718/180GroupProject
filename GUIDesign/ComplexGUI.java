@@ -16,6 +16,8 @@ public class ComplexGUI {
     public static String whichMessage;
     public static String friend;
     public static String message;
+    public static String logout;
+    public static String secondMenuItem;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -288,12 +290,13 @@ class mainMenu1 extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
 
         JButton friendButton = new JButton("Add or Remove Friends");
         friendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         friendButton.addActionListener(e -> {
+            ComplexGUI.secondMenuItem = "1";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new friendsScreen1().setVisible(true));
             dispose();
@@ -302,6 +305,7 @@ class mainMenu1 extends JFrame {
         JButton blockButton = new JButton("Block or Unblock Users");
         blockButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         blockButton.addActionListener(e -> {
+            ComplexGUI.secondMenuItem = "2";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new blockedScreen().setVisible(true));
             dispose();
@@ -310,16 +314,28 @@ class mainMenu1 extends JFrame {
         JButton messageButton = new JButton("Message");
         messageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         messageButton.addActionListener(e -> {
+            ComplexGUI.secondMenuItem = "3";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new messageMenu1().setVisible(true));
             dispose();
             return;
         });
 
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        logoutButton.addActionListener(e -> {
+            ComplexGUI.secondMenuItem = "4";
+            ComplexGUI.logout = "logout";
+            new MainGUI().setVisible(true);
+            SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
+            dispose();
+        });
+
 
         bottomBar.add(friendButton);
         bottomBar.add(blockButton);
         bottomBar.add(messageButton);
+        bottomBar.add(logoutButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
 
