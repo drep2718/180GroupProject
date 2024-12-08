@@ -346,6 +346,7 @@ class mainMenu1 extends JFrame {
 }
 
 class friendsScreen1 extends JFrame {
+    JPanel panel = new JPanel(new BorderLayout());
 
     private Friends friends;
     JComboBox<String> friendDropdown = new JComboBox<>();
@@ -355,19 +356,44 @@ class friendsScreen1 extends JFrame {
 
     public friendsScreen1() {
         this.friends = new Friends();
-        setTitle("Friend Manager");
+//        setTitle("Friend Manager");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        JLabel welcomeLabel = new JLabel("Welcome to The Friend Menu", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 200));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
         mainPanel.add(createMainMenuPanel(), "Menu");
         mainPanel.add(createAddFriendPanel(), "AddFriend");
         mainPanel.add(createRemoveFriendPanel(), "RemoveFriend");
 
         add(mainPanel);
+
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> new mainMenu1().setVisible(true));
+        dispose();
+
+        bottomBar.add(backButton);
+        add(bottomBar, BorderLayout.SOUTH);
     }
 
     private JPanel createMainMenuPanel() {
@@ -560,19 +586,45 @@ class blockedScreen extends JFrame {
 
     public blockedScreen() {
         this.friends = new Friends(temp);
-        setTitle("Privacy");
-        setSize(200, 500);
+//        setTitle("Privacy");
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        JLabel welcomeLabel = new JLabel("Welcome to The Friend Menu", SwingConstants.CENTER);
+
+        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+        
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+
+        JPanel topBar = new JPanel();
+        topBar.setBackground(Color.BLACK);
+        topBar.setPreferredSize(new Dimension(getWidth(), 100));
+        add(topBar, BorderLayout.NORTH);
+        
+        JPanel bottomBar = new JPanel();
+        bottomBar.setBackground(new Color(229, 194, 31));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 200));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
         mainPanel.add(createMainMenuPanel(), "Menu");
         mainPanel.add(createBlockUserPanel(), "BlockUser");
         mainPanel.add(creatUnblockUserPanel(), "UnblockUser");
 
         add(mainPanel);
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> new mainMenu1().setVisible(true));
+        dispose();
+        
+        bottomBar.add(backButton);
+        add(bottomBar, BorderLayout.SOUTH);
     }
 
     private JPanel createMainMenuPanel() {
