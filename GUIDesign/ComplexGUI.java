@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 
 public class ComplexGUI {
@@ -11,6 +12,7 @@ public class ComplexGUI {
     public static String usernameGUI;
     public static String passwordGUI;
     public static String bioGUI;
+    public static User waypoint;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -179,6 +181,7 @@ class loginMenu extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 ComplexGUI.usernameGUI = username.getText();
+                ComplexGUI.waypoint = new User(ComplexGUI.usernameGUI);
                 ComplexGUI.passwordGUI = password.getText();
                 dispose();
             }
@@ -395,6 +398,7 @@ class friendsScreen1 extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                friends = new Friends(ComplexGUI.waypoint);
                 String username = (String) userDropdown.getSelectedItem();
                 if (username != null) {
                     User newFriend = new User(username);
@@ -463,9 +467,12 @@ class friendsScreen1 extends JFrame {
     private void updateUserDropdown() {
 
         userDropdown.removeAllItems();
+        User tempUser = new User("temp");
+        tempUser.loadUsers();
         ArrayList<User> users = User.getAllUsers();
+        System.out.println(users);
         for (User user : users) {
-            userDropdown.addItem(user.getName());
+            userDropdown.addItem(user.getUsername());
         }
     }
 
@@ -474,7 +481,7 @@ class friendsScreen1 extends JFrame {
         friendDropdown.removeAllItems();
         ArrayList<User> friendsList = Friends.getFriendsList();
         for (User friend : friendsList) {
-            friendDropdown.addItem(friend.getName());
+            friendDropdown.addItem(friend.getUsername());
         }
     }
 
@@ -485,6 +492,7 @@ class friendsScreen1 extends JFrame {
 }
 
 class blockedScreen extends JFrame {
+    User temp = new User("temp");
     private Friends friends;
     JComboBox<String> friendDropdown = new JComboBox<>();
     private JComboBox<String> userDropdown = new JComboBox<>();
@@ -492,7 +500,7 @@ class blockedScreen extends JFrame {
     private JPanel mainPanel;
 
     public blockedScreen() {
-        this.friends = new Friends();
+        this.friends = new Friends(temp);
         setTitle("Privacy");
         setSize(200, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -625,7 +633,7 @@ class blockedScreen extends JFrame {
         userDropdown.removeAllItems();
         ArrayList<User> users = User.getAllUsers();
         for (User user : users) {
-            userDropdown.addItem(user.getName());
+            userDropdown.addItem(user.getUsername());
         }
     }
 
@@ -634,7 +642,7 @@ class blockedScreen extends JFrame {
         friendDropdown.removeAllItems();
         ArrayList<User> friendsList = Friends.getFriendsList();
         for (User friend : friendsList) {
-            friendDropdown.addItem(friend.getName());
+            friendDropdown.addItem(friend.getUsername());
         }
     }
 
@@ -926,4 +934,3 @@ class deleteMenu extends JFrame {
 }
 
 // Final
-
