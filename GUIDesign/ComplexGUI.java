@@ -461,6 +461,8 @@ class friendsScreen1 extends JFrame {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                updateFriendDropdown();
+                friends = new Friends(ComplexGUI.waypoint);
                 String friendName = (String) friendDropdown.getSelectedItem();
                 if (friendName != null) {
                     User friendToRemove = new User(friendName);
@@ -489,7 +491,6 @@ class friendsScreen1 extends JFrame {
         User tempUser = new User("temp");
         tempUser.loadUsers();
         ArrayList<User> users = User.getAllUsers();
-        System.out.println(users);
         for (User user : users) {
             userDropdown.addItem(user.getUsername());
         }
@@ -498,7 +499,10 @@ class friendsScreen1 extends JFrame {
     private void updateFriendDropdown() {
 
         friendDropdown.removeAllItems();
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadFriends();
         ArrayList<User> friendsList = Friends.getFriendsList();
+        System.out.println(friendsList);
         for (User friend : friendsList) {
             friendDropdown.addItem(friend.getUsername());
         }
