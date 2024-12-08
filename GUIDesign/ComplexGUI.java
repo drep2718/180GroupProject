@@ -13,6 +13,9 @@ public class ComplexGUI {
     public static String passwordGUI;
     public static String bioGUI;
     public static User waypoint;
+    public static String whichMessage;
+    public static String friend;
+    public static String message;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -683,12 +686,14 @@ class messageMenu1 extends JFrame {
         sendTextMessagesButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         sendTextMessagesButton.addActionListener(e -> {
             SwingUtilities.invokeLater(() -> new textMenu().setVisible(true));
+            ComplexGUI.whichMessage = "1";
             dispose();
         });
 
         JButton messagePhotoButton = new JButton("SEND PHOTO MESSAGES");
         messagePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         messagePhotoButton.addActionListener(e -> {
+            ComplexGUI.whichMessage = "2";
             new messageMenu1.MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
             dispose();
@@ -697,6 +702,7 @@ class messageMenu1 extends JFrame {
         JButton removeMessageButton = new JButton("DELETE MESSAGES");
         removeMessageButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         removeMessageButton.addActionListener(e -> {
+            ComplexGUI.whichMessage = "3";
             new messageMenu1.MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new deleteMenu().setVisible(true));
             dispose();
@@ -747,8 +753,11 @@ class textMenu extends JFrame {
         textAllFriends.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ComplexGUI.whichMessage = "1"; // replace text type and below new globl
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text all friends?");
+                ComplexGUI.message = message;
+
             }
         });
 
@@ -757,8 +766,10 @@ class textMenu extends JFrame {
         textAllUsers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ComplexGUI.whichMessage = "2";
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text all users??");
+                ComplexGUI.message = message;
             }
         });
 
@@ -767,11 +778,15 @@ class textMenu extends JFrame {
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ComplexGUI.whichMessage = "3";
                 String person = JOptionPane.showInputDialog(textMenu.this,
                         "Who would you like to text");
+                ComplexGUI.friend = person;
 
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text this person??");
+                ComplexGUI.message = message;
+
             }
         });
 
