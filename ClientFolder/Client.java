@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
 
 /**
  * Team Project -- Client Class
