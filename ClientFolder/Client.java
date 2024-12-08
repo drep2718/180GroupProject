@@ -143,6 +143,7 @@ public class Client extends Thread implements FlagInterface {
 
 
                     } else if (firstMenuItem.equals("2")) {
+
                         while ((ComplexGUI.usernameGUI == null || ComplexGUI.usernameGUI.isEmpty()) ||
                                 (ComplexGUI.passwordGUI == null || ComplexGUI.passwordGUI.isEmpty()) ||
                                 (ComplexGUI.bioGUI == null || ComplexGUI.bioGUI.isEmpty())) {
@@ -377,7 +378,7 @@ public class Client extends Thread implements FlagInterface {
                             System.out.println("1- Send a text message");
                             System.out.println("2- Send a photo message");
                             System.out.println("3- Delete text message");
-                            String whichMessage = scan.nextLine();
+                            String whichMessage = ComplexGUI.whichMessage;
                             if (whichMessage.equals("1")) {
                                 System.out.println("1- Send text message to all friends");
                                 System.out.println("2- Send text message to all users");
