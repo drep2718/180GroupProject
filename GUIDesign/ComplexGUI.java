@@ -324,106 +324,158 @@ class mainMenu1 extends JFrame {
 }
 
 class friendsScreen1 extends JFrame {
+
+    private Friends friends;
+    JComboBox<String> friendDropdown = new JComboBox<>();
+    private JComboBox<String> userDropdown = new JComboBox<>();
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+
     public friendsScreen1() {
-        setTitle("Main Menu");
+        this.friends = new Friends();
+        setTitle("Friend Manager");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Friends Menu", SwingConstants.CENTER);
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        mainPanel.add(createMainMenuPanel(), "Menu");
+        mainPanel.add(createAddFriendPanel(), "AddFriend");
+        mainPanel.add(createRemoveFriendPanel(), "RemoveFriend");
+
+        add(mainPanel);
+    }
+
+    private JPanel createMainMenuPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Friend Manager", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+        panel.add(welcomeLabel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-        add(centerPanel, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 20, 20));
 
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
+        JButton addFriendButton = new JButton("ADD FRIEND");
+        addFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        addFriendButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
+        addFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "AddFriend"));
 
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 300));
-        bottomBar.setLayout(new GridLayout(2, 1, 10, 10));
+        JButton removeFriendButton = new JButton("REMOVE FRIEND");
+        removeFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        removeFriendButton.setBackground(Color.YELLOW); // SAME ISSUE
+        removeFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "RemoveFriend"));
 
+        buttonPanel.add(addFriendButton);
+        buttonPanel.add(removeFriendButton);
 
-        JButton addFriendsButton = new JButton("ADD FRIENDS");
-        addFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
-        addFriendsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String friendsName = JOptionPane.showInputDialog(friendsScreen1.this,
-                        "Who do you want to add?");
-                if (friendsName != null) {
-                    JOptionPane.showMessageDialog(friendsScreen1.this,
-                            "Please enter a name.");
-                    return;
-                }
+        panel.add(buttonPanel, BorderLayout.CENTER);
 
-//                    String doubleCheckFriend = FRIENDS_ADD + ";" + friendName;
-//                    System.out.println(doubleCheckFriend);
+        return panel;
+    }
 
-                boolean friendExists = true;
-                boolean alreadyFriends = false;
+    private JPanel createAddFriendPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
 
-                if (friendExists) {
-                    if (alreadyFriends) {
-                        JOptionPane.showMessageDialog(friendsScreen1.this,
-                                "You are already friends");
-                    } else {
-                        JOptionPane.showMessageDialog(friendsScreen1.this,
-                                "Friend added successfully.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(friendsScreen1.this,
-                            "User does not exist.");
-                }
+        JLabel label = new JLabel("ADD FRIEND", SwingConstants.CENTER);
+        label.setFont(new Font("Bernard MT", Font.BOLD, 40));
+        panel.add(label, BorderLayout.NORTH);
 
-                dispose();
-            }
-        });
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
 
+        userDropdown = new JComboBox<>();
+        userDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        userDropdown.setPreferredSize(new Dimension(300, 50));
+        updateUserDropdown();
+        formPanel.add(userDropdown);
 
-        JButton removeFriendsButton = new JButton("REMOVE FRIENDS");
-        removeFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
-        removeFriendsButton.addActionListener(new ActionListener() {
-
+        JButton addButton = new JButton("ADD FRIEND");
+        addButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String friendsName = JOptionPane.showInputDialog(friendsScreen1.this,
-                        "Who do you want to remove?");
-                if (friendsName != null) {
-                    JOptionPane.showMessageDialog(friendsScreen1.this,
-                            "Please enter a name.");
-                    return;
-                }
-
-                boolean isFriend = true;
-                boolean friendExists = true;
-
-                if (friendExists) {
-                    if (isFriend) {
-                        JOptionPane.showMessageDialog(friendsScreen1.this,
-                                "Friend removed successfully.");
-                    } else {
-                        JOptionPane.showMessageDialog(friendsScreen1.this,
-                                "This person is not your friend");
-                    }
+                String username = (String) userDropdown.getSelectedItem();
+                if (username != null) {
+                    User newFriend = new User(username);
+                    friends.addFriend(newFriend);
+                    JOptionPane.showMessageDialog(friendsScreen1.this, "User added: " + username);
+                    updateUserDropdown();
                 } else {
-                    JOptionPane.showMessageDialog(friendsScreen1.this,
-                            "User does not exist.");
+                    JOptionPane.showMessageDialog(friendsScreen1.this, "No user selected.");
                 }
-
-                dispose();
-
             }
         });
+        formPanel.add(addButton);
 
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
+        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
 
-        bottomBar.add(addFriendsButton);
-        bottomBar.add(removeFriendsButton);
-        add(bottomBar, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    private JPanel createRemoveFriendPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel label = new JLabel("REMOVE FRIEND", SwingConstants.CENTER);
+        label.setFont(new Font("Bernard MT", Font.BOLD, 40));
+        panel.add(label, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setPreferredSize(new Dimension(300, 50));
+        updateFriendDropdown();
+        formPanel.add(friendDropdown);
+
+        JButton removeButton = new JButton("REMOVE");
+        removeButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        removeButton.setBackground(Color.BLACK);
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String friendName = (String) friendDropdown.getSelectedItem();
+                if (friendName != null) {
+                    User friendToRemove = new User(friendName);
+                    friends.removeFriend(friends, friendToRemove);
+                    JOptionPane.showMessageDialog(friendsScreen1.this, "Friend removed: " + friendName);
+                    updateFriendDropdown();
+                } else {
+                    JOptionPane.showMessageDialog(friendsScreen1.this, "No friend selected.");
+                }
+            }
+        });
+        formPanel.add(removeButton);
+
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
+        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void updateUserDropdown() {
+
+        userDropdown.removeAllItems();
+        ArrayList<User> users = User.getAllUsers();
+        for (User user : users) {
+            userDropdown.addItem(user.getName());
+        }
+    }
+
+    private void updateFriendDropdown() {
+
+        friendDropdown.removeAllItems();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getName());
+        }
     }
 
 
@@ -433,106 +485,157 @@ class friendsScreen1 extends JFrame {
 }
 
 class blockedScreen extends JFrame {
+    private Friends friends;
+    JComboBox<String> friendDropdown = new JComboBox<>();
+    private JComboBox<String> userDropdown = new JComboBox<>();
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+
     public blockedScreen() {
-        setTitle("Main Menu");
-        setSize(1000, 700);
+        this.friends = new Friends();
+        setTitle("Privacy");
+        setSize(200, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Blocked Menu", SwingConstants.CENTER);
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        mainPanel.add(createMainMenuPanel(), "Menu");
+        mainPanel.add(createBlockUserPanel(), "BlockUser");
+        mainPanel.add(creatUnblockUserPanel(), "UnblockUser");
+
+        add(mainPanel);
+    }
+
+    private JPanel createMainMenuPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Privacy Settings", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+        panel.add(welcomeLabel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-        add(centerPanel, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 20, 20));
 
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
+        JButton blockUserButton = new JButton("BLOCK USER");
+        blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        blockUserButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
+        blockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "BlockUser"));
 
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 300));
-        bottomBar.setLayout(new GridLayout(2, 1, 10, 10));
+        JButton unblockUserButton = new JButton("UNBLOCK USER");
+        unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        unblockUserButton.setBackground(Color.YELLOW); // SAME ISSUE
+        unblockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "UnblockUser"));
 
+        buttonPanel.add(blockUserButton);
+        buttonPanel.add(unblockUserButton);
 
-        JButton addFriendsButton = new JButton("Block User");
-        addFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
-        addFriendsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String friendsName = JOptionPane.showInputDialog(blockedScreen.this,
-                        "Who do you want to add?");
-                if (friendsName != null) {
-                    JOptionPane.showMessageDialog(blockedScreen.this,
-                            "Please enter a name.");
-                    return;
-                }
+        panel.add(buttonPanel, BorderLayout.CENTER);
 
-//                    String doubleCheckFriend = FRIENDS_ADD + ";" + friendName;
-//                    System.out.println(doubleCheckFriend);
+        return panel;
+    }
 
-                boolean friendExists = true;
-                boolean alreadyFriends = false;
+    private JPanel createBlockUserPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
 
-                if (friendExists) {
-                    if (alreadyFriends) {
-                        JOptionPane.showMessageDialog(blockedScreen.this,
-                                "You are already friends");
-                    } else {
-                        JOptionPane.showMessageDialog(blockedScreen.this,
-                                "Friend added successfully.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(blockedScreen.this,
-                            "User does not exist.");
-                }
+        JLabel label = new JLabel("BLOCK USER", SwingConstants.CENTER);
+        label.setFont(new Font("Bernard MT", Font.BOLD, 20));
+        panel.add(label, BorderLayout.NORTH);
 
-                dispose();
-            }
-        });
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
 
+        userDropdown = new JComboBox<>();
+        userDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        userDropdown.setPreferredSize(new Dimension(300, 50));
+        updateUserDropdown();
+        formPanel.add(userDropdown);
 
-        JButton removeFriendsButton = new JButton("Unblock User");
-        removeFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
-        removeFriendsButton.addActionListener(new ActionListener() {
-
+        JButton blockUserButton = new JButton("BLOCK USER");
+        blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        blockUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String friendsName = JOptionPane.showInputDialog(blockedScreen.this,
-                        "Who do you want to remove?");
-                if (friendsName != null) {
-                    JOptionPane.showMessageDialog(blockedScreen.this,
-                            "Please enter a name.");
-                    return;
-                }
-
-                boolean isFriend = true;
-                boolean friendExists = true;
-
-                if (friendExists) {
-                    if (isFriend) {
-                        JOptionPane.showMessageDialog(blockedScreen.this,
-                                "Friend removed successfully.");
-                    } else {
-                        JOptionPane.showMessageDialog(blockedScreen.this,
-                                "This person is not your friend");
-                    }
+                String username = (String) userDropdown.getSelectedItem();
+                if (username != null) {
+                    User friend = new User(username);
+                    friends.blockUser(friend);
+                    JOptionPane.showMessageDialog(blockedScreen.this, "User blocked: " + username);
+                    updateUserDropdown();
                 } else {
-                    JOptionPane.showMessageDialog(blockedScreen.this,
-                            "User does not exist.");
+                    JOptionPane.showMessageDialog(blockedScreen.this, "No user selected.");
                 }
-
-                dispose();
-
             }
         });
+        formPanel.add(blockUserButton);
 
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
+        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
 
-        bottomBar.add(addFriendsButton);
-        bottomBar.add(removeFriendsButton);
-        add(bottomBar, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    private JPanel creatUnblockUserPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel label = new JLabel("UNBLOCK USER", SwingConstants.CENTER);
+        label.setFont(new Font("Bernard MT", Font.BOLD, 40));
+        panel.add(label, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setPreferredSize(new Dimension(300, 50));
+        updateFriendDropdown();
+        formPanel.add(friendDropdown);
+
+        JButton unblockUserButton = new JButton("UNBLOCK USER");
+        unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        unblockUserButton.setBackground(Color.BLACK);
+        unblockUserButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String friendName = (String) friendDropdown.getSelectedItem();
+                if (friendName != null) {
+                    User userToUnblock = new User(friendName);
+                    friends.unblockUser(friends, userToUnblock);
+                    JOptionPane.showMessageDialog(blockedScreen.this, "Friend removed: " + friendName);
+                    updateFriendDropdown();
+                } else {
+                    JOptionPane.showMessageDialog(blockedScreen.this, "No friend selected.");
+                }
+            }
+        });
+        formPanel.add(unblockUserButton);
+
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
+        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void updateUserDropdown() {
+
+        userDropdown.removeAllItems();
+        ArrayList<User> users = User.getAllUsers();
+        for (User user : users) {
+            userDropdown.addItem(user.getName());
+        }
+    }
+
+    private void updateFriendDropdown() {
+
+        friendDropdown.removeAllItems();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getName());
+        }
     }
 
 
