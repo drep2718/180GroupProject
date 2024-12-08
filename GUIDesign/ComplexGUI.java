@@ -384,10 +384,25 @@ class friendsScreen1 extends JFrame {
         addFriendButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
         addFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "AddFriend"));
 
+        addFriendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                updateUserDropdown();
+            }
+        });
+
         JButton removeFriendButton = new JButton("REMOVE FRIEND");
         removeFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         removeFriendButton.setBackground(Color.YELLOW); // SAME ISSUE
         removeFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "RemoveFriend"));
+
+        removeFriendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateFriendDropdown();
+            }
+        });
 
         buttonPanel.add(addFriendButton);
         buttonPanel.add(removeFriendButton);
@@ -461,7 +476,6 @@ class friendsScreen1 extends JFrame {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateFriendDropdown();
                 friends = new Friends(ComplexGUI.waypoint);
                 String friendName = (String) friendDropdown.getSelectedItem();
                 if (friendName != null) {
@@ -488,13 +502,35 @@ class friendsScreen1 extends JFrame {
     private void updateUserDropdown() {
 
         userDropdown.removeAllItems();
+        JComboBox<String> userDropdownNoF = new JComboBox<>();
+        userDropdownNoF.removeAllItems();
         User tempUser = new User("temp");
         tempUser.loadUsers();
+        Friends waypoint = new Friends(ComplexGUI.waypoint);
         ArrayList<User> users = User.getAllUsers();
         for (User user : users) {
-            userDropdown.addItem(user.getUsername());
+            userDropdownNoF.addItem(user.getUsername());
+        }
+
+        friendDropdown.removeAllItems();
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadFriends();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        System.out.println(friendsList);
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getUsername());
+        }
+
+        for (int i = 0; i < friendDropdown.getItemCount(); i++) {
+            String friendName = friendDropdown.getItemAt(i);
+            userDropdownNoF.removeItem(friendName);
+        }
+
+        for (int i = 0; i < userDropdownNoF.getItemCount(); i++) {
+            userDropdown.addItem(userDropdownNoF.getItemAt(i));
         }
     }
+
 
     private void updateFriendDropdown() {
 
