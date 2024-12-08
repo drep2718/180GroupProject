@@ -378,7 +378,7 @@ class friendsScreen1 extends JFrame {
 
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 200));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 50));
         bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
         mainPanel.add(createMainMenuPanel(), "Menu");
@@ -387,13 +387,12 @@ class friendsScreen1 extends JFrame {
 
         add(mainPanel);
 
-        JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        JButton backButton = new JButton("CANCEL");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         backButton.addActionListener(e -> new mainMenu1().setVisible(true));
         dispose();
 
-        bottomBar.add(backButton);
-        add(bottomBar, BorderLayout.SOUTH);
+        add(backButton, BorderLayout.SOUTH);
     }
 
     private JPanel createMainMenuPanel() {
@@ -473,7 +472,7 @@ class friendsScreen1 extends JFrame {
         formPanel.add(addButton);
 
         JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
         panel.add(formPanel, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -517,7 +516,7 @@ class friendsScreen1 extends JFrame {
         formPanel.add(removeButton);
 
         JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
         panel.add(formPanel, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -597,7 +596,7 @@ class blockedScreen extends JFrame {
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-        
+
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
@@ -607,7 +606,7 @@ class blockedScreen extends JFrame {
         topBar.setBackground(Color.BLACK);
         topBar.setPreferredSize(new Dimension(getWidth(), 100));
         add(topBar, BorderLayout.NORTH);
-        
+
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 200));
@@ -622,7 +621,7 @@ class blockedScreen extends JFrame {
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         backButton.addActionListener(e -> new mainMenu1().setVisible(true));
         dispose();
-        
+
         bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
