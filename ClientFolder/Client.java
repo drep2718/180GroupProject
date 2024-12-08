@@ -411,74 +411,74 @@ public class Client extends Thread implements FlagInterface {
 
 
                             } else if (whichMessage.equals("2")) {
-                                try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+                                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                                SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
 
-                                    System.out.println("1- Send photo message to all friends");
-                                    System.out.println("2- Send photo message to all users");
-                                    System.out.println("3- Send photo message to a single friend");
-                                    String textType = scan.nextLine();
-
-                                    if (textType.equals("1")) {
-                                        System.out.println("Enter the path to the photo you want to send to all your friends:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageAllFriends = MESSAGE_ALL_FRIENDS + ";" + photoPath;
-                                        writer.println(messageAllFriends);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to all friends.");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else if (textType.equals("2")) {
-                                        System.out.println("Enter the path to the photo you want to send to all users:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageAllUsers = MESSAGE_ALL_USERS + ";" + photoPath;
-                                        writer.println(messageAllUsers);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to all users.");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else if (textType.equals("3")) {
-                                        System.out.println("Enter the friend's username you want to message:");
-                                        String friend = scan.nextLine();
-                                        System.out.println("Enter the path to the photo you want to send:");
-                                        String photoPath = scan.nextLine();
-
-                                        String messageSingleFriend = MESSAGE_SINGLE_FRIEND + ";" + friend + ";" + photoPath;
-                                        writer.println(messageSingleFriend);
-                                        writer.flush();
-                                        try {
-                                            File imageFile = new File(photoPath);
-                                            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                            dataOutputStream.writeInt(imageBytes.length);
-
-                                            dataOutputStream.write(imageBytes);
-                                            dataOutputStream.flush();
-                                            System.out.println("Photo message sent to " + friend + ".");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                while (ComplexGUI.photoMessageTypeGUI == null) {
+                                    try {
+                                        Thread.sleep(100);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
                                 }
 
+                                try {
+                                    File imageFile = new File(ComplexGUI.photoPathGUI);
+                                    if (!imageFile.exists()) {
+                                        JOptionPane.showMessageDialog(null, "Photo file not found",
+                                                "Error", JOptionPane.ERROR_MESSAGE);
+                                        continue;
+                                    }
 
+                                    BufferedImage image = ImageIO.read(imageFile);
+                                    if (image == null) {
+                                        JOptionPane.showMessageDialog(null, "Invalid image file",
+                                                "Error", JOptionPane.ERROR_MESSAGE);
+                                        continue;
+                                    }
+
+                                    if (ComplexGUI.photoMessageTypeGUI.equals("1")) {
+                                        String messageAllFriends = MESSAGE_ALL_FRIENDS + ";" + ComplexGUI.photoPathGUI;
+                                        writer.println(messageAllFriends);
+                                        writer.flush();
+
+                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                        dataOutputStream.writeInt(imageBytes.length);
+                                        dataOutputStream.write(imageBytes);
+                                        dataOutputStream.flush();
+
+                                    } else if (ComplexGUI.photoMessageTypeGUI.equals("2")) {
+                                        String messageAllUsers = MESSAGE_ALL_USERS + ";" + ComplexGUI.photoPathGUI;
+                                        writer.println(messageAllUsers);
+                                        writer.flush();
+
+                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                        dataOutputStream.writeInt(imageBytes.length);
+                                        dataOutputStream.write(imageBytes);
+                                        dataOutputStream.flush();
+
+                                    } else if (ComplexGUI.photoMessageTypeGUI.equals("3")) {
+                                        String messageSingleFriend = MESSAGE_SINGLE_FRIEND + ";"
+                                                + ComplexGUI.photoRecipientGUI + ";" + ComplexGUI.photoPathGUI;
+                                        writer.println(messageSingleFriend);
+                                        writer.flush();
+
+                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                                        dataOutputStream.writeInt(imageBytes.length);
+                                        dataOutputStream.write(imageBytes);
+                                        dataOutputStream.flush();
+                                    }
+
+                                    ComplexGUI.photoPathGUI = null;
+                                    ComplexGUI.photoRecipientGUI = null;
+                                    ComplexGUI.photoMessageTypeGUI = null;
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    JOptionPane.showMessageDialog(null, "Error sending photo: " + e.getMessage(),
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                                
                             } else if (whichMessage.equals("3")) {
                                 System.out.println("1- Delete message to all friends");
                                 System.out.println("2- Delete message to all users");
