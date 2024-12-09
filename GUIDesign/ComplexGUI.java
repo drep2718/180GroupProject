@@ -331,6 +331,7 @@ class mainMenu1 extends JFrame {
             ComplexGUI.logout = "logout";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
+            SwingUtilities.getWindowAncestor(this).dispose();
             dispose();
         });
 
