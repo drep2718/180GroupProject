@@ -114,6 +114,7 @@ public class User implements UserInterface {
             allUsers.add(user);
 
             saveToFile(user);
+            usernameTaken = false;
             return user;
         }
     }
