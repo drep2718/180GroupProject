@@ -101,7 +101,6 @@ class mainMenu extends JFrame {
         loginButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         loginButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
-            ComplexGUI.firstMenuItemGUI = "1";
             SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
             dispose();
         });
@@ -110,7 +109,6 @@ class mainMenu extends JFrame {
         createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
             new MainGUI().setVisible(true);
-            ComplexGUI.firstMenuItemGUI = "2";
             SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
             dispose();
         });
@@ -187,7 +185,7 @@ class loginMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                ComplexGUI.firstMenuItemGUI = "1";
                 ComplexGUI.usernameGUI = username.getText();
                 ComplexGUI.waypoint = new User(ComplexGUI.usernameGUI);
                 ComplexGUI.passwordGUI = password.getText();
@@ -195,6 +193,15 @@ class loginMenu extends JFrame {
             }
         });
 
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        backButton.addActionListener(e -> {
+            ComplexGUI.firstMenuItemGUI = "4";
+            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
+            dispose();
+        });
+
+        bottomBar.add(backButton, BorderLayout.SOUTH);
         bottomBar.add(enterButton, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
     }
@@ -258,12 +265,22 @@ class createMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                ComplexGUI.firstMenuItemGUI = "2";
                 ComplexGUI.usernameGUI = username.getText();
                 ComplexGUI.passwordGUI = password.getText();
                 ComplexGUI.bioGUI = bio.getText();
                 dispose();
             }
         });
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        backButton.addActionListener(e -> {
+            ComplexGUI.firstMenuItemGUI = "4";
+            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
+            dispose();
+        });
+
+        bottomBar.add(backButton, BorderLayout.SOUTH);
 
         bottomBar.add(enterButton, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
@@ -330,7 +347,6 @@ class mainMenu1 extends JFrame {
             ComplexGUI.secondMenuItem = "4";
             ComplexGUI.logout = "logout";
             new MainGUI().setVisible(true);
-            SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
             SwingUtilities.getWindowAncestor(this).dispose();
             dispose();
         });
@@ -595,6 +611,7 @@ class blockedScreen extends JFrame {
         setLocationRelativeTo(null);
 
         JLabel welcomeLabel = new JLabel("Welcome to The Friend Menu", SwingConstants.CENTER);
+
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         cardLayout = new CardLayout();
@@ -640,12 +657,12 @@ class blockedScreen extends JFrame {
 
         JButton blockUserButton = new JButton("BLOCK USER");
         blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        blockUserButton.setBackground(Color.BLACK);
+        blockUserButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
         blockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "BlockUser"));
 
         JButton unblockUserButton = new JButton("UNBLOCK USER");
         unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        unblockUserButton.setBackground(Color.YELLOW);
+        unblockUserButton.setBackground(Color.YELLOW); // SAME ISSUE
         unblockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "UnblockUser"));
 
         buttonPanel.add(blockUserButton);
