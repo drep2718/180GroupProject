@@ -103,6 +103,11 @@ public class ThreadSafe extends Thread implements FlagInterface {
 
                     if (message.contains(CREATE)) {
                         synchronized (gatekeeper) {
+                            boolean rand = false;
+                            User temp = new User("temp");
+                            temp.loadUsers();
+                            ArrayList<User> all = User.getAllUsers();
+                            System.out.println(all);
                             String username = message.split(";")[1];
                             String password = message.split(";")[2];
                             String bio = message.split(";")[3];
@@ -115,18 +120,23 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             for (String existingUsername : User.getUsernames()) {
                                 if (existingUsername.equals(username)) {
                                     validUser = true;
+                                    rand = true;
                                     break;
+                                } else {
+
                                 }
                             }
 
-                            if (User.usernameTaken) {
-                                System.out.println("Taken");
-                                writer.println(CREATE + ";" + "Taken");
-                                writer.flush();
-                                continue;
+
+                            for (User user : all) {
+                                if (user.getUsername().equals(username)) {
+                                    writer.println(CREATE + ";" + "Taken");
+                                    writer.flush();
+                                }
                             }
 
 
+                            rand = false;
                             writer.println(CREATE + ";" + validUser);
                             writer.flush();
                             continue;
