@@ -834,7 +834,12 @@ class messageMenu1 extends JFrame {
 
 
 class textMenu extends JFrame {
+    
+    JComboBox<String> friendDropdown = new JComboBox<>();
+    private Friends friends;
+    
     public textMenu() {
+        this.friends = new Friends();
         setTitle("Main Menu");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -886,13 +891,34 @@ class textMenu extends JFrame {
 
         JButton textAFriend = new JButton("TEXT A FRIEND");
         textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setPreferredSize(new Dimension(300, 50));
+        updateFriendDropdown();
+        formPanel.add(friendDropdown);
+        
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ComplexGUI.whichMessage = "3";
-                String person = JOptionPane.showInputDialog(textMenu.this,
-                        "Who would you like to text");
-                ComplexGUI.friend = person;
+                
+                JPanel panel = new JPanel();
+                panel.add(new JLabel("Who would you like to text?"));
+                panel.add(friendDropdown);
+
+                int result = JOptionPane.showConfirmDialog(
+                        textMenu.this, panel, "Select Friend",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+
+                if (result == JOptionPane.OK_OPTION) {
+
+                    String person = (String) friendDropdown.getSelectedItem();
+                    ComplexGUI.friend = person;
+                }
 
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text this person??");
@@ -907,7 +933,16 @@ class textMenu extends JFrame {
         bottomBar.add(textAFriend);
         add(bottomBar, BorderLayout.SOUTH);
     }
-
+        private void updateFriendDropdown() {
+        friendDropdown.removeAllItems();
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadFriends();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        System.out.println(friendsList);
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getUsername());
+        }
+    }
 
     class MainGUI extends JFrame {
 
