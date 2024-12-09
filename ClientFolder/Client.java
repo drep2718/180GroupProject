@@ -180,7 +180,7 @@ public class Client extends Thread implements FlagInterface {
                         if (message.contains(CREATE)) {
                             String[] index = message.split(";");
                             String successMessage = index[1];
-                            System.out.println("message" + successMessage);
+                            System.out.println("message h" + successMessage);
                             if (successMessage.equals("true")) {
                                 System.out.println("User Successfully Created");
                             } else if (successMessage.equals("Taken")) {
@@ -196,7 +196,9 @@ public class Client extends Thread implements FlagInterface {
                                 if (response.equals("CONTINUE")) {
                                     continue;
                                 }
-                            }else if (successMessage.equals("false")) {
+                            }
+
+                            else if (successMessage.equals("false")) {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
                                 ComplexGUI.usernameGUI = null;
@@ -481,7 +483,7 @@ public class Client extends Thread implements FlagInterface {
                                     JOptionPane.showMessageDialog(null, "Error sending photo: " + e.getMessage(),
                                             "Error", JOptionPane.ERROR_MESSAGE);
                                 }
-                                
+
                             } else if (whichMessage.equals("3")) {
                                 System.out.println("1- Delete message to all friends");
                                 System.out.println("2- Delete message to all users");
