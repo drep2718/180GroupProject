@@ -638,6 +638,7 @@ public class Client extends Thread implements FlagInterface {
                                     new mainMenu().setVisible(true);
 
 
+
                                 });
                                 break;
                             }
