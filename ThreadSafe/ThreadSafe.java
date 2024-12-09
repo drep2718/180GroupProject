@@ -103,45 +103,35 @@ public class ThreadSafe extends Thread implements FlagInterface {
 
                     if (message.contains(CREATE)) {
                         synchronized (gatekeeper) {
-                            boolean rand = false;
+                            String[] parts = message.split(";");
+                            String username = parts[1];
+                            String password = parts[2];
+                            String bio = parts[3];
+
                             User temp = new User("temp");
                             temp.loadUsers();
-                            ArrayList<User> all = User.getAllUsers();
-                            System.out.println(all);
-                            String username = message.split(";")[1];
-                            String password = message.split(";")[2];
-                            String bio = message.split(";")[3];
-                            currentUser = new User(username);
-                            usernames = User.getUsernames();
-                            boolean validUser = false;
-                            User newUser = currentUser.createProfile(username, password, bio);
+                            ArrayList<User> allUsers = User.getAllUsers();
 
-
-                            for (String existingUsername : User.getUsernames()) {
-                                if (existingUsername.equals(username)) {
-                                    validUser = true;
-                                    rand = true;
-                                    break;
-                                } else {
-
-                                }
-                            }
-
-
-                            for (User user : all) {
+                            boolean isUsernameTaken = false;
+                            for (User user : allUsers) {
                                 if (user.getUsername().equals(username)) {
-                                    writer.println(CREATE + ";" + "Taken");
-                                    writer.flush();
+                                    isUsernameTaken = true;
+                                    break;
                                 }
                             }
 
-
-                            rand = false;
-                            writer.println(CREATE + ";" + validUser);
-                            writer.flush();
-                            continue;
+                            if (isUsernameTaken) {
+                                writer.println(CREATE + ";Taken");
+                                writer.flush();
+                            } else {
+                                User newUser = new User(username);
+                                newUser.createProfile(username, password, bio);
+                                writer.println(CREATE + ";true");
+                                writer.flush();
+                            }
                         }
                     }
+
 
                     String secondMessage = reader.readLine();
                     if (secondMessage == null || secondMessage.equals("LOOP")) {
