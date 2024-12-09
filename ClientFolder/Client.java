@@ -235,13 +235,23 @@ public class Client extends Thread implements FlagInterface {
                     } else if (firstMenuItem.equals("3")) {
                         return;
                     }
-                    // Aiden ^^^
+
                     while (loggedIn) {
                         System.out.println("1- Add or remove friends");
                         System.out.println("2- block or unblock users");
                         System.out.println("3- Message");
 
-                        String secondMenuItem = scan.nextLine();
+                        while ((ComplexGUI.secondMenuItem == null || ComplexGUI.secondMenuItem.isEmpty())) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                JOptionPane.showMessageDialog(null, "An error occurred while waiting for input.", "Error", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                                return;
+                            }
+                        }
+
+                        String secondMenuItem = ComplexGUI.secondMenuItem;
 
                         if (!secondMenuItem.equals("1") && !secondMenuItem.equals("2") && !secondMenuItem.equals("3") && !secondMenuItem.equals("4")) {
                             System.out.println("Not a valid choice");
@@ -612,6 +622,24 @@ public class Client extends Thread implements FlagInterface {
                                 }
 
 
+                            }
+                        } else if (secondMenuItem.equals("4")) {
+                            writer.println("LOOP");
+                            writer.flush();
+
+                            String response = reader.readLine();
+                            if (response.equals("CONTINUE")) {
+                                loggedIn = false;
+
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.passwordGUI = null;
+
+                                SwingUtilities.invokeLater(() -> {
+                                    new mainMenu().setVisible(true);
+
+
+                                });
+                                break;
                             }
                         }
 
