@@ -595,7 +595,6 @@ class blockedScreen extends JFrame {
         setLocationRelativeTo(null);
 
         JLabel welcomeLabel = new JLabel("Welcome to The Friend Menu", SwingConstants.CENTER);
-
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         cardLayout = new CardLayout();
@@ -641,12 +640,12 @@ class blockedScreen extends JFrame {
 
         JButton blockUserButton = new JButton("BLOCK USER");
         blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        blockUserButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
+        blockUserButton.setBackground(Color.BLACK);
         blockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "BlockUser"));
 
         JButton unblockUserButton = new JButton("UNBLOCK USER");
         unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        unblockUserButton.setBackground(Color.YELLOW); // SAME ISSUE
+        unblockUserButton.setBackground(Color.YELLOW);
         unblockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "UnblockUser"));
 
         buttonPanel.add(blockUserButton);
@@ -790,7 +789,7 @@ class messageMenu1 extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
 
         JButton sendTextMessagesButton = new JButton("SEND TEXT MESSAGES");
@@ -819,10 +818,18 @@ class messageMenu1 extends JFrame {
             dispose();
         });
 
+        add(welcomeLabel);
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
 
         bottomBar.add(sendTextMessagesButton);
         bottomBar.add(messagePhotoButton);
         bottomBar.add(removeMessageButton);
+        bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
 
@@ -834,10 +841,10 @@ class messageMenu1 extends JFrame {
 
 
 class textMenu extends JFrame {
-    
+
     JComboBox<String> friendDropdown = new JComboBox<>();
     private Friends friends;
-    
+
     public textMenu() {
         this.friends = new Friends();
         setTitle("Main Menu");
@@ -846,7 +853,7 @@ class textMenu extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Main Menu", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("Welcome to The Text Menu", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         JPanel centerPanel = new JPanel(new BorderLayout());
@@ -861,8 +868,15 @@ class textMenu extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
+        add(welcomeLabel);
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> {
+            new messageMenu1().setVisible(true);
+            dispose();
+        });
 
         JButton textAllFriends = new JButton("TEXT ALL FRIENDS");
         textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
@@ -899,12 +913,12 @@ class textMenu extends JFrame {
         friendDropdown.setPreferredSize(new Dimension(300, 50));
         updateFriendDropdown();
         formPanel.add(friendDropdown);
-        
+
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ComplexGUI.whichMessage = "3";
-                
+
                 JPanel panel = new JPanel();
                 panel.add(new JLabel("Who would you like to text?"));
                 panel.add(friendDropdown);
@@ -931,9 +945,11 @@ class textMenu extends JFrame {
         bottomBar.add(textAllFriends);
         bottomBar.add(textAllUsers);
         bottomBar.add(textAFriend);
+        bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
-        private void updateFriendDropdown() {
+
+    private void updateFriendDropdown() {
         friendDropdown.removeAllItems();
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadFriends();
@@ -991,7 +1007,7 @@ class photoMenu extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
         JButton photoAllFriends = new JButton("PHOTO MESSAGE ALL FRIENDS");
         photoAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
@@ -1033,9 +1049,18 @@ class photoMenu extends JFrame {
             }
         });
 
+        add(welcomeLabel);
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> {
+            new messageMenu1().setVisible(true);
+            dispose();
+        });
+
         bottomBar.add(photoAllFriends);
         bottomBar.add(photoAllUsers);
         bottomBar.add(photoSingleFriend);
+        bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
 
