@@ -58,6 +58,16 @@ public class Client extends Thread implements FlagInterface {
                         break;
                     }
 
+                    while ((ComplexGUI.firstMenuItemGUI == null || ComplexGUI.firstMenuItemGUI.isEmpty())) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            JOptionPane.showMessageDialog(null, "An error occurred while waiting for input.", "Error", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+
                     String firstMenuItem = ComplexGUI.firstMenuItemGUI;
 
                     if (!firstMenuItem.equals("1") && !firstMenuItem.equals("2") && !firstMenuItem.equals("3")) {
@@ -86,6 +96,19 @@ public class Client extends Thread implements FlagInterface {
 
                         System.out.println("Enter your password");
                         String password = ComplexGUI.passwordGUI;
+
+                        System.out.println(password);
+                        if (password.equals("back")) {
+                            ComplexGUI.passwordGUI = null;
+                            ComplexGUI.usernameGUI = null;
+                            ComplexGUI.firstMenuItemGUI = null;
+                            writer.println("LOOP");
+                            writer.flush();
+                            String response = reader.readLine();
+                            if (response.equals("CONTINUE")) {
+                                continue;
+                            }
+                        }
 
                         String login = LOGIN + ";" + username + ";" + password;
                         writer.write(login);
@@ -165,6 +188,19 @@ public class Client extends Thread implements FlagInterface {
                         System.out.println("Enter your new password");
                         String newPassword = ComplexGUI.passwordGUI;
 
+                        System.out.println(newPassword);
+                        if (newPassword.equals("back")) {
+                            ComplexGUI.passwordGUI = null;
+                            ComplexGUI.usernameGUI = null;
+                            ComplexGUI.firstMenuItemGUI = null;
+                            writer.println("LOOP");
+                            writer.flush();
+                            String response = reader.readLine();
+                            if (response.equals("CONTINUE")) {
+                                continue;
+                            }
+                        }
+
 
                         System.out.println("Enter your bio");
                         String newBio = ComplexGUI.bioGUI;
@@ -236,6 +272,26 @@ public class Client extends Thread implements FlagInterface {
                         return;
                     }
 
+                    while (ComplexGUI.back == null || ComplexGUI.back.isEmpty()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            JOptionPane.showMessageDialog(null, "An error occurred while waiting for input.", "Error", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+
+                    String back = ComplexGUI.back;
+                    if (back.equals("true")) {
+                        writer.println("LOOP");
+                        writer.flush();
+                        String response = reader.readLine();
+                        if (response == null || response.equals("CONTINUE")) {
+                            continue;
+                        }
+                    }
+
                     while (loggedIn) {
                         System.out.println("1- Add or remove friends");
                         System.out.println("2- block or unblock users");
@@ -252,6 +308,7 @@ public class Client extends Thread implements FlagInterface {
                         }
 
                         String secondMenuItem = ComplexGUI.secondMenuItem;
+                        System.out.println("second item" + secondMenuItem);
 
                         if (!secondMenuItem.equals("1") && !secondMenuItem.equals("2") && !secondMenuItem.equals("3") && !secondMenuItem.equals("4")) {
                             System.out.println("Not a valid choice");
@@ -629,17 +686,16 @@ public class Client extends Thread implements FlagInterface {
 
                             String response = reader.readLine();
                             if (response.equals("CONTINUE")) {
-                                loggedIn = false;
-
-                                ComplexGUI.usernameGUI = null;
                                 ComplexGUI.passwordGUI = null;
-
-                                SwingUtilities.invokeLater(() -> {
-                                    new mainMenu().setVisible(true);
-
-
-
-                                });
+                                ComplexGUI.secondMenuItem = null;
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.firstMenuItemGUI = null;
+                                writer.println("LOOP");
+                                writer.flush();
+                                response = reader.readLine();
+                                if (response.equals("CONTINUE")) {
+                                    continue;
+                                }
                                 break;
                             }
                         }
