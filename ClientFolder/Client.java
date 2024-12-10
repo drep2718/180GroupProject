@@ -458,23 +458,23 @@ public class Client extends Thread implements FlagInterface {
                                 String textType = scan.nextLine();
                                 if (textType.equals("1")) {
                                     System.out.println("What would you like to text to all your friends");
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String textALlFriends = TEXT_ALL_FRIENDS + ";" + text;
                                     writer.write(textALlFriends);
                                     writer.println();
                                     writer.flush();
                                 } else if (textType.equals("2")) {
                                     System.out.println("What would you like to text to all your users");
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String textAllUsers = TEXT_ALL_USERS + ";" + text;
                                     writer.write(textAllUsers);
                                     writer.println();
                                     writer.flush();
                                 } else if (textType.equals("3")) {
                                     System.out.println("Who is the friend you want to text");
-                                    String friend = scan.nextLine();
+                                    String friend = ComplexGUI.friend;
                                     System.out.println("What would you like to text " + friend);
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String textSingleFriend = TEXT_SINGLE_FRIEND + ";" + friend + ";" + text;
                                     writer.write(textSingleFriend);
                                     writer.println();
