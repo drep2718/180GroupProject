@@ -1244,7 +1244,7 @@ class deleteMenu extends JFrame {
                 singleFriendMessagePanel.add(new JLabel("Who would you like to delete the message from?"));
                 singleFriendMessagePanel.add(friendDropdown);
 
-                String selectedFriend = (String) friendDropdown.getSelectedItem();
+                Friends selectedFriend = (Friends) friendDropdown.getSelectedItem();
 
                 int result = JOptionPane.showConfirmDialog(deleteMenu.this,
                         singleFriendMessagePanel, "Select Friend", JOptionPane.OK_CANCEL_OPTION);
@@ -1263,9 +1263,9 @@ class deleteMenu extends JFrame {
                 String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
 
                 int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
-                        singleFriendMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
-                if (result == JOptionPane.OK_OPTION) {
-                    messaging.deleteMessage(user, receiver, selectedMessage, date, isRead);
+                        singleMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+                if (resultMessage == JOptionPane.OK_OPTION) {
+                    messaging.deleteMessage(user, selectedFriend, selectedMessage, date, isRead);
                     JOptionPane.showMessageDialog(deleteMenu.this,
                             "Message deleted.");
                     updateSingleFriendMessage();
