@@ -1293,7 +1293,7 @@ class deleteMenu extends JFrame {
     }
 
     private void updateAllFriendsMessages() {
-        User tempUser = new User(ComplexGUI.message);
+        User tempUser = new User(ComplexGUI.usernameGUI);
         allFriendsDropdown.removeAllItems();
         messaging.loadAllFriendMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
@@ -1304,7 +1304,7 @@ class deleteMenu extends JFrame {
     }
 
     private void updateAllUsersMessages() {
-        User tempUser = new User(ComplexGUI.message);
+        User tempUser = new User(ComplexGUI.usernameGUI);
         allUsersDropdown.removeAllItems();
         messaging.loadAllUsersMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
@@ -1315,7 +1315,7 @@ class deleteMenu extends JFrame {
     }
 
     private void updateSingleFriendMessage() {
-        User tempUser = new User(ComplexGUI.message);
+        User tempUser = new User(ComplexGUI.usernameGUI);
         singleFriendDropdown.removeAllItems();
         messaging.loadMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
