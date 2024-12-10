@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 
@@ -675,6 +676,8 @@ class friendsScreen1 extends JFrame {
 }
 
 class blockedScreen extends JFrame {
+    JPanel panel = new JPanel(new BorderLayout());
+
     private Friends friends;
     JComboBox<String> friendDropdown = new JComboBox<>();
     private JComboBox<String> userDropdown = new JComboBox<>();
@@ -787,15 +790,15 @@ class blockedScreen extends JFrame {
 
         updateBlockedTextArea(blockedTextArea);
 
-        JButton backButton = new JButton("CANCEL");
+        JButton backButton = new JButton("Refresh");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         backButton.addActionListener(e -> {
             new mainMenu1().setVisible(true);
             dispose();
         });
 
-        viewBlockedPanel.add(refreshButton,BorderLayout.SOUTH);
-        viewBlockedPanel.add(backButton, BorderLayout.SOUTH);
+        panel.add(viewBlockedPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
 
         return viewBlockedPanel;
     }
@@ -1114,11 +1117,18 @@ class textMenu extends JFrame {
                 ComplexGUI.whichMessage = "2";
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text all users??");
-                ComplexGUI.message = message;
-                messaging.sendAllUsersMessage(user, message, date, isRead);
-                if (message != null) {
-                    JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
-                            " sent");
+                if (message != null || !message.isEmpty()) {
+                    ComplexGUI.message = message;
+                    messaging.sendAllUsersMessage(user, message, date, isRead);
+                    if (message != null) {
+                        JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
+                                " sent");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(textMenu.this,
+                            "Message cannot be empty!",
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -1143,43 +1153,59 @@ class textMenu extends JFrame {
                 panel.add(new JLabel("Who would you like to text?"));
                 panel.add(friendDropdown);
 
-                String person = (String) friendDropdown.getSelectedItem();
-                ComplexGUI.friend = person;
-
-                ArrayList<User> allUsers = User.getAllUsers();
-
-                User friendUser = null;
-                for (User user : User.getAllUsers()) {
-                    if (user.getUsername().equals(person)) {
-                        friendUser = user;
-                        break;
-                    }
-                }
-
-                Friends friendFriends = new Friends(friendUser);
-
-
                 int result = JOptionPane.showConfirmDialog(
                         textMenu.this, panel, "Select Friend",
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
 
                 if (result == JOptionPane.OK_OPTION) {
+                    String person = (String) friendDropdown.getSelectedItem();
+                    System.out.println("Selected person: " + person);
 
+                    ComplexGUI.friend = person;
+                    User user1 = new User("temp");
+                    user1.loadUsers();
+
+                    ArrayList<User> allUsers = User.getAllUsers();
+
+                    User friendUser = null;
+                    for (User user : allUsers) {
+                        System.out.println("Checking user: " + user.getUsername());
+                        if (user.getUsername().equals(person)) {
+                            System.out.println("Match found: " + user.getUsername());
+                            friendUser = user;
+                            break;
+                        }
+                    }
+
+                    if (friendUser == null) {
+                        JOptionPane.showMessageDialog(textMenu.this,
+                                "No friend found with the selected name!",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Friends friendFriends = new Friends(friendUser);
+
+                    String message = JOptionPane.showInputDialog(textMenu.this,
+                            "What would you like to text this person?");
+                    if (message != null && !message.isEmpty()) {
+                        ComplexGUI.message = message;
+                        Messaging messaging = new Messaging(user, friendFriends, message, date, isRead);
+                        messaging.sendMessage(user, friendFriends, message, date, isRead);
+                        JOptionPane.showMessageDialog(textMenu.this,
+                                "Message successfully sent!");
+                    } else {
+                        JOptionPane.showMessageDialog(textMenu.this,
+                                "Message cannot be empty!",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
                 }
-
-                String message = JOptionPane.showInputDialog(textMenu.this,
-                        "What would you like to text this person??");
-                ComplexGUI.message = message;
-                Messaging messaging = new Messaging(user, friendFriends, message, date, isRead);
-                messaging.sendMessage(user, friendFriends, message, date, isRead);
-                if (message != null) {
-                    JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
-                            " sent");
-                }
-
             }
         });
+
 
 
         bottomBar.add(textAllFriends);
@@ -1323,6 +1349,7 @@ class deleteMenu extends JFrame {
     private boolean isRead;
 
     public deleteMenu() {
+        this.user = new User(ComplexGUI.usernameGUI);
         this.messaging = new Messaging(user, receiver, ComplexGUI.message, date, isRead);
         setTitle("Main Menu");
         setSize(1000, 700);
@@ -1361,27 +1388,43 @@ class deleteMenu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                Messaging messageTemp = new Messaging(user, null, content, date, isRead);
+                messageTemp.loadAllFriendMessages(user);
+                ArrayList<Messaging> messages = Messaging.getMessageHistory();
+                System.out.println(messages);
+
+
                 JPanel friendMessagePanel = new JPanel();
                 friendMessagePanel.add(new JLabel(
-                        "What message to all your friends would you like to delete"));
+                        "What message to all your friends would you like to delete?"));
                 friendMessagePanel.add(allFriendsDropdown);
-
-                String selectedMessage = (String) allFriendsDropdown.getSelectedItem();
 
                 int result = JOptionPane.showConfirmDialog(deleteMenu.this,
                         friendMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+
                 if (result == JOptionPane.OK_OPTION) {
-                    messaging.deleteFriendsMessage(user, selectedMessage, date, isRead);
-                    JOptionPane.showMessageDialog(deleteMenu.this,
-                            "Message deleted for all friends.");
-//                    updateAllFriendsMessages();
+                    String selectedMessage = (String) allFriendsDropdown.getSelectedItem();
+                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":")+1);
+                    System.out.println("Selected Message: " + finalMessage);
+
+                    if (finalMessage != null && !finalMessage.trim().isEmpty()) {
+                        messaging.deleteFriendsMessage(user, finalMessage, date, isRead);
+                        JOptionPane.showMessageDialog(deleteMenu.this,
+                                "Message deleted for all friends.");
+
+                    } else {
+                        JOptionPane.showMessageDialog(deleteMenu.this,
+                                "No message selected or invalid selection.",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(deleteMenu.this,
                             "No message selected.");
                 }
-
             }
         });
+
 
         JPanel formPanel2 = new JPanel(new GridLayout(2, 1, 20, 20));
 
@@ -1396,20 +1439,34 @@ class deleteMenu extends JFrame {
         textAllUsers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Messaging messageTemp = new Messaging(user, null, content, date, isRead);
+                messageTemp.loadAllUsersMessages(user);
+                ArrayList<Messaging> messages = Messaging.getMessageHistory();
+                System.out.println(messages);
 
                 JPanel userMessagePanel = new JPanel();
-                userMessagePanel.add(new JLabel("What message to all your users would you like to delete"));
+                userMessagePanel.add(new JLabel(
+                        "What message to all your users would you like to delete?"));
                 userMessagePanel.add(allUsersDropdown);
-
-                String selectedMessage = (String) allUsersDropdown.getSelectedItem();
 
                 int result = JOptionPane.showConfirmDialog(deleteMenu.this,
                         userMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+
                 if (result == JOptionPane.OK_OPTION) {
-                    messaging.deleteUsersMessage(user, selectedMessage, date, isRead);
-                    JOptionPane.showMessageDialog(deleteMenu.this,
-                            "Message deleted for all users.");
-//                updateAllUsersMessages();
+                    String selectedMessage = (String) allUsersDropdown.getSelectedItem();
+                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":")+1);
+                    System.out.println("Selected Message: " + finalMessage);
+
+                    if (finalMessage != null && !finalMessage.trim().isEmpty()) {
+                        messaging.deleteUsersMessage(user, finalMessage, date, isRead);
+                        JOptionPane.showMessageDialog(deleteMenu.this,
+                                "Message deleted for all users.");
+                    } else {
+                        JOptionPane.showMessageDialog(deleteMenu.this,
+                                "No message selected or invalid selection.",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(deleteMenu.this,
                             "No message selected.");
@@ -1438,41 +1495,70 @@ class deleteMenu extends JFrame {
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Messaging messageTemp = new Messaging(user, null, content, date, isRead);
+                messageTemp.loadMessages(user);
+                ArrayList<Messaging> messages = Messaging.getMessageHistory();
+                System.out.println(messages);
 
                 JPanel singleFriendMessagePanel = new JPanel();
                 singleFriendMessagePanel.add(new JLabel("Who would you like to delete the message from?"));
                 singleFriendMessagePanel.add(friendDropdown);
 
-                String selectedFriend = (String) friendDropdown.getSelectedItem();
-
                 int result = JOptionPane.showConfirmDialog(deleteMenu.this,
                         singleFriendMessagePanel, "Select Friend", JOptionPane.OK_CANCEL_OPTION);
+
                 if (result == JOptionPane.OK_OPTION) {
-                    JOptionPane.showMessageDialog(deleteMenu.this,
-                            "Friend selected.");
+                    String selectedFriend = (String) friendDropdown.getSelectedItem();
+
+                    JPanel singleMessagePanel = new JPanel();
+                    singleMessagePanel.add(new JLabel("What message would you like to delete?"));
+                    singleMessagePanel.add(singleFriendDropdown);
+
+                    int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
+                            singleMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+
+                    if (resultMessage == JOptionPane.OK_OPTION) {
+                        String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
+                        String finalMessage = selectedMessage.substring(
+                                selectedMessage.indexOf(":") + 1,
+                                selectedMessage.lastIndexOf(":")
+                        );
+                        System.out.println("Selected Message: " + finalMessage);
+                        User user1 = new User("temp");
+                        user1.loadUsers();
+
+                        ArrayList<User> allUsers = User.getAllUsers();
+
+                        User friendUser = null;
+                        for (User user : User.getAllUsers()) {
+                            if (user.getUsername().equals(selectedFriend)) {
+                                friendUser = user;
+                                break;
+                            }
+                        }
+
+                        Friends friendFriends = new Friends(friendUser);
+
+
+                        if (finalMessage != null && !finalMessage.trim().isEmpty()) {
+                            messaging.deleteMessage(user, friendFriends, finalMessage, date, isRead);
+                            JOptionPane.showMessageDialog(deleteMenu.this,
+                                    "Message deleted.");
+                            updateSingleFriendMessage();
+                        } else {
+                            JOptionPane.showMessageDialog(deleteMenu.this,
+                                    "No message selected or invalid selection.",
+                                    "Warning",
+                                    JOptionPane.WARNING_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(deleteMenu.this,
+                                "No message selected.");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(deleteMenu.this,
                             "No friend selected.");
                 }
-
-                JPanel singleMessagePanel = new JPanel();
-                singleMessagePanel.add(new JLabel("What message would you like to delete?"));
-                singleMessagePanel.add(singleFriendDropdown);
-
-                String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
-
-                int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
-                        singleMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
-                if (resultMessage == JOptionPane.OK_OPTION) {
-                    messaging.deleteMessage(user, receiver, selectedMessage, date, isRead);
-                    JOptionPane.showMessageDialog(deleteMenu.this,
-                            "Message deleted.");
-                    updateSingleFriendMessage();
-                } else {
-                    JOptionPane.showMessageDialog(deleteMenu.this,
-                            "No message selected.");
-                }
-
             }
         });
 
