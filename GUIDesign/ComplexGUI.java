@@ -1146,6 +1146,19 @@ class textMenu extends JFrame {
                 String person = (String) friendDropdown.getSelectedItem();
                 ComplexGUI.friend = person;
 
+                ArrayList<User> allUsers = User.getAllUsers();
+
+                User friendUser = null;
+                for (User user : User.getAllUsers()) {
+                    if (user.getUsername().equals(person)) {
+                        friendUser = user;
+                        break;
+                    }
+                }
+
+                Friends friendFriends = new Friends(friendUser);
+
+
                 int result = JOptionPane.showConfirmDialog(
                         textMenu.this, panel, "Select Friend",
                         JOptionPane.OK_CANCEL_OPTION,
@@ -1158,7 +1171,8 @@ class textMenu extends JFrame {
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text this person??");
                 ComplexGUI.message = message;
-                messaging.sendMessage(user, person, message, date, isRead);
+                Messaging messaging = new Messaging(user, friendFriends, message, date, isRead);
+                messaging.sendMessage(user, friendFriends, message, date, isRead);
                 if (message != null) {
                     JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
                             " sent");
