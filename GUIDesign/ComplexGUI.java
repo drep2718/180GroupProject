@@ -21,6 +21,7 @@ public class ComplexGUI {
     public static String photoPathGUI;
     public static String photoRecipientGUI;
     public static String photoMessageTypeGUI;
+    public static String back;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -100,6 +101,7 @@ class mainMenu extends JFrame {
         JButton loginButton = new JButton("Login");
         loginButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         loginButton.addActionListener(e -> {
+            ComplexGUI.firstMenuItemGUI = "1";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new loginMenu().setVisible(true));
             dispose();
@@ -108,6 +110,7 @@ class mainMenu extends JFrame {
         JButton createButton = new JButton("Create User");
         createButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         createButton.addActionListener(e -> {
+            ComplexGUI.firstMenuItemGUI = "2";
             new MainGUI().setVisible(true);
             SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
             dispose();
@@ -185,7 +188,6 @@ class loginMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ComplexGUI.firstMenuItemGUI = "1";
                 ComplexGUI.usernameGUI = username.getText();
                 ComplexGUI.waypoint = new User(ComplexGUI.usernameGUI);
                 ComplexGUI.passwordGUI = password.getText();
@@ -195,11 +197,15 @@ class loginMenu extends JFrame {
 
         JButton backButton = new JButton("BACK");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        backButton.addActionListener(e -> {
-            ComplexGUI.firstMenuItemGUI = "4";
-            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
-            dispose();
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ComplexGUI.usernameGUI = "qwertyuiop";
+                ComplexGUI.passwordGUI = "back";
+                new mainMenu().setVisible(true);
+                dispose();
+            }
         });
+
 
         bottomBar.add(backButton, BorderLayout.SOUTH);
         bottomBar.add(enterButton, BorderLayout.CENTER);
@@ -265,19 +271,23 @@ class createMenu extends JFrame {
         enterButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         enterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ComplexGUI.firstMenuItemGUI = "2";
                 ComplexGUI.usernameGUI = username.getText();
                 ComplexGUI.passwordGUI = password.getText();
                 ComplexGUI.bioGUI = bio.getText();
                 dispose();
             }
         });
+
         JButton backButton = new JButton("BACK");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        backButton.addActionListener(e -> {
-            ComplexGUI.firstMenuItemGUI = "4";
-            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
-            dispose();
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ComplexGUI.usernameGUI = "cqwbofnfewhnefwnhfeqnhfqewx";
+                ComplexGUI.bioGUI = "buyfwbfhowhfw";
+                ComplexGUI.passwordGUI = "back";
+                new mainMenu().setVisible(true);
+                dispose();
+            }
         });
 
         bottomBar.add(backButton, BorderLayout.SOUTH);
@@ -341,14 +351,16 @@ class mainMenu1 extends JFrame {
             return;
         });
 
+
         JButton logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        logoutButton.addActionListener(e -> {
-            ComplexGUI.secondMenuItem = "4";
-            ComplexGUI.logout = "logout";
-            new MainGUI().setVisible(true);
-            SwingUtilities.getWindowAncestor(this).dispose();
-            dispose();
+        logoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ComplexGUI.secondMenuItem = "4";
+                ComplexGUI.logout = "logout";
+                new mainMenu().setVisible(true);
+                dispose();
+            }
         });
 
 
