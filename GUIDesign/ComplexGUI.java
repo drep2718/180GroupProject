@@ -354,14 +354,16 @@ class mainMenu1 extends JFrame {
 
         JButton logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        logoutButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ComplexGUI.secondMenuItem = "4";
-                ComplexGUI.logout = "logout";
-                new mainMenu().setVisible(true);
-                dispose();
-            }
+        logoutButton.addActionListener(e -> {
+            ComplexGUI.secondMenuItem = "4";
+            ComplexGUI.logout = "logout";
+            ComplexGUI.usernameGUI = null;
+            ComplexGUI.passwordGUI = null;
+            ComplexGUI.firstMenuItemGUI = null;
+            new mainMenu().setVisible(true);
+            dispose();
         });
+
 
 
         bottomBar.add(friendButton);
@@ -416,16 +418,21 @@ class friendsScreen1 extends JFrame {
         mainPanel.add(createMainMenuPanel(), "Menu");
         mainPanel.add(createAddFriendPanel(), "AddFriend");
         mainPanel.add(createRemoveFriendPanel(), "RemoveFriend");
-
+        mainPanel.add(viewFriendsPanel(), "ViewFriends");
         add(mainPanel);
 
         JButton backButton = new JButton("CANCEL");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        backButton.addActionListener(e -> new mainMenu1().setVisible(true));
-        dispose();
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
+
+
 
         add(backButton, BorderLayout.SOUTH);
     }
+
 
     private JPanel createMainMenuPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -438,36 +445,96 @@ class friendsScreen1 extends JFrame {
 
         JButton addFriendButton = new JButton("ADD FRIEND");
         addFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        addFriendButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
-        addFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "AddFriend"));
-
-        addFriendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                updateUserDropdown();
-            }
+        addFriendButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "AddFriend");
+            updateUserDropdown();
         });
 
         JButton removeFriendButton = new JButton("REMOVE FRIEND");
         removeFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        removeFriendButton.setBackground(Color.YELLOW); // SAME ISSUE
-        removeFriendButton.addActionListener(e -> cardLayout.show(mainPanel, "RemoveFriend"));
+        removeFriendButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "RemoveFriend");
+            updateFriendDropdown();
+        });
 
-        removeFriendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateFriendDropdown();
-            }
+        JButton viewFriends = new JButton("VIEW FRIENDS");
+        viewFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        viewFriends.addActionListener(e -> {
+            cardLayout.show(mainPanel, "ViewFriends");
         });
 
         buttonPanel.add(addFriendButton);
         buttonPanel.add(removeFriendButton);
+        buttonPanel.add(viewFriends);
 
         panel.add(buttonPanel, BorderLayout.CENTER);
 
         return panel;
     }
+
+    private JPanel viewFriendsPanel() {
+        JPanel viewFriendPanel = new JPanel(new BorderLayout());
+
+        JLabel friendListLabel = new JLabel("Friend List", SwingConstants.CENTER);
+        friendListLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        viewFriendPanel.add(friendListLabel, BorderLayout.NORTH);
+
+        JTextArea friendsTextArea = new JTextArea();
+        friendsTextArea.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        friendsTextArea.setEditable(false);
+        friendsTextArea.setLineWrap(true);
+        friendsTextArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(friendsTextArea);
+        viewFriendPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JButton refreshButton = new JButton("REFRESH FRIENDS");
+        refreshButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        refreshButton.addActionListener(e -> {
+            updateFriendDropdown();
+            updateFriendsTextArea(friendsTextArea);
+        });
+        viewFriendPanel.add(refreshButton, BorderLayout.SOUTH);
+
+        updateFriendsTextArea(friendsTextArea);
+
+        JButton backButton = new JButton("CANCEL");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
+
+        panel.add(viewFriendPanel, BorderLayout.CENTER);
+        panel.add(backButton, BorderLayout.SOUTH);
+
+        return viewFriendPanel;
+    }
+
+    private void updateFriendsTextArea(JTextArea friendsTextArea) {
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadFriends();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+
+        friendsTextArea.setText("");
+
+        if (friendsList.isEmpty()) {
+            friendsTextArea.append("No friends found.");
+            return;
+        }
+
+        String friendsText = "Your Friends:\n" +
+                "---------------\n";
+
+        for (int i = 0; i < friendsList.size(); i++) {
+            friendsText += (i + 1) + ". " + friendsList.get(i).getUsername() + "\n";
+        }
+
+        friendsText += "\nTotal Friends: " + friendsList.size();
+
+        friendsTextArea.setText(friendsText);
+    }
+
 
     private JPanel createAddFriendPanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -479,7 +546,7 @@ class friendsScreen1 extends JFrame {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
 
         userDropdown = new JComboBox<>();
-        userDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        userDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         userDropdown.setPreferredSize(new Dimension(300, 50));
         updateUserDropdown();
         formPanel.add(userDropdown);
@@ -522,7 +589,7 @@ class friendsScreen1 extends JFrame {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
 
         friendDropdown = new JComboBox<>();
-        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         friendDropdown.setPreferredSize(new Dimension(300, 50));
         updateFriendDropdown();
         formPanel.add(friendDropdown);
@@ -608,7 +675,6 @@ class friendsScreen1 extends JFrame {
 }
 
 class blockedScreen extends JFrame {
-    User temp = new User("temp");
     private Friends friends;
     JComboBox<String> friendDropdown = new JComboBox<>();
     private JComboBox<String> userDropdown = new JComboBox<>();
@@ -616,14 +682,12 @@ class blockedScreen extends JFrame {
     private JPanel mainPanel;
 
     public blockedScreen() {
-        this.friends = new Friends(temp);
-//        setTitle("Privacy");
+        this.friends = new Friends(ComplexGUI.waypoint);
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Friend Menu", SwingConstants.CENTER);
-
+        JLabel welcomeLabel = new JLabel("Welcome to The Blocked User Menu", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
         cardLayout = new CardLayout();
@@ -633,7 +697,6 @@ class blockedScreen extends JFrame {
         centerPanel.add(welcomeLabel, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
-
         JPanel topBar = new JPanel();
         topBar.setBackground(Color.BLACK);
         topBar.setPreferredSize(new Dimension(getWidth(), 100));
@@ -641,55 +704,141 @@ class blockedScreen extends JFrame {
 
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 200));
+        bottomBar.setPreferredSize(new Dimension(getWidth(), 50));
         bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
         mainPanel.add(createMainMenuPanel(), "Menu");
         mainPanel.add(createBlockUserPanel(), "BlockUser");
-        mainPanel.add(creatUnblockUserPanel(), "UnblockUser");
-
+        mainPanel.add(createUnblockUserPanel(), "UnblockUser");
+        mainPanel.add(createViewBlockedPanel(), "ViewBlocked");
         add(mainPanel);
-        JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        backButton.addActionListener(e -> new mainMenu1().setVisible(true));
-        dispose();
 
-        bottomBar.add(backButton);
-        add(bottomBar, BorderLayout.SOUTH);
+        JButton backButton = new JButton("CANCEL");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
+
+        add(backButton, BorderLayout.SOUTH);
     }
 
     private JPanel createMainMenuPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Privacy Settings", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("Blocked User Manager", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
         panel.add(welcomeLabel, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 20, 20));
 
         JButton blockUserButton = new JButton("BLOCK USER");
-        blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        blockUserButton.setBackground(Color.BLACK); // DOESNT WORK FOR SOME REASON
-        blockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "BlockUser"));
+        blockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        blockUserButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "BlockUser");
+            updateUserDropdown();
+        });
 
         JButton unblockUserButton = new JButton("UNBLOCK USER");
-        unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
-        unblockUserButton.setBackground(Color.YELLOW); // SAME ISSUE
-        unblockUserButton.addActionListener(e -> cardLayout.show(mainPanel, "UnblockUser"));
+        unblockUserButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        unblockUserButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "UnblockUser");
+            updateFriendDropdown();
+        });
+
+        JButton viewBlockedUsers = new JButton("VIEW BLOCKED");
+        viewBlockedUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        viewBlockedUsers.addActionListener(e -> {
+            cardLayout.show(mainPanel, "ViewBlocked");
+        });
 
         buttonPanel.add(blockUserButton);
         buttonPanel.add(unblockUserButton);
+        buttonPanel.add(viewBlockedUsers);
 
         panel.add(buttonPanel, BorderLayout.CENTER);
 
         return panel;
     }
 
+    private JPanel createViewBlockedPanel() {
+        JPanel viewBlockedPanel = new JPanel(new BorderLayout());
+
+        JLabel blockedListLabel = new JLabel("Blocked List", SwingConstants.CENTER);
+        blockedListLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        viewBlockedPanel.add(blockedListLabel, BorderLayout.NORTH);
+
+        JTextArea blockedTextArea = new JTextArea();
+        blockedTextArea.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        blockedTextArea.setEditable(false);
+        blockedTextArea.setLineWrap(true);
+        blockedTextArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(blockedTextArea);
+        viewBlockedPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JButton refreshButton = new JButton("REFRESH BLOCKED");
+        refreshButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        refreshButton.addActionListener(e -> {
+            updateFriendDropdown();
+            updateBlockedTextArea(blockedTextArea);
+        });
+        viewBlockedPanel.add(refreshButton, BorderLayout.SOUTH);
+
+        updateBlockedTextArea(blockedTextArea);
+
+        JButton backButton = new JButton("CANCEL");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
+
+        viewBlockedPanel.add(refreshButton,BorderLayout.SOUTH);
+        viewBlockedPanel.add(backButton, BorderLayout.SOUTH);
+
+        return viewBlockedPanel;
+    }
+
+
+    private void updateBlockedTextArea(JTextArea friendsTextArea) {
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadBlocked();
+        ArrayList<User> friendsList = Friends.getBlockedList();
+
+
+        friendsTextArea.setText("");
+
+
+        if (friendsList.isEmpty()) {
+            friendsTextArea.append("No friends found.");
+            return;
+        }
+
+
+        String blockedText = "Your Friends:\n" +
+                "---------------\n";
+
+
+        for (int i = 0; i < friendsList.size(); i++) {
+            blockedText += (i + 1) + ". " + friendsList.get(i).getUsername() + "\n";
+        }
+
+
+        blockedText += "\nTotal Friends: " + friendsList.size();
+
+
+        friendsTextArea.setText(blockedText);
+    }
+
+
+
+
     private JPanel createBlockUserPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel label = new JLabel("BLOCK USER", SwingConstants.CENTER);
-        label.setFont(new Font("Bernard MT", Font.BOLD, 20));
+        label.setFont(new Font("Bernard MT", Font.BOLD, 40));
         panel.add(label, BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
@@ -719,7 +868,7 @@ class blockedScreen extends JFrame {
         formPanel.add(blockUserButton);
 
         JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
         panel.add(formPanel, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -727,7 +876,7 @@ class blockedScreen extends JFrame {
         return panel;
     }
 
-    private JPanel creatUnblockUserPanel() {
+    private JPanel createUnblockUserPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel label = new JLabel("UNBLOCK USER", SwingConstants.CENTER);
@@ -737,7 +886,7 @@ class blockedScreen extends JFrame {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
 
         friendDropdown = new JComboBox<>();
-        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         friendDropdown.setPreferredSize(new Dimension(300, 50));
         updateFriendDropdown();
         formPanel.add(friendDropdown);
@@ -762,7 +911,7 @@ class blockedScreen extends JFrame {
         formPanel.add(unblockUserButton);
 
         JButton backButton = new JButton("BACK");
-        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 40));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
         panel.add(formPanel, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -773,20 +922,47 @@ class blockedScreen extends JFrame {
     private void updateUserDropdown() {
 
         userDropdown.removeAllItems();
+        JComboBox<String> userDropdownNoF = new JComboBox<>();
+        userDropdownNoF.removeAllItems();
+        User tempUser = new User("temp");
+        tempUser.loadUsers();
+        Friends waypoint = new Friends(ComplexGUI.waypoint);
         ArrayList<User> users = User.getAllUsers();
         for (User user : users) {
-            userDropdown.addItem(user.getUsername());
+            userDropdownNoF.addItem(user.getUsername());
+        }
+
+        friendDropdown.removeAllItems();
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadBlocked();
+        ArrayList<User> blockedList = Friends.getBlockedList();
+        System.out.println(blockedList);
+        for (User blocked : blockedList) {
+            friendDropdown.addItem(blocked.getUsername());
+        }
+
+        for (int i = 0; i < friendDropdown.getItemCount(); i++) {
+            String friendName = friendDropdown.getItemAt(i);
+            userDropdownNoF.removeItem(friendName);
+        }
+
+        for (int i = 0; i < userDropdownNoF.getItemCount(); i++) {
+            userDropdown.addItem(userDropdownNoF.getItemAt(i));
         }
     }
 
     private void updateFriendDropdown() {
 
         friendDropdown.removeAllItems();
-        ArrayList<User> friendsList = Friends.getFriendsList();
-        for (User friend : friendsList) {
-            friendDropdown.addItem(friend.getUsername());
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadBlocked();
+        ArrayList<User> blockedList = Friends.getBlockedList();
+        System.out.println(blockedList);
+        for (User blocked : blockedList) {
+            friendDropdown.addItem(blocked.getUsername());
         }
     }
+
 
 
     class MainGUI extends JFrame {
