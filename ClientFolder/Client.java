@@ -232,9 +232,7 @@ public class Client extends Thread implements FlagInterface {
                                 if (response.equals("CONTINUE")) {
                                     continue;
                                 }
-                            }
-
-                            else if (successMessage.equals("false")) {
+                            } else if (successMessage.equals("false")) {
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
                                 SwingUtilities.invokeLater(() -> new createMenu().setVisible(true));
                                 ComplexGUI.usernameGUI = null;
@@ -680,25 +678,24 @@ public class Client extends Thread implements FlagInterface {
 
 
                             }
-                        } else if (secondMenuItem.equals("4")) {
-                            writer.println("LOOP");
-                            writer.flush();
-
-                            String response = reader.readLine();
-                            if (response.equals("CONTINUE")) {
-                                ComplexGUI.passwordGUI = null;
-                                ComplexGUI.secondMenuItem = null;
-                                ComplexGUI.usernameGUI = null;
-                                ComplexGUI.firstMenuItemGUI = null;
+                            if (ComplexGUI.secondMenuItem.equals("4") || ComplexGUI.logout != null || ComplexGUI.logout.equals("logout")) {
+                                System.out.println("Logging out...");
                                 writer.println("LOOP");
                                 writer.flush();
-                                response = reader.readLine();
-                                if (response.equals("CONTINUE")) {
-                                    continue;
-                                }
-                                break;
+
+                                ComplexGUI.logout = null;
+                                ComplexGUI.passwordGUI = null;
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.firstMenuItemGUI = null;
+                                ComplexGUI.secondMenuItem = null;
+
+                                JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+
+                                loggedIn = false;
+                                continue;
                             }
                         }
+
 
                     }
                 }
@@ -716,3 +713,4 @@ public class Client extends Thread implements FlagInterface {
 
 
 }
+
