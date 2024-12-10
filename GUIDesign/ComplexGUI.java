@@ -916,6 +916,10 @@ class textMenu extends JFrame {
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text all friends?");
                 ComplexGUI.message = message;
+                if (message != null) {
+                    JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
+                            " sent");
+                }
 
             }
         });
@@ -929,6 +933,10 @@ class textMenu extends JFrame {
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text all users??");
                 ComplexGUI.message = message;
+                if (message != null) {
+                    JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
+                            " sent");
+                }
             }
         });
 
@@ -966,6 +974,10 @@ class textMenu extends JFrame {
                 String message = JOptionPane.showInputDialog(textMenu.this,
                         "What would you like to text this person??");
                 ComplexGUI.message = message;
+                if (message != null) {
+                    JOptionPane.showMessageDialog(textMenu.this, "Successfully" +
+                            " sent");
+                }
 
             }
         });
@@ -1099,7 +1111,20 @@ class photoMenu extends JFrame {
 }
 
 class deleteMenu extends JFrame {
+    private JComboBox<String> allUsersDropdown;
+    private JComboBox<String> allFriendsDropdown;
+    private JComboBox<String> singleFriendDropdown;
+    private JComboBox<String> friendDropdown;
+    private User user;
+    private Messaging messaging;
+    JPanel mainPanel;
+    private Friends receiver;
+    private String content;
+    private String date;
+    private boolean isRead;
+
     public deleteMenu() {
+        this.messaging = new Messaging(user, receiver, ComplexGUI.message, date, isRead);
         setTitle("Main Menu");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1121,49 +1146,195 @@ class deleteMenu extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
+        JPanel formPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        allFriendsDropdown = new JComboBox<>();
+        allFriendsDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        allFriendsDropdown.setPreferredSize(new Dimension(300, 50));
+        updateAllFriendsMessages();
+        formPanel.add(allFriendsDropdown);
 
         JButton textAllFriends = new JButton("DELETE MESSAGE TO ALL FRIENDS");
         textAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         textAllFriends.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
-                        "What message to all your friends would you like to delete");
+
+                JPanel friendMessagePanel = new JPanel();
+                friendMessagePanel.add(new JLabel(
+                        "What message to all your friends would you like to delete"));
+                friendMessagePanel.add(allFriendsDropdown);
+
+                String selectedMessage = (String) allFriendsDropdown.getSelectedItem();
+
+                int result = JOptionPane.showConfirmDialog(deleteMenu.this,
+                        friendMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    messaging.deleteFriendsMessage(user, selectedMessage, date, isRead);
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "Message deleted for all friends.");
+//                    updateAllFriendsMessages();
+                } else {
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "No message selected.");
+                }
+
             }
         });
+
+        JPanel formPanel2 = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        allUsersDropdown = new JComboBox<>();
+        allUsersDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        allUsersDropdown.setPreferredSize(new Dimension(300, 50));
+        updateAllUsersMessages();
+        formPanel2.add(allUsersDropdown);
 
         JButton textAllUsers = new JButton("DELETE MESSAGE TO ALL USERS");
         textAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         textAllUsers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
-                        "What message to all your users would you like to delete");
+
+                JPanel userMessagePanel = new JPanel();
+                userMessagePanel.add(new JLabel("What message to all your users would you like to delete"));
+                userMessagePanel.add(allUsersDropdown);
+
+                String selectedMessage = (String) allUsersDropdown.getSelectedItem();
+
+                int result = JOptionPane.showConfirmDialog(deleteMenu.this,
+                        userMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    messaging.deleteUsersMessage(user, selectedMessage, date, isRead);
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "Message deleted for all users.");
+//                updateAllUsersMessages();
+                } else {
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "No message selected.");
+                }
             }
         });
+
+        JPanel formPanel3 = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown.setPreferredSize(new Dimension(300, 50));
+        updateFriendDropdown();
+        formPanel3.add(friendDropdown);
+
+        JPanel formPanel4 = new JPanel(new GridLayout(2, 1, 20, 20));
+
+        singleFriendDropdown = new JComboBox<>();
+        singleFriendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        singleFriendDropdown.setPreferredSize(new Dimension(300, 50));
+        updateSingleFriendMessage();
+        formPanel4.add(singleFriendDropdown);
 
         JButton textAFriend = new JButton("DELETE MESSAGE TO A SINGLE FRIEND");
         textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String person = JOptionPane.showInputDialog(deleteMenu.this,
-                        "Who would you like to delete the message from.");
 
-                String filepath = JOptionPane.showInputDialog(deleteMenu.this,
-                        "What did the message say");
+                JPanel singleFriendMessagePanel = new JPanel();
+                singleFriendMessagePanel.add(new JLabel("Who would you like to delete the message from?"));
+                singleFriendMessagePanel.add(friendDropdown);
+
+                String selectedFriend = (String) friendDropdown.getSelectedItem();
+
+                int result = JOptionPane.showConfirmDialog(deleteMenu.this,
+                        singleFriendMessagePanel, "Select Friend", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "Friend selected.");
+                } else {
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "No friend selected.");
+                }
+
+                JPanel singleMessagePanel = new JPanel();
+                singleMessagePanel.add(new JLabel("What message would you like to delete?"));
+                singleMessagePanel.add(singleFriendDropdown);
+
+                String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
+
+                int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
+                        singleFriendMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    messaging.deleteMessage(user, receiver, selectedMessage, date, isRead);
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "Message deleted.");
+                    updateSingleFriendMessage();
+                } else {
+                    JOptionPane.showMessageDialog(deleteMenu.this,
+                            "No message selected.");
+                }
+
             }
         });
 
+        add(welcomeLabel);
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> {
+            new messageMenu1().setVisible(true);
+            dispose();
+        });
 
         bottomBar.add(textAllFriends);
         bottomBar.add(textAllUsers);
         bottomBar.add(textAFriend);
+        bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
 
+    private void updateAllFriendsMessages() {
+        User tempUser = new User(ComplexGUI.message);
+        allFriendsDropdown.removeAllItems();
+        messaging.loadAllFriendMessages(tempUser);
+        ArrayList<Messaging> messages = messaging.getMessageHistory();
+        System.out.println(messages);
+        for (Messaging message : messages) {
+            allFriendsDropdown.addItem(message.toString());
+        }
+    }
+
+    private void updateAllUsersMessages() {
+        User tempUser = new User(ComplexGUI.message);
+        allUsersDropdown.removeAllItems();
+        messaging.loadAllUsersMessages(tempUser);
+        ArrayList<Messaging> messages = messaging.getMessageHistory();
+        System.out.println(messages);
+        for (Messaging message : messages) {
+            allUsersDropdown.addItem(message.toString());
+        }
+    }
+
+    private void updateSingleFriendMessage() {
+        User tempUser = new User(ComplexGUI.message);
+        singleFriendDropdown.removeAllItems();
+        messaging.loadMessages(tempUser);
+        ArrayList<Messaging> messages = messaging.getMessageHistory();
+        System.out.println(messages);
+        for (Messaging message : messages) {
+            singleFriendDropdown.addItem(message.toString());
+        }
+    }
+
+    private void updateFriendDropdown() {
+        friendDropdown.removeAllItems();
+        receiver = new Friends(ComplexGUI.waypoint);
+        receiver.loadFriends();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        System.out.println(friendsList);
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getUsername());
+        }
+    }
 
     class MainGUI extends JFrame {
 
