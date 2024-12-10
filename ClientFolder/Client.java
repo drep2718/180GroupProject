@@ -553,6 +553,7 @@ public class Client extends Thread implements FlagInterface {
                                 System.out.println("1- Delete message to all friends");
                                 System.out.println("2- Delete message to all users");
                                 System.out.println("3- Delete message to single friend");
+
                                 String textType = scan.nextLine();
 
                                 if (textType.equals("1")) {
