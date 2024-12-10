@@ -559,23 +559,23 @@ public class Client extends Thread implements FlagInterface {
 
                                 if (textType.equals("1")) {
                                     System.out.println("What message to all your friends would you like to delete");
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String messageALlFriends = DELETE_ALL_FRIENDS + ";" + text;
                                     writer.write(messageALlFriends);
                                     writer.println();
                                     writer.flush();
                                 } else if (textType.equals("2")) {
                                     System.out.println("What message to all your users would you like to delete");
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String messageAllUsers = DELETE_ALL_USERS + ";" + text;
                                     writer.write(messageAllUsers);
                                     writer.println();
                                     writer.flush();
                                 } else if (textType.equals("3")) {
                                     System.out.println("Who would you like to delete the message from");
-                                    String friend = scan.nextLine();
+                                    String friend = ComplexGUI.friend;
                                     System.out.println("What did the message say");
-                                    String text = scan.nextLine();
+                                    String text = ComplexGUI.message;
                                     String textSingleFriend = DELETE_SINGLE_FRIEND + ";" + friend + ";" + text;
                                     writer.write(textSingleFriend);
                                     writer.println();
