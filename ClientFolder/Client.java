@@ -69,6 +69,7 @@ public class Client extends Thread implements FlagInterface {
                     }
 
                     String firstMenuItem = ComplexGUI.firstMenuItemGUI;
+                    System.out.println(firstMenuItem);
 
                     if (!firstMenuItem.equals("1") && !firstMenuItem.equals("2") && !firstMenuItem.equals("3")) {
                         writer.println("LOOP");
@@ -99,9 +100,14 @@ public class Client extends Thread implements FlagInterface {
 
                         System.out.println(password);
                         if (password.equals("back")) {
-                            ComplexGUI.passwordGUI = null;
                             ComplexGUI.usernameGUI = null;
-                            ComplexGUI.firstMenuItemGUI = null;
+                            ComplexGUI.passwordGUI = null;
+                            ComplexGUI.firstMenuItemGUI = "0";
+                            ComplexGUI.secondMenuItem = null;
+                            ComplexGUI.message = null;
+                            ComplexGUI.logout = null;
+                            ComplexGUI.back = "back";
+                            ComplexGUI.waypoint = null;
                             writer.println("LOOP");
                             writer.flush();
                             String response = reader.readLine();
@@ -121,6 +127,7 @@ public class Client extends Thread implements FlagInterface {
                             String passwordMessage = index[1];
                             if (passwordMessage.equals("Login Successful")) {
                                 System.out.println("Login Successful");
+                                ComplexGUI.usernameGUI = null;
                             } else if (passwordMessage.equals("Login Failed")) {
                                 loop = "no";
                                 JOptionPane.showMessageDialog(null, "Error: Try again", null, JOptionPane.ERROR_MESSAGE);
@@ -281,13 +288,13 @@ public class Client extends Thread implements FlagInterface {
                     }
 
                     String back = ComplexGUI.back;
-                    if (back.equals("true")) {
+                    System.out.println(back);
+                    if (back.equals("back")) {
+                        System.out.println("here");
                         writer.println("LOOP");
                         writer.flush();
-                        String response = reader.readLine();
-                        if (response == null || response.equals("CONTINUE")) {
-                            continue;
-                        }
+                        loggedIn = false;
+                        break;
                     }
 
                     while (loggedIn) {
@@ -321,7 +328,7 @@ public class Client extends Thread implements FlagInterface {
                             writer.flush();
                             System.out.println("1- Add Friend");
                             System.out.println("2- Remove Friend");
-                            String addOrRemove = scan.nextLine();
+                            String addOrRemove = ComplexGUI.message;
                             if (addOrRemove.equals("1")) {
                                 System.out.println("What is the name of the user you want to add as a friend");
                                 String friendName = scan.nextLine();
@@ -335,6 +342,27 @@ public class Client extends Thread implements FlagInterface {
                                 writer.write(friendToBlock);
                                 writer.println();
                                 writer.flush();
+                            } else if (addOrRemove.equals("3")) {
+                                System.out.println("Logging out...");
+                                writer.println("LOOP");
+                                writer.flush();
+
+                                String response = reader.readLine();
+                                if (response.equals("CONTINUE")) {
+                                    continue;
+                                }
+
+                                ComplexGUI.logout = null;
+                                ComplexGUI.passwordGUI = null;
+                                ComplexGUI.usernameGUI = null;
+                                ComplexGUI.firstMenuItemGUI = null;
+                                ComplexGUI.secondMenuItem = null;
+                                ComplexGUI.message = null;
+
+                                JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+
+                                loggedIn = false;
+
                             }
 
                             String message = reader.readLine();
@@ -684,16 +712,22 @@ public class Client extends Thread implements FlagInterface {
                                 writer.println("LOOP");
                                 writer.flush();
 
+                                String response = reader.readLine();
+                                if (response.equals("CONTINUE")) {
+                                    continue;
+                                }
+
                                 ComplexGUI.logout = null;
                                 ComplexGUI.passwordGUI = null;
                                 ComplexGUI.usernameGUI = null;
                                 ComplexGUI.firstMenuItemGUI = null;
                                 ComplexGUI.secondMenuItem = null;
+                                ComplexGUI.message = null;
 
                                 JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
 
                                 loggedIn = false;
-                                continue;
+
                             }
                         }
 
