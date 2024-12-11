@@ -328,7 +328,7 @@ class mainMenu1 extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(3, 1, 10, 10));
 
 
         JButton friendButton = new JButton("Add or Remove Friends");
@@ -360,27 +360,11 @@ class mainMenu1 extends JFrame {
         });
 
 
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        logoutButton.addActionListener(e -> {
-            ComplexGUI.usernameGUI = null;
-            ComplexGUI.passwordGUI = null;
-            ComplexGUI.firstMenuItemGUI = "0"; // Optional: Reset to default value
-            ComplexGUI.secondMenuItem = null;
-            ComplexGUI.message = null;
-            ComplexGUI.logout = null;
-            ComplexGUI.back = "back";
-            ComplexGUI.waypoint = null;
-
-            SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
-            dispose();
-        });
 
 
         bottomBar.add(friendButton);
         bottomBar.add(blockButton);
         bottomBar.add(messageButton);
-        bottomBar.add(logoutButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
 
@@ -1078,6 +1062,8 @@ class viewMenu extends JFrame {
         setVisible(true);
     }
 
+    private JComboBox<String> friendDropdown;
+
     private JPanel createViewMessagesPanel() {
         JPanel viewMessagesPanel = new JPanel(new BorderLayout());
 
@@ -1103,7 +1089,7 @@ class viewMenu extends JFrame {
         topBarPanel.add(backButton, BorderLayout.WEST);
         viewMessagesPanel.add(topBarPanel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
 
         JButton allUsersButton = new JButton("View All Users Messages");
         allUsersButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
@@ -1119,26 +1105,46 @@ class viewMenu extends JFrame {
             updateAllFriendsText(messagesTextArea);
         });
 
+        // Dropdown for friends
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        updateFriendDropdown();
+
         JButton singleFriendButton = new JButton("View Single Friend Messages");
         singleFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         singleFriendButton.addActionListener(e -> {
-            String friendName = JOptionPane.showInputDialog(this, "Enter Friend's Name:");
-            if (friendName != null && !friendName.trim().isEmpty()) {
+            String friendName = (String) friendDropdown.getSelectedItem();
+            if (friendName != null) {
                 messagesTextArea.setText("");
                 updateSingleFriendMessages(messagesTextArea, friendName.trim());
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid friend name entered.");
+                JOptionPane.showMessageDialog(this, "No friend selected.");
             }
         });
 
         buttonPanel.add(allUsersButton);
         buttonPanel.add(allFriendsButton);
+        buttonPanel.add(friendDropdown);
         buttonPanel.add(singleFriendButton);
 
         viewMessagesPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         return viewMessagesPanel;
     }
+
+    private void updateFriendDropdown() {
+        if (friendDropdown != null) {
+            friendDropdown.removeAllItems();
+            Friends receiver = new Friends(ComplexGUI.waypoint);
+            receiver.loadFriends();
+            ArrayList<User> friendsList = Friends.getFriendsList();
+
+            for (User friend : friendsList) {
+                friendDropdown.addItem(friend.getUsername());
+            }
+        }
+    }
+
 
     @Override
     public void setVisible(boolean b) {
@@ -1679,14 +1685,10 @@ class deleteMenu extends JFrame {
 
         JButton textAFriend = new JButton("DELETE MESSAGE TO A SINGLE FRIEND");
         textAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+
         textAFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Messaging messageTemp = new Messaging(user, null, content, date, isRead);
-                messageTemp.loadMessages(user);
-                ArrayList<Messaging> messages = Messaging.getMessageHistory();
-                System.out.println(messages);
-
                 JPanel singleFriendMessagePanel = new JPanel();
                 singleFriendMessagePanel.add(new JLabel("Who would you like to delete the message from?"));
                 singleFriendMessagePanel.add(friendDropdown);
@@ -1697,50 +1699,52 @@ class deleteMenu extends JFrame {
                 if (result == JOptionPane.OK_OPTION) {
                     String selectedFriend = (String) friendDropdown.getSelectedItem();
 
-                    JPanel singleMessagePanel = new JPanel();
-                    singleMessagePanel.add(new JLabel("What message would you like to delete?"));
-                    singleMessagePanel.add(singleFriendDropdown);
+                    if (selectedFriend != null && !selectedFriend.trim().isEmpty()) {
+                        // Update the single friend's messages dropdown
+                        updateSingleFriendMessages(selectedFriend);
 
-                    int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
-                            singleMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
+                        JPanel singleMessagePanel = new JPanel();
+                        singleMessagePanel.add(new JLabel("What message would you like to delete?"));
+                        singleMessagePanel.add(singleFriendDropdown);
 
-                    if (resultMessage == JOptionPane.OK_OPTION) {
-                        String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
-                        String finalMessage = selectedMessage.substring(
-                                selectedMessage.indexOf(":") + 1,
-                                selectedMessage.lastIndexOf(":")
-                        );
-                        System.out.println("Selected Message: " + finalMessage);
-                        User user1 = new User("temp");
-                        user1.loadUsers();
+                        int resultMessage = JOptionPane.showConfirmDialog(deleteMenu.this,
+                                singleMessagePanel, "Select Message", JOptionPane.OK_CANCEL_OPTION);
 
-                        ArrayList<User> allUsers = User.getAllUsers();
+                        if (resultMessage == JOptionPane.OK_OPTION) {
+                            String selectedMessage = (String) singleFriendDropdown.getSelectedItem();
 
-                        User friendUser = null;
-                        for (User user : User.getAllUsers()) {
-                            if (user.getUsername().equals(selectedFriend)) {
-                                friendUser = user;
-                                break;
+                            if (selectedMessage != null && !selectedMessage.trim().isEmpty() &&
+                                    !selectedMessage.startsWith("No messages")) {
+
+                                String finalMessage = selectedMessage.substring(
+                                        selectedMessage.indexOf(":") + 1,
+                                        selectedMessage.lastIndexOf(":")
+                                );
+
+                                System.out.println("Selected Message: " + finalMessage);
+
+                                User tempUser = new User(selectedFriend);
+                                Friends friendFriends = new Friends(tempUser);
+
+                                messaging.deleteMessage(user, friendFriends, finalMessage, date, isRead);
+                                JOptionPane.showMessageDialog(deleteMenu.this,
+                                        "Message deleted.");
+                                updateSingleFriendMessages(selectedFriend);
+                            } else {
+                                JOptionPane.showMessageDialog(deleteMenu.this,
+                                        "No message selected or invalid selection.",
+                                        "Warning",
+                                        JOptionPane.WARNING_MESSAGE);
                             }
-                        }
-
-                        Friends friendFriends = new Friends(friendUser);
-
-
-                        if (finalMessage != null && !finalMessage.trim().isEmpty()) {
-                            messaging.deleteMessage(user, friendFriends, finalMessage, date, isRead);
-                            JOptionPane.showMessageDialog(deleteMenu.this,
-                                    "Message deleted.");
-                            updateSingleFriendMessage();
                         } else {
                             JOptionPane.showMessageDialog(deleteMenu.this,
-                                    "No message selected or invalid selection.",
-                                    "Warning",
-                                    JOptionPane.WARNING_MESSAGE);
+                                    "No message selected.");
                         }
                     } else {
                         JOptionPane.showMessageDialog(deleteMenu.this,
-                                "No message selected.");
+                                "No friend selected or invalid selection.",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(deleteMenu.this,
@@ -1748,6 +1752,7 @@ class deleteMenu extends JFrame {
                 }
             }
         });
+
 
         add(welcomeLabel);
         JButton backButton = new JButton("BACK");
@@ -1796,6 +1801,37 @@ class deleteMenu extends JFrame {
             singleFriendDropdown.addItem(message.toString());
         }
     }
+
+    private void updateSingleFriendMessages(String friendName) {
+        singleFriendDropdown.removeAllItems(); // Clear the dropdown first
+
+        User user = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
+        messageTemp.loadMessages(user);
+        ArrayList<Messaging> messagesList = Messaging.getMessageHistory();
+
+        if (messagesList.isEmpty()) {
+            singleFriendDropdown.addItem("No messages found.");
+            return;
+        }
+
+        boolean found = false;
+
+        for (Messaging message : messagesList) {
+            String senderName = message.getSender().getUsername();
+            String receiverName = message.getReceiver().getUser().getUsername();
+
+            if (senderName.equalsIgnoreCase(friendName) || receiverName.equalsIgnoreCase(friendName)) {
+                singleFriendDropdown.addItem(message.toString());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            singleFriendDropdown.addItem("No messages found for " + friendName + ".");
+        }
+    }
+
 
     private void updateFriendDropdown() {
         friendDropdown.removeAllItems();
