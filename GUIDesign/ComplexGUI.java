@@ -1421,38 +1421,48 @@ class textMenu extends JFrame {
     }
 }
 
-
 class photoMenu extends JFrame {
+    JComboBox<String> friendDropdown = new JComboBox<>();
+    private User user;
+    private Friends friends;
+    private PhotoMessaging photoMessaging;
+    private String date;
+    private boolean isRead;
+
     public photoMenu() {
-        setTitle("Photo Menu");
+        this.friends = new Friends(ComplexGUI.waypoint);
+        this.user = new User(ComplexGUI.usernameGUI);
+        setTitle("PhotoMessage Menu");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel welcomeLabel = new JLabel("Welcome to The Photo Menu", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("PhotoMessage Menu", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-
-        JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        JPanel photoPanel = new JPanel(new GridLayout(2, 1));
         JButton choosePhotoButton = new JButton("Choose Photo");
-        choosePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        choosePhotoButton.setFont(new Font("Bernard MT", Font.PLAIN, 16));
+        JLabel photoStatusLabel = new JLabel("No photo selected", SwingConstants.CENTER);
+        photoStatusLabel.setFont(new Font("Bernard MT", Font.PLAIN, 14));
+
         choosePhotoButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                    "Image files", "png", "jpg", "jpeg", "gif"));
-
-            if (fileChooser.showOpenDialog(photoMenu.this) == JFileChooser.APPROVE_OPTION) {
+                    "Image Files", "jpg", "png"));
+            int result = fileChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
                 ComplexGUI.photoPathGUI = fileChooser.getSelectedFile().getAbsolutePath();
-                JOptionPane.showMessageDialog(photoMenu.this,
-                        "Photo selected: " + ComplexGUI.photoPathGUI);
+                photoStatusLabel.setText("Selected: " + fileChooser.getSelectedFile().getName());
             }
         });
-        inputPanel.add(choosePhotoButton);
+        photoPanel.add(choosePhotoButton);
+        photoPanel.add(photoStatusLabel);
 
-        centerPanel.add(inputPanel, BorderLayout.SOUTH);
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(welcomeLabel, BorderLayout.NORTH);
+        centerPanel.add(photoPanel, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel topBar = new JPanel();
@@ -1465,47 +1475,114 @@ class photoMenu extends JFrame {
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
         bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
 
-        JButton photoAllFriends = new JButton("PHOTO MESSAGE ALL FRIENDS");
+        JButton photoAllFriends = new JButton("Send Photo to All Friends");
         photoAllFriends.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        photoAllFriends.addActionListener(e -> {
-            if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
-                JOptionPane.showMessageDialog(photoMenu.this,
-                        "Please select a photo first", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+        photoAllFriends.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
+                    JOptionPane.showMessageDialog(photoMenu.this, "Please select a photo first!");
+                    return;
+                }
+                try {
+                    BufferedImage photo = ImageIO.read(new File(ComplexGUI.photoPathGUI));
+                    ComplexGUI.whichMessage = "2";
+                    ComplexGUI.photoMessageTypeGUI = "2";
+                    photoMessaging = new PhotoMessaging(user, null, photo, date, isRead);
+                    photoMessaging.sendAllFriendsPhotoMessage(user, photo, date, isRead);
+                    JOptionPane.showMessageDialog(photoMenu.this, "Photo successfully sent to all friends!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(photoMenu.this, "Error loading photo!");
+                    ex.printStackTrace();
+                }
             }
-            ComplexGUI.photoMessageTypeGUI = "1";
-            dispose();
         });
 
-        JButton photoAllUsers = new JButton("PHOTO MESSAGE ALL USERS");
+        JButton photoAllUsers = new JButton("Send Photo to All Users");
         photoAllUsers.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        photoAllUsers.addActionListener(e -> {
-            if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
-                JOptionPane.showMessageDialog(photoMenu.this,
-                        "Please select a photo first", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            ComplexGUI.photoMessageTypeGUI = "2";
-            dispose();
-        });
-
-        JButton photoSingleFriend = new JButton("PHOTO MESSAGE A FRIEND");
-        photoSingleFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
-        photoSingleFriend.addActionListener(e -> {
-            if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
-                JOptionPane.showMessageDialog(photoMenu.this,
-                        "Please select a photo first", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            ComplexGUI.photoRecipientGUI = JOptionPane.showInputDialog(photoMenu.this,
-                    "Who would you like to send the photo to?");
-            if (ComplexGUI.photoRecipientGUI != null && !ComplexGUI.photoRecipientGUI.isEmpty()) {
-                ComplexGUI.photoMessageTypeGUI = "3";
-                dispose();
+        photoAllUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
+                    JOptionPane.showMessageDialog(photoMenu.this, "Please select a photo first!");
+                    return;
+                }
+                try {
+                    BufferedImage photo = ImageIO.read(new File(ComplexGUI.photoPathGUI));
+                    ComplexGUI.whichMessage = "2";
+                    ComplexGUI.photoMessageTypeGUI = "3";
+                    photoMessaging = new PhotoMessaging(user, null, photo, date, isRead);
+                    photoMessaging.sendAllUsersPhotoMessage(user, photo, date, isRead);
+                    JOptionPane.showMessageDialog(photoMenu.this, "Photo successfully sent to all users!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(photoMenu.this, "Error loading photo!");
+                    ex.printStackTrace();
+                }
             }
         });
 
-        add(welcomeLabel);
+        JButton photoAFriend = new JButton("Send Photo to a Friend");
+        photoAFriend.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        friendDropdown = new JComboBox<>();
+        friendDropdown.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        updateFriendDropdown();
+
+        photoAFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ComplexGUI.photoPathGUI == null || ComplexGUI.photoPathGUI.isEmpty()) {
+                    JOptionPane.showMessageDialog(photoMenu.this, "Please select a photo first!");
+                    return;
+                }
+
+                JPanel panel = new JPanel();
+                panel.add(new JLabel("Who would you like to send the photo to?"));
+                panel.add(friendDropdown);
+
+                int result = JOptionPane.showConfirmDialog(
+                        photoMenu.this, panel, "Select Friend",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String person = (String) friendDropdown.getSelectedItem();
+                    ComplexGUI.photoRecipientGUI = person;
+                    User user1 = new User("temp");
+                    user1.loadUsers();
+
+                    ArrayList<User> allUsers = User.getAllUsers();
+                    User friendUser = null;
+                    for (User user : allUsers) {
+                        if (user.getUsername().equals(person)) {
+                            friendUser = user;
+                            break;
+                        }
+                    }
+
+                    if (friendUser == null) {
+                        JOptionPane.showMessageDialog(photoMenu.this,
+                                "No friend found with the selected name!",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    try {
+                        BufferedImage photo = ImageIO.read(new File(ComplexGUI.photoPathGUI));
+                        ComplexGUI.whichMessage = "2";
+                        ComplexGUI.photoMessageTypeGUI = "1";
+                        Friends friendFriends = new Friends(friendUser);
+                        photoMessaging = new PhotoMessaging(user, friendFriends, photo, date, isRead);
+                        photoMessaging.sendPhotoMessage(user, friendFriends, photo, date, isRead);
+                        JOptionPane.showMessageDialog(photoMenu.this, "Photo successfully sent!");
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(photoMenu.this, "Error loading photo!");
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
         JButton backButton = new JButton("BACK");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
         backButton.addActionListener(e -> {
@@ -1515,9 +1592,19 @@ class photoMenu extends JFrame {
 
         bottomBar.add(photoAllFriends);
         bottomBar.add(photoAllUsers);
-        bottomBar.add(photoSingleFriend);
+        bottomBar.add(photoAFriend);
         bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
+    }
+
+    private void updateFriendDropdown() {
+        friendDropdown.removeAllItems();
+        friends = new Friends(ComplexGUI.waypoint);
+        friends.loadFriends();
+        ArrayList<User> friendsList = Friends.getFriendsList();
+        for (User friend : friendsList) {
+            friendDropdown.addItem(friend.getUsername());
+        }
     }
 
     class MainGUI extends JFrame {
