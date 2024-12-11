@@ -1181,7 +1181,7 @@ class viewMenu extends JFrame {
             allUsersMessages += (i + 1) + ". " + usersList.get(i) + "\n";
         }
 
-        allUsersMessages += "\nTotal Users: " + usersList.size();
+        allUsersMessages += "\nAll Users Messages: " + usersList.size();
         userTextArea.setText(allUsersMessages);
     }
 
@@ -1205,7 +1205,7 @@ class viewMenu extends JFrame {
             allFriendsMessages += (i + 1) + ". " + friendsList.get(i) + "\n";
         }
 
-        allFriendsMessages += "\nTotal Friends: " + friendsList.size();
+        allFriendsMessages += "\nAll Friends Messages: " + friendsList.size();
         friendsTextArea.setText(allFriendsMessages);
     }
 
@@ -1883,7 +1883,7 @@ class deleteMenu extends JFrame {
     }
 
     private void updateSingleFriendMessages(String friendName) {
-        singleFriendDropdown.removeAllItems(); // Clear the dropdown first
+        singleFriendDropdown.removeAllItems();
 
         User user = new User(ComplexGUI.waypoint.getUsername());
         Messaging messageTemp = new Messaging(user, null, "content", "date", false);
