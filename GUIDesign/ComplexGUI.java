@@ -2,11 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import javax.imageio.ImageIO;
 
 /**
@@ -1162,50 +1165,108 @@ class viewMenu extends JFrame {
     }
 
     private void updateAllUsersText(JTextArea userTextArea) {
-        User user = new User(ComplexGUI.waypoint.getUsername());
-        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
-        messageTemp.loadAllUsersMessages(user);
+        User currentUser = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(currentUser, null, "content", "date", false);
+        messageTemp.loadAllUsersMessages(currentUser);
         ArrayList<Messaging> usersList = Messaging.getMessageHistory();
 
         userTextArea.setText("");
 
-        if (usersList.isEmpty()) {
-            userTextArea.append("No messages found.");
-            return;
+        String allMessagesText = "Messages from All Users:\n--------------------------\n";
+
+        if (!usersList.isEmpty()) {
+            allMessagesText += "Your Sent Messages:\n";
+            for (int i = 0; i < usersList.size(); i++) {
+                allMessagesText += (i + 1) + ". " + usersList.get(i) + "\n";
+            }
+            allMessagesText += "\nTotal Sent Messages: " + usersList.size() + "\n\n";
         }
 
-        String allUsersMessages = "Messages from All Users:\n" +
-                "--------------------------\n";
+        User loadAllUsers = new User(ComplexGUI.waypoint.getUsername());
+        loadAllUsers.loadUsers();
+        ArrayList<User> allUsersList = User.getAllUsers();
 
-        for (int i = 0; i < usersList.size(); i++) {
-            allUsersMessages += (i + 1) + ". " + usersList.get(i) + "\n";
+        allMessagesText += "Messages from All Users:\n";
+        int systemMessageCount = 0;
+
+        for (User user : allUsersList) {
+            try {
+                File allUsersFile = new File(user.getUsername() + "AllUsers.txt");
+
+                if (allUsersFile.exists()) {
+                    BufferedReader reader = new BufferedReader(new FileReader(allUsersFile));
+                    String line = reader.readLine();
+                    reader.close();
+
+                    if (line != null && !line.trim().isEmpty()) {
+                        systemMessageCount++;
+                        allMessagesText += systemMessageCount + ". " + line + "\n";
+                    }
+                }
+            } catch (IOException e) {
+                allMessagesText += "Error reading file for user " + user.getUsername() + ": " + e.getMessage() + "\n";
+            }
         }
 
-        allUsersMessages += "\nAll Users Messages: " + usersList.size();
-        userTextArea.setText(allUsersMessages);
+        if (systemMessageCount > 0) {
+            allMessagesText += "\nTotal System Messages: " + systemMessageCount;
+        } else {
+            allMessagesText += "No system messages found.";
+        }
+
+        userTextArea.setText(allMessagesText);
     }
 
     private void updateAllFriendsText(JTextArea friendsTextArea) {
-        User user = new User(ComplexGUI.waypoint.getUsername());
-        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
-        messageTemp.loadAllFriendMessages(user);
+        User currentUser = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(currentUser, null, "content", "date", false);
+        messageTemp.loadAllFriendMessages(currentUser);
         ArrayList<Messaging> friendsList = Messaging.getMessageHistory();
 
         friendsTextArea.setText("");
 
-        if (friendsList.isEmpty()) {
-            friendsTextArea.append("No messages found.");
-            return;
+        String allFriendsMessages = "Messages from All Friends:\n--------------------------\n";
+
+        if (!friendsList.isEmpty()) {
+            allFriendsMessages += "Your Sent Friend Messages:\n";
+            for (int i = 0; i < friendsList.size(); i++) {
+                allFriendsMessages += (i + 1) + ". " + friendsList.get(i) + "\n";
+            }
+            allFriendsMessages += "\nTotal Sent Friend Messages: " + friendsList.size() + "\n\n";
         }
 
-        String allFriendsMessages = "Messages to All Friends:\n" +
-                "--------------------------\n";
+        Friends receiver = new Friends(ComplexGUI.waypoint);
+        receiver.loadFriends();
+        ArrayList<User> userFriendsList = Friends.getFriendsList();
 
-        for (int i = 0; i < friendsList.size(); i++) {
-            allFriendsMessages += (i + 1) + ". " + friendsList.get(i) + "\n";
+        allFriendsMessages += "Messages from All Friends:\n";
+        int systemFriendMessageCount = 0;
+
+        for (User friend : userFriendsList) {
+            try {
+                File allFriendsFile = new File(friend.getUsername() + "AllFriends.txt");
+
+                if (allFriendsFile.exists()) {
+                    BufferedReader reader = new BufferedReader(new FileReader(allFriendsFile));
+                    String line = reader.readLine();
+                    reader.close();
+
+                    if (line != null && !line.trim().isEmpty()) {
+                        systemFriendMessageCount++;
+                        allFriendsMessages += systemFriendMessageCount + ". " + line + "\n";
+                    }
+                }
+            } catch (IOException e) {
+                allFriendsMessages += "Error reading file for friend " + friend.getUsername() + ": " + e.getMessage() + "\n";
+            }
         }
 
-        allFriendsMessages += "\nAll Friends Messages: " + friendsList.size();
+        if (systemFriendMessageCount > 0) {
+            allFriendsMessages += "\nTotal System Friend Messages: " + systemFriendMessageCount;
+        } else {
+            allFriendsMessages += "No system friend messages found.";
+        }
+
         friendsTextArea.setText(allFriendsMessages);
     }
 
@@ -1217,23 +1278,56 @@ class viewMenu extends JFrame {
 
         singleFriendTextArea.setText("");
 
-        if (messagesList.isEmpty()) {
-            singleFriendTextArea.append("No messages found.");
-            return;
-        }
-
-        String friendMessages = "Messages to " + friendName + ":\n" +
-                "--------------------------\n";
-
+        String friendMessages = "Messages with " + friendName + ":\n--------------------------\n";
         boolean found = false;
 
-        for (Messaging message : messagesList) {
-            String friendsName = message.toString().substring(message.toString().lastIndexOf(":") + 1);
-            if (message.getSender().getUsername().equalsIgnoreCase(friendName) ||
-                    message.getReceiver().getUser().getUsername().equalsIgnoreCase(friendName)) {
-                friendMessages += message + "\n";
-                found = true;
+        friendMessages += "Messages to " + friendName + ":\n";
+        HashSet<String> uniqueMessages = new HashSet<>();
+        try {
+            File userFile = new File(user.getUsername() + ".txt");
+            if (userFile.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(userFile));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(":");
+                    if (parts.length >= 3 &&
+                            parts[0].trim().equalsIgnoreCase(user.getUsername()) &&
+                            parts[2].trim().equalsIgnoreCase(friendName)) {
+                        String formattedMessage = user.getUsername() + ": " + parts[1].trim();
+                        if (uniqueMessages.add(formattedMessage)) {
+                            friendMessages += formattedMessage + "\n";
+                            found = true;
+                        }
+                    }
+                }
+                reader.close();
             }
+        } catch (IOException e) {
+            friendMessages += "Error reading your messages: " + e.getMessage() + "\n";
+        }
+
+        friendMessages += "\nMessages from " + friendName + ":\n";
+        try {
+            File friendFile = new File(friendName + ".txt");
+            if (friendFile.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(friendFile));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(":");
+                    if (parts.length >= 3 &&
+                            parts[0].trim().equalsIgnoreCase(friendName) &&
+                            parts[2].trim().equalsIgnoreCase(user.getUsername())) {
+                        String formattedMessage = friendName + ": " + parts[1].trim();
+                        if (uniqueMessages.add(formattedMessage)) {
+                            friendMessages += formattedMessage + "\n";
+                            found = true;
+                        }
+                    }
+                }
+                reader.close();
+            }
+        } catch (IOException e) {
+            friendMessages += "Error reading friend's messages: " + e.getMessage() + "\n";
         }
 
         if (!found) {
