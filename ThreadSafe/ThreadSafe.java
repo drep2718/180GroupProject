@@ -130,11 +130,11 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 writer.flush();
                             }
                         }
-                    } if (message.equals("LOGOUT")) {
+                    }
+                    if (message.equals("LOGOUT")) {
                         System.out.println("User has logged out");
                         break;
                     }
-
 
 
                     String secondMessage = reader.readLine();
