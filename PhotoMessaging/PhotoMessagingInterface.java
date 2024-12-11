@@ -17,7 +17,7 @@ public interface PhotoMessagingInterface {
 
     Friends getReceiver();
 
-    BufferedImage getImageContent();
+    String getImagePath();
 
     String getDate();
 
