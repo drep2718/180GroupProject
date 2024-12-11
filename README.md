@@ -67,9 +67,24 @@ NOTE: There are no test cases as we do not have anything that does not relate to
 - The same goes throughout the program including blocking non-users not trying to unblock someone who is not blocked this will all be handled by the GUI in phase 3
 - This also applies for the messaging class for deleting a message from a non friend or messages that never existed in the first place
 
+## ComplexGUI class 
+- This class outlines all the GUIs that we used in our client and server that replaced the scanners we used in phase 2
+- This class is full of many different Jpanels for different screens we go to while executing the code
+- You will start at the welome screen than go to the main menu where you can Login or Create account, and use the back button to go back to the main menu
+- Once your logged in or you created an account you can start adding and removing friends and there see all your friends list
+- You can also do the same with blocking and unblocking users and view those you have blocked
+- Than the messaging where you can send a message to all your friends on the platform, all users on the platform, and a single friend on the platform
+- And than you can view all the messages that you sent to either all friends, users, or a single friend
+- Than you can delete the messages you send as well if you dont want them to be seen
+- Lastly you can select from your directary a photo to send to the same 3 choices.
+
   
 ## Who submitted what
 - Aiden submitted the report and the Vocareum workspace (Phase 1)
+- Aiden submitted the report and the Vocareum workspace (Phase 2)
+- Aiden submitted the report and the Vocareum workspace (Phase 3)
+- Linh submitted the presentation (phase 3)
+
 
 
 
