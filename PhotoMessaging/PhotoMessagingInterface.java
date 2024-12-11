@@ -27,7 +27,7 @@ public interface PhotoMessagingInterface {
 
     void setMessageType(String messageType);
 
-    void rewritePhotoMessages();
+    void rewritePhotoMessages(User user);
 
     String toString();
 
