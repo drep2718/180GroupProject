@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +10,6 @@ import java.util.ArrayList;
  * @author Santhosh, Sabareesh, Aiden, Linh, Lab Number: 26043
  * @version November 17, 2024
  */
-
 
 
 public class ComplexGUI {
@@ -31,6 +29,7 @@ public class ComplexGUI {
     public static String photoRecipientGUI;
     public static String photoMessageTypeGUI;
     public static String back;
+    public static String LoopMessage;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
@@ -364,15 +363,18 @@ class mainMenu1 extends JFrame {
         JButton logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Bernard MT", Font.PLAIN, 30));
         logoutButton.addActionListener(e -> {
-            ComplexGUI.secondMenuItem = "4";
-            ComplexGUI.logout = "logout";
             ComplexGUI.usernameGUI = null;
             ComplexGUI.passwordGUI = null;
-            ComplexGUI.firstMenuItemGUI = null;
-            new mainMenu().setVisible(true);
+            ComplexGUI.firstMenuItemGUI = "0"; // Optional: Reset to default value
+            ComplexGUI.secondMenuItem = null;
+            ComplexGUI.message = null;
+            ComplexGUI.logout = null;
+            ComplexGUI.back = "back";
+            ComplexGUI.waypoint = null;
+
+            SwingUtilities.invokeLater(() -> new WelcomeScreen().setVisible(true));
             dispose();
         });
-
 
 
         bottomBar.add(friendButton);
@@ -436,7 +438,6 @@ class friendsScreen1 extends JFrame {
             new mainMenu1().setVisible(true);
             dispose();
         });
-
 
 
         add(backButton, BorderLayout.SOUTH);
@@ -843,8 +844,6 @@ class blockedScreen extends JFrame {
     }
 
 
-
-
     private JPanel createBlockUserPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -975,7 +974,6 @@ class blockedScreen extends JFrame {
     }
 
 
-
     class MainGUI extends JFrame {
 
     }
@@ -1005,7 +1003,7 @@ class messageMenu1 extends JFrame {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(229, 194, 31));
         bottomBar.setPreferredSize(new Dimension(getWidth(), 400));
-        bottomBar.setLayout(new GridLayout(4, 1, 10, 10));
+        bottomBar.setLayout(new GridLayout(5, 1, 10, 10));
 
 
         JButton sendTextMessagesButton = new JButton("SEND TEXT MESSAGES");
@@ -1034,6 +1032,15 @@ class messageMenu1 extends JFrame {
             dispose();
         });
 
+        JButton view = new JButton("VIEW MESSAGES");
+        view.setFont(new Font("Bernard MT", Font.PLAIN, 30));
+        view.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> new viewMenu().setVisible(true));
+
+            ComplexGUI.whichMessage = "1";
+            dispose();
+        });
+
         add(welcomeLabel);
         JButton backButton = new JButton("BACK");
         backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
@@ -1042,9 +1049,11 @@ class messageMenu1 extends JFrame {
             dispose();
         });
 
+
         bottomBar.add(sendTextMessagesButton);
         bottomBar.add(messagePhotoButton);
         bottomBar.add(removeMessageButton);
+        bottomBar.add(view);
         bottomBar.add(backButton);
         add(bottomBar, BorderLayout.SOUTH);
     }
@@ -1053,6 +1062,177 @@ class messageMenu1 extends JFrame {
     class MainGUI extends JFrame {
 
     }
+}
+
+class viewMenu extends JFrame {
+
+    public viewMenu() {
+        setTitle("View Menu");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 600);
+        setLayout(new BorderLayout());
+
+        JPanel viewMessagesPanel = createViewMessagesPanel();
+        add(viewMessagesPanel, BorderLayout.CENTER);
+
+        setVisible(true);
+    }
+
+    private JPanel createViewMessagesPanel() {
+        JPanel viewMessagesPanel = new JPanel(new BorderLayout());
+
+        JLabel messagesListLabel = new JLabel("Messages", SwingConstants.CENTER);
+        messagesListLabel.setFont(new Font("Bernard MT", Font.BOLD, 30));
+        viewMessagesPanel.add(messagesListLabel, BorderLayout.NORTH);
+        JTextArea messagesTextArea = new JTextArea();
+        messagesTextArea.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        messagesTextArea.setEditable(false);
+        messagesTextArea.setLineWrap(true);
+        messagesTextArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(messagesTextArea);
+        viewMessagesPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel topBarPanel = new JPanel(new BorderLayout());
+        JButton backButton = new JButton("BACK");
+        backButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        backButton.addActionListener(e -> {
+            new mainMenu1().setVisible(true);
+            dispose();
+        });
+        topBarPanel.add(backButton, BorderLayout.WEST);
+        viewMessagesPanel.add(topBarPanel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+
+        JButton allUsersButton = new JButton("View All Users Messages");
+        allUsersButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        allUsersButton.addActionListener(e -> {
+            messagesTextArea.setText("");
+            updateAllUsersText(messagesTextArea);
+        });
+
+        JButton allFriendsButton = new JButton("View All Friends Messages");
+        allFriendsButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        allFriendsButton.addActionListener(e -> {
+            messagesTextArea.setText("");
+            updateAllFriendsText(messagesTextArea);
+        });
+
+        JButton singleFriendButton = new JButton("View Single Friend Messages");
+        singleFriendButton.setFont(new Font("Bernard MT", Font.PLAIN, 20));
+        singleFriendButton.addActionListener(e -> {
+            String friendName = JOptionPane.showInputDialog(this, "Enter Friend's Name:");
+            if (friendName != null && !friendName.trim().isEmpty()) {
+                messagesTextArea.setText("");
+                updateSingleFriendMessages(messagesTextArea, friendName.trim());
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid friend name entered.");
+            }
+        });
+
+        buttonPanel.add(allUsersButton);
+        buttonPanel.add(allFriendsButton);
+        buttonPanel.add(singleFriendButton);
+
+        viewMessagesPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return viewMessagesPanel;
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension frameSize = getSize();
+            setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        }
+        super.setVisible(b);
+    }
+
+    private void updateAllUsersText(JTextArea userTextArea) {
+        User user = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
+        messageTemp.loadAllUsersMessages(user);
+        ArrayList<Messaging> usersList = Messaging.getMessageHistory();
+
+        userTextArea.setText("");
+
+        if (usersList.isEmpty()) {
+            userTextArea.append("No messages found.");
+            return;
+        }
+
+        String allUsersMessages = "Messages from All Users:\n" +
+                "--------------------------\n";
+
+        for (int i = 0; i < usersList.size(); i++) {
+            allUsersMessages += (i + 1) + ". " + usersList.get(i) + "\n";
+        }
+
+        allUsersMessages += "\nTotal Users: " + usersList.size();
+        userTextArea.setText(allUsersMessages);
+    }
+
+    private void updateAllFriendsText(JTextArea friendsTextArea) {
+        User user = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
+        messageTemp.loadAllFriendMessages(user);
+        ArrayList<Messaging> friendsList = Messaging.getMessageHistory();
+
+        friendsTextArea.setText("");
+
+        if (friendsList.isEmpty()) {
+            friendsTextArea.append("No messages found.");
+            return;
+        }
+
+        String allFriendsMessages = "Messages to All Friends:\n" +
+                "--------------------------\n";
+
+        for (int i = 0; i < friendsList.size(); i++) {
+            allFriendsMessages += (i + 1) + ". " + friendsList.get(i) + "\n";
+        }
+
+        allFriendsMessages += "\nTotal Friends: " + friendsList.size();
+        friendsTextArea.setText(allFriendsMessages);
+    }
+
+    private void updateSingleFriendMessages(JTextArea singleFriendTextArea, String friendName) {
+        User user = new User(ComplexGUI.waypoint.getUsername());
+        Messaging messageTemp = new Messaging(user, null, "content", "date", false);
+        messageTemp.loadMessages(user);
+        ArrayList<Messaging> messagesList = Messaging.getMessageHistory();
+
+        singleFriendTextArea.setText("");
+
+        if (messagesList.isEmpty()) {
+            singleFriendTextArea.append("No messages found.");
+            return;
+        }
+
+        String friendMessages = "Messages to " + friendName + ":\n" +
+                "--------------------------\n";
+
+        boolean found = false;
+
+        for (Messaging message : messagesList) {
+            String friendsName = message.toString().substring(message.toString().lastIndexOf(":") +1);
+            if (message.getSender().getUsername().equalsIgnoreCase(friendName) ||
+                    message.getReceiver().getUser().getUsername().equalsIgnoreCase(friendName)) {
+                friendMessages += message + "\n";
+                found = true;
+            }
+        }
+
+        if (!found) {
+            singleFriendTextArea.append("No messages found for " + friendName + ".");
+        } else {
+            singleFriendTextArea.setText(friendMessages);
+        }
+    }
+
+
 }
 
 class textMenu extends JFrame {
@@ -1213,7 +1393,6 @@ class textMenu extends JFrame {
                 }
             }
         });
-
 
 
         bottomBar.add(textAllFriends);
@@ -1412,7 +1591,7 @@ class deleteMenu extends JFrame {
 
                 if (result == JOptionPane.OK_OPTION) {
                     String selectedMessage = (String) allFriendsDropdown.getSelectedItem();
-                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":")+1);
+                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":") + 1);
                     System.out.println("Selected Message: " + finalMessage);
 
                     if (finalMessage != null && !finalMessage.trim().isEmpty()) {
@@ -1462,7 +1641,7 @@ class deleteMenu extends JFrame {
 
                 if (result == JOptionPane.OK_OPTION) {
                     String selectedMessage = (String) allUsersDropdown.getSelectedItem();
-                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":")+1);
+                    String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":") + 1);
                     System.out.println("Selected Message: " + finalMessage);
 
                     if (finalMessage != null && !finalMessage.trim().isEmpty()) {
