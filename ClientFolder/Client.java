@@ -678,7 +678,7 @@ public class Client extends Thread implements FlagInterface {
                                         System.out.println("Not your friend");
                                         continue;
                                     }
-                                } else if (message2.contains(MESSAGE_ALL_FRIENDS)) {
+                                } else if (message2.contains(PHOTO_ALL_FRIENDS)) {
                                     if (trueOrFalse.equals("true")) {
                                         System.out.println("You successfully messaged all friends");
                                     } else if (trueOrFalse.equals("false")) {
@@ -688,7 +688,7 @@ public class Client extends Thread implements FlagInterface {
                                         System.out.println("No friends");
                                         continue;
                                     }
-                                } else if (message2.contains(MESSAGE_ALL_USERS)) {
+                                } else if (message2.contains(PHOTO_ALL_USERS)) {
                                     if (trueOrFalse.equals("true")) {
                                         System.out.println("You successfully messaged all users");
                                     } else if (trueOrFalse.equals("false")) {
@@ -698,7 +698,7 @@ public class Client extends Thread implements FlagInterface {
                                         System.out.println("Failure");
                                         continue;
                                     }
-                                } else if (message2.contains(MESSAGE_SINGLE_FRIEND)) {
+                                } else if (message2.contains(PHOTO_SINGLE_FRIEND)) {
                                     if (trueOrFalse.equals("true")) {
                                         System.out.println("You successfully messaged a friend");
                                     } else if (trueOrFalse.equals("false")) {
