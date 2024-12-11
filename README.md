@@ -75,6 +75,7 @@ NOTE: There are no test cases as we do not have anything that does not relate to
 - You can also do the same with blocking and unblocking users and view those you have blocked
 - Than the messaging where you can send a message to all your friends on the platform, all users on the platform, and a single friend on the platform
 - And than you can view all the messages that you sent to either all friends, users, or a single friend
+- You can also view the messages that they sent to you in real time as well
 - Than you can delete the messages you send as well if you dont want them to be seen
 - Lastly you can select from your directary a photo to send to the same 3 choices.
 
