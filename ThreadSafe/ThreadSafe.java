@@ -568,6 +568,8 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             writer.flush();
                         }
 
+                    } else if (secondMessage.equals("back")) {
+                        continue;
                     }
 
 
