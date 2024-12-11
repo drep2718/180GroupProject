@@ -480,7 +480,7 @@ public class Client extends Thread implements FlagInterface {
                                 }
 
 
-                            } else if (whichMessage.equals("2")) { 
+                            } else if (whichMessage.equals("2")) {
                                 SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
 
                                 while (ComplexGUI.photoMessageTypeGUI == null || ComplexGUI.photoPathGUI == null) {
@@ -528,7 +528,7 @@ public class Client extends Thread implements FlagInterface {
                                             }
                                         }
 
-                                    } else if (photoType.equals("2")) { 
+                                    } else if (photoType.equals("2")) {
                                         String photoMessage = PHOTO_ALL_FRIENDS;
                                         writer.println(photoMessage);
                                         writer.flush();
@@ -558,7 +558,7 @@ public class Client extends Thread implements FlagInterface {
                                             }
                                         }
 
-                                    } else if (photoType.equals("3")) { 
+                                    } else if (photoType.equals("3")) {
                                         String photoMessage = PHOTO_ALL_USERS;
                                         writer.println(photoMessage);
                                         writer.flush();
@@ -593,7 +593,7 @@ public class Client extends Thread implements FlagInterface {
                                     ComplexGUI.photoMessageTypeGUI = null;
                                     ComplexGUI.photoRecipientGUI = null;
                                     ComplexGUI.whichMessage = null;
-                                    
+
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                     System.out.println("Error processing photo");
