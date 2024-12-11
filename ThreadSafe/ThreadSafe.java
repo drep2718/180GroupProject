@@ -368,7 +368,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                             writer.flush();
                         }
 
-                    } else if (secondMessage.contains(MESSAGE_ALL_FRIENDS)) {
+                    } else if (secondMessage.contains(PHOTO_ALL_FRIENDS)) {
                         synchronized (gatekeeper) {
                             try {
                                 InputStream inputStream = socket.getInputStream();
@@ -386,13 +386,13 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 PhotoMessaging photoMessage = new PhotoMessaging(currentUser, imageContent, friendsList, date, isRead, "AllFriends");
                                 photoMessage.sendAllFriendsPhotoMessage(currentUser, imageContent, date, isRead);
 
-                                writer.println(MESSAGE_ALL_FRIENDS + ";" + "sent");
+                                writer.println(PHOTO_ALL_FRIENDS + ";" + "sent");
                                 writer.flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
-                    } else if (secondMessage.contains(MESSAGE_ALL_USERS)) {
+                    } else if (secondMessage.contains(PHOTO_ALL_USERS)) {
                         synchronized (gatekeeper) {
                             try {
                                 InputStream inputStream = socket.getInputStream();
@@ -410,13 +410,13 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 photoMessage.sendAllUsersPhotoMessage(currentUser, imageContent, date, isRead);
 
                                 boolean sent = true;
-                                writer.println(MESSAGE_ALL_USERS + ";" + sent);
+                                writer.println(PHOTO_ALL_USERS + ";" + sent);
                                 writer.flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
-                    } else if (secondMessage.contains(MESSAGE_SINGLE_FRIEND)) {
+                    } else if (secondMessage.contains(PHOTO_SINGLE_FRIEND)) {
                         synchronized (gatekeeper) {
                             try {
                                 String[] operation = secondMessage.split(";");
@@ -442,7 +442,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 }
 
                                 if (friendUser == null) {
-                                    writer.println(MESSAGE_SINGLE_FRIEND + ";false");
+                                    writer.println(PHOTO_SINGLE_FRIEND + ";false");
                                     writer.flush();
                                     return;
                                 }
@@ -452,7 +452,7 @@ public class ThreadSafe extends Thread implements FlagInterface {
                                 PhotoMessaging photoMessage = new PhotoMessaging(currentUser, friendFriends, imageContent, date, isRead);
                                 photoMessage.sendPhotoMessage(currentUser, friendFriends, imageContent, date, isRead);
 
-                                writer.println(MESSAGE_SINGLE_FRIEND + ";true");
+                                writer.println(PHOTO_SINGLE_FRIEND + ";true");
                                 writer.flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
