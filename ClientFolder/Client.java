@@ -480,11 +480,10 @@ public class Client extends Thread implements FlagInterface {
                                 }
 
 
-                            } else if (whichMessage.equals("2")) {
-                                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                            } else if (whichMessage.equals("2")) { 
                                 SwingUtilities.invokeLater(() -> new photoMenu().setVisible(true));
 
-                                while (ComplexGUI.photoMessageTypeGUI == null) {
+                                while (ComplexGUI.photoMessageTypeGUI == null || ComplexGUI.photoPathGUI == null) {
                                     try {
                                         Thread.sleep(100);
                                     } catch (InterruptedException e) {
@@ -492,61 +491,125 @@ public class Client extends Thread implements FlagInterface {
                                     }
                                 }
 
+                                String photoType = ComplexGUI.photoMessageTypeGUI;
+                                File photoFile = new File(ComplexGUI.photoPathGUI);
+
                                 try {
-                                    File imageFile = new File(ComplexGUI.photoPathGUI);
-                                    if (!imageFile.exists()) {
-                                        JOptionPane.showMessageDialog(null, "Photo file not found",
-                                                "Error", JOptionPane.ERROR_MESSAGE);
-                                        continue;
-                                    }
+                                    BufferedImage image = ImageIO.read(photoFile);
 
-                                    BufferedImage image = ImageIO.read(imageFile);
-                                    if (image == null) {
-                                        JOptionPane.showMessageDialog(null, "Invalid image file",
-                                                "Error", JOptionPane.ERROR_MESSAGE);
-                                        continue;
-                                    }
-
-                                    if (ComplexGUI.photoMessageTypeGUI.equals("1")) {
-                                        String messageAllFriends = MESSAGE_ALL_FRIENDS + ";" + ComplexGUI.photoPathGUI;
-                                        writer.println(messageAllFriends);
+                                    if (photoType.equals("1")) {
+                                        String friendUsername = ComplexGUI.photoRecipientGUI;
+                                        String photoMessage = PHOTO_SINGLE_FRIEND + ";" + friendUsername;
+                                        writer.println(photoMessage);
                                         writer.flush();
 
-                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                        dataOutputStream.writeInt(imageBytes.length);
-                                        dataOutputStream.write(imageBytes);
-                                        dataOutputStream.flush();
-
-                                    } else if (ComplexGUI.photoMessageTypeGUI.equals("2")) {
-                                        String messageAllUsers = MESSAGE_ALL_USERS + ";" + ComplexGUI.photoPathGUI;
-                                        writer.println(messageAllUsers);
+                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                        ImageIO.write(image, "png", baos);
+                                        byte[] imageBytes = baos.toByteArray();
+                                        writer.println(imageBytes.length);
                                         writer.flush();
 
-                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                        dataOutputStream.writeInt(imageBytes.length);
-                                        dataOutputStream.write(imageBytes);
-                                        dataOutputStream.flush();
+                                        socket.getOutputStream().write(imageBytes);
+                                        socket.getOutputStream().flush();
 
-                                    } else if (ComplexGUI.photoMessageTypeGUI.equals("3")) {
-                                        String messageSingleFriend = MESSAGE_SINGLE_FRIEND + ";"
-                                                + ComplexGUI.photoRecipientGUI + ";" + ComplexGUI.photoPathGUI;
-                                        writer.println(messageSingleFriend);
+                                        String response = reader.readLine();
+                                        if (response.contains(PHOTO_SINGLE_FRIEND)) {
+                                            String[] parts = response.split(";");
+                                            if (parts[1].equals("true")) {
+                                                System.out.println("Photo sent to friend successfully");
+                                            } else {
+                                                System.out.println("Failed to send photo to friend");
+                                                writer.println("LOOP");
+                                                writer.flush();
+                                                String loopResponse = reader.readLine();
+                                                if (loopResponse.equals("CONTINUE")) {
+                                                    continue;
+                                                }
+                                            }
+                                        }
+
+                                    } else if (photoType.equals("2")) { 
+                                        String photoMessage = PHOTO_ALL_FRIENDS;
+                                        writer.println(photoMessage);
                                         writer.flush();
 
-                                        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-                                        dataOutputStream.writeInt(imageBytes.length);
-                                        dataOutputStream.write(imageBytes);
-                                        dataOutputStream.flush();
+                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                        ImageIO.write(image, "png", baos);
+                                        byte[] imageBytes = baos.toByteArray();
+                                        writer.println(imageBytes.length);
+                                        writer.flush();
+
+                                        socket.getOutputStream().write(imageBytes);
+                                        socket.getOutputStream().flush();
+
+                                        String response = reader.readLine();
+                                        if (response.contains(PHOTO_ALL_FRIENDS)) {
+                                            String[] parts = response.split(";");
+                                            if (parts[1].equals("true")) {
+                                                System.out.println("Photo sent to all friends successfully");
+                                            } else {
+                                                System.out.println("Failed to send photo to all friends");
+                                                writer.println("LOOP");
+                                                writer.flush();
+                                                String loopResponse = reader.readLine();
+                                                if (loopResponse.equals("CONTINUE")) {
+                                                    continue;
+                                                }
+                                            }
+                                        }
+
+                                    } else if (photoType.equals("3")) { 
+                                        String photoMessage = PHOTO_ALL_USERS;
+                                        writer.println(photoMessage);
+                                        writer.flush();
+
+                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                        ImageIO.write(image, "png", baos);
+                                        byte[] imageBytes = baos.toByteArray();
+                                        writer.println(imageBytes.length);
+                                        writer.flush();
+
+                                        socket.getOutputStream().write(imageBytes);
+                                        socket.getOutputStream().flush();
+
+                                        String response = reader.readLine();
+                                        if (response.contains(PHOTO_ALL_USERS)) {
+                                            String[] parts = response.split(";");
+                                            if (parts[1].equals("true")) {
+                                                System.out.println("Photo sent to all users successfully");
+                                            } else {
+                                                System.out.println("Failed to send photo to all users");
+                                                writer.println("LOOP");
+                                                writer.flush();
+                                                String loopResponse = reader.readLine();
+                                                if (loopResponse.equals("CONTINUE")) {
+                                                    continue;
+                                                }
+                                            }
+                                        }
                                     }
 
                                     ComplexGUI.photoPathGUI = null;
-                                    ComplexGUI.photoRecipientGUI = null;
                                     ComplexGUI.photoMessageTypeGUI = null;
-
+                                    ComplexGUI.photoRecipientGUI = null;
+                                    ComplexGUI.whichMessage = null;
+                                    
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                    JOptionPane.showMessageDialog(null, "Error sending photo: " + e.getMessage(),
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                    System.out.println("Error processing photo");
+                                    writer.println("LOOP");
+                                    writer.flush();
+                                    String response = reader.readLine();
+                                    if (response.equals("CONTINUE")) {
+                                        continue;
+                                    }
+                                }
+
+                                writer.println("LOOP");
+                                writer.flush();
+                                String response = reader.readLine();
+                                if (response.equals("CONTINUE")) {
+                                    continue;
                                 }
 
                             } else if (whichMessage.equals("3")) {
