@@ -29,14 +29,11 @@ public interface FlagInterface {
     // TextSingleFriend; friend username; text to send
     String TEXT_SINGLE_FRIEND = "TextSingleFriend";
 
-    // MessageAllFriends; text to send
-    String MESSAGE_ALL_FRIENDS = "MessageAllFriends";
+    String PHOTO_SINGLE_FRIEND = "PhotoSingleFriend";
 
-    // MessageAllUsers; text to send
-    String MESSAGE_ALL_USERS = "MessageAllUsers";
+    String PHOTO_ALL_FRIENDS = "PhotoAllFriends";
 
-    // MessageSingleFriend; friend username; text to send
-    String MESSAGE_SINGLE_FRIEND = "MessageSingleFriend";
+    String PHOTO_ALL_USERS = "PhotoAllUsers";
 
     // friend username:content
     String DELETE_ALL_FRIENDS = "DeleteMessageToAllFriends";
