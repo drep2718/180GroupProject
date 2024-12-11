@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -44,38 +45,44 @@ class WelcomeScreen extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        ImageIcon logo = new ImageIcon("/Users/aidendrep/Downloads/PurduePete1.png");
-        Image scaledImage = logo.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
-        ImageIcon scaledLogo = new ImageIcon(scaledImage);
-        JLabel logoLabel = new JLabel(scaledLogo, SwingConstants.CENTER);
+        try {
+
+            URL logoUrl = new URL("https://raw.githubusercontent.com/drep2718/180GroupProject/main/PurduePete1.png");
+            ImageIcon logo = new ImageIcon(logoUrl);
+            Image scaledImage = logo.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH);
+            ImageIcon scaledLogo = new ImageIcon(scaledImage);
+            JLabel logoLabel = new JLabel(scaledLogo, SwingConstants.CENTER);
 
 
-        JLabel welcomeLabel = new JLabel("Welcome to Boiler Chat!", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
+            JLabel welcomeLabel = new JLabel("Welcome to Boiler Chat!", SwingConstants.CENTER);
+            welcomeLabel.setFont(new Font("Bernard MT", Font.BOLD, 40));
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(logoLabel, BorderLayout.NORTH);
-        centerPanel.add(welcomeLabel, BorderLayout.CENTER);
-        add(centerPanel, BorderLayout.CENTER);
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(logoLabel, BorderLayout.NORTH);
+            centerPanel.add(welcomeLabel, BorderLayout.CENTER);
+            add(centerPanel, BorderLayout.CENTER);
 
-        JPanel topBar = new JPanel();
-        topBar.setBackground(Color.BLACK);
-        topBar.setPreferredSize(new Dimension(getWidth(), 100));
-        add(topBar, BorderLayout.NORTH);
+            JPanel topBar = new JPanel();
+            topBar.setBackground(Color.BLACK);
+            topBar.setPreferredSize(new Dimension(getWidth(), 100));
+            add(topBar, BorderLayout.NORTH);
 
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(229, 194, 31));
-        bottomBar.setLayout(new BorderLayout());
-        bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
+            JPanel bottomBar = new JPanel();
+            bottomBar.setBackground(new Color(229, 194, 31));
+            bottomBar.setLayout(new BorderLayout());
+            bottomBar.setPreferredSize(new Dimension(getWidth(), 100));
 
-        JButton continueButton = new JButton("Continue");
-        continueButton.setFont(new Font("Bernard MT", Font.PLAIN, 16));
-        continueButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
-            dispose();
-        });
-        bottomBar.add(continueButton, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
+            JButton continueButton = new JButton("Continue");
+            continueButton.setFont(new Font("Bernard MT", Font.PLAIN, 16));
+            continueButton.addActionListener(e -> {
+                SwingUtilities.invokeLater(() -> new mainMenu().setVisible(true));
+                dispose();
+            });
+            bottomBar.add(continueButton, BorderLayout.CENTER);
+            add(bottomBar, BorderLayout.SOUTH);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
@@ -360,8 +367,6 @@ class mainMenu1 extends JFrame {
         });
 
 
-
-
         bottomBar.add(friendButton);
         bottomBar.add(blockButton);
         bottomBar.add(messageButton);
@@ -634,7 +639,6 @@ class friendsScreen1 extends JFrame {
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadFriends();
         ArrayList<User> friendsList = Friends.getFriendsList();
-        System.out.println(friendsList);
         for (User friend : friendsList) {
             friendDropdown.addItem(friend.getUsername());
         }
@@ -656,7 +660,6 @@ class friendsScreen1 extends JFrame {
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadFriends();
         ArrayList<User> friendsList = Friends.getFriendsList();
-        System.out.println(friendsList);
         for (User friend : friendsList) {
             friendDropdown.addItem(friend.getUsername());
         }
@@ -930,7 +933,6 @@ class blockedScreen extends JFrame {
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadBlocked();
         ArrayList<User> blockedList = Friends.getBlockedList();
-        System.out.println(blockedList);
         for (User blocked : blockedList) {
             friendDropdown.addItem(blocked.getUsername());
         }
@@ -951,7 +953,6 @@ class blockedScreen extends JFrame {
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadBlocked();
         ArrayList<User> blockedList = Friends.getBlockedList();
-        System.out.println(blockedList);
         for (User blocked : blockedList) {
             friendDropdown.addItem(blocked.getUsername());
         }
@@ -1223,7 +1224,7 @@ class viewMenu extends JFrame {
         boolean found = false;
 
         for (Messaging message : messagesList) {
-            String friendsName = message.toString().substring(message.toString().lastIndexOf(":") +1);
+            String friendsName = message.toString().substring(message.toString().lastIndexOf(":") + 1);
             if (message.getSender().getUsername().equalsIgnoreCase(friendName) ||
                     message.getReceiver().getUser().getUsername().equalsIgnoreCase(friendName)) {
                 friendMessages += message + "\n";
@@ -1354,7 +1355,6 @@ class textMenu extends JFrame {
 
                 if (result == JOptionPane.OK_OPTION) {
                     String person = (String) friendDropdown.getSelectedItem();
-                    System.out.println("Selected person: " + person);
 
                     ComplexGUI.friend = person;
                     User user1 = new User("temp");
@@ -1364,9 +1364,7 @@ class textMenu extends JFrame {
 
                     User friendUser = null;
                     for (User user : allUsers) {
-                        System.out.println("Checking user: " + user.getUsername());
                         if (user.getUsername().equals(person)) {
-                            System.out.println("Match found: " + user.getUsername());
                             friendUser = user;
                             break;
                         }
@@ -1413,7 +1411,6 @@ class textMenu extends JFrame {
         friends = new Friends(ComplexGUI.waypoint);
         friends.loadFriends();
         ArrayList<User> friendsList = Friends.getFriendsList();
-        System.out.println(friendsList);
         for (User friend : friendsList) {
             friendDropdown.addItem(friend.getUsername());
         }
@@ -1584,7 +1581,6 @@ class deleteMenu extends JFrame {
                 Messaging messageTemp = new Messaging(user, null, content, date, isRead);
                 messageTemp.loadAllFriendMessages(user);
                 ArrayList<Messaging> messages = Messaging.getMessageHistory();
-                System.out.println(messages);
 
 
                 JPanel friendMessagePanel = new JPanel();
@@ -1598,7 +1594,6 @@ class deleteMenu extends JFrame {
                 if (result == JOptionPane.OK_OPTION) {
                     String selectedMessage = (String) allFriendsDropdown.getSelectedItem();
                     String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":") + 1);
-                    System.out.println("Selected Message: " + finalMessage);
 
                     if (finalMessage != null && !finalMessage.trim().isEmpty()) {
                         messaging.deleteFriendsMessage(user, finalMessage, date, isRead);
@@ -1635,7 +1630,6 @@ class deleteMenu extends JFrame {
                 Messaging messageTemp = new Messaging(user, null, content, date, isRead);
                 messageTemp.loadAllUsersMessages(user);
                 ArrayList<Messaging> messages = Messaging.getMessageHistory();
-                System.out.println(messages);
 
                 JPanel userMessagePanel = new JPanel();
                 userMessagePanel.add(new JLabel(
@@ -1648,7 +1642,6 @@ class deleteMenu extends JFrame {
                 if (result == JOptionPane.OK_OPTION) {
                     String selectedMessage = (String) allUsersDropdown.getSelectedItem();
                     String finalMessage = selectedMessage.substring(selectedMessage.indexOf(":") + 1);
-                    System.out.println("Selected Message: " + finalMessage);
 
                     if (finalMessage != null && !finalMessage.trim().isEmpty()) {
                         messaging.deleteUsersMessage(user, finalMessage, date, isRead);
@@ -1721,7 +1714,6 @@ class deleteMenu extends JFrame {
                                         selectedMessage.lastIndexOf(":")
                                 );
 
-                                System.out.println("Selected Message: " + finalMessage);
 
                                 User tempUser = new User(selectedFriend);
                                 Friends friendFriends = new Friends(tempUser);
@@ -1774,7 +1766,6 @@ class deleteMenu extends JFrame {
         allFriendsDropdown.removeAllItems();
         messaging.loadAllFriendMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
-        System.out.println(messages);
         for (Messaging message : messages) {
             allFriendsDropdown.addItem(message.toString());
         }
@@ -1785,7 +1776,6 @@ class deleteMenu extends JFrame {
         allUsersDropdown.removeAllItems();
         messaging.loadAllUsersMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
-        System.out.println(messages);
         for (Messaging message : messages) {
             allUsersDropdown.addItem(message.toString());
         }
@@ -1796,7 +1786,6 @@ class deleteMenu extends JFrame {
         singleFriendDropdown.removeAllItems();
         messaging.loadMessages(tempUser);
         ArrayList<Messaging> messages = messaging.getMessageHistory();
-        System.out.println(messages);
         for (Messaging message : messages) {
             singleFriendDropdown.addItem(message.toString());
         }
@@ -1838,7 +1827,6 @@ class deleteMenu extends JFrame {
         receiver = new Friends(ComplexGUI.waypoint);
         receiver.loadFriends();
         ArrayList<User> friendsList = Friends.getFriendsList();
-        System.out.println(friendsList);
         for (User friend : friendsList) {
             friendDropdown.addItem(friend.getUsername());
         }
